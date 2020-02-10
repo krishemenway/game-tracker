@@ -2,6 +2,8 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
+		<PublishSingleFile>true</PublishSingleFile>
+		<RuntimeIdentifier>win10-x64</RuntimeIdentifier>
 		<TargetFramework>netcoreapp3.0</TargetFramework>
 		<RootNamespace>GameTracker</RootNamespace>
 	</PropertyGroup>
