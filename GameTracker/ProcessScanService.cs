@@ -10,7 +10,7 @@ using Topshelf;
 
 namespace GameTracker
 {
-	internal class ProcessScanService : ServiceControl, IDisposable
+	internal class ProcessScanService : ServiceControl
 	{
 		public ProcessScanService() : this(null) { }
 
@@ -26,7 +26,7 @@ namespace GameTracker
 
 		public bool Start(HostControl hostControl)
 		{
-			Log.Information("Writing Data To: {GameProfileDataPath}", Program.ApplicationDataRoot);
+			Log.Information("Writing Scanned Data To: {GameProfileDataPath}", Program.ApplicationDataRoot);
 			Timer = new Timer((state) => Execute(), null, TimeSpan.Zero, TimeSpan.FromSeconds(Program.Configuration.GetValue<int>("ProcessScanIntervalInSeconds")));
 			return true;
 		}
@@ -35,12 +35,6 @@ namespace GameTracker
 		{
 			Timer.Dispose();
 			return true;
-		}
-
-		public void Dispose()
-		{
-			Timer?.Dispose();
-			Timer = null;
 		}
 
 		public void Execute()
