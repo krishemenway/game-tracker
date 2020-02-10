@@ -32,11 +32,7 @@ namespace GameTracker
 
 				x.UseAssemblyInfoForServiceInfo();
 
-				x.Service(settings => new ProcessScanService(), s =>
-				{
-					s.BeforeStartingService(_ => Console.WriteLine("BeforeStart"));
-					s.BeforeStoppingService(_ => Console.WriteLine("BeforeStop"));
-				});
+				x.Service(settings => new ProcessScanService());
 
 				x.SetStartTimeout(TimeSpan.FromSeconds(10));
 				x.SetStopTimeout(TimeSpan.FromSeconds(10));
@@ -48,7 +44,7 @@ namespace GameTracker
 
 				x.OnException((exception) =>
 				{
-					Console.WriteLine("Exception thrown - " + exception.Message);
+					Log.Error(exception, "Service level exception");
 				});
 			});
 		}
