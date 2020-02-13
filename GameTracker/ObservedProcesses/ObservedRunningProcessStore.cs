@@ -1,6 +1,4 @@
-﻿using GameTracker.RunningProcesses;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -86,9 +84,9 @@ namespace GameTracker.ObservedProcesses
 			}
 		}
 
-		private readonly IDictionary<string, ObservedRunningProcess> _observedRunningProcessesByFilePath;
+		public static string DataFilePath => Program.FilePathInAppData("ObservedRunningProcesses.json");
 
+		private readonly IDictionary<string, ObservedRunningProcess> _observedRunningProcessesByFilePath;
 		private static Dictionary<string, ObservedRunningProcess> StaticObservedRunningProcessesByFilePath { get; } = new Dictionary<string, ObservedRunningProcess>();
-		private static string DataFilePath = Path.Combine(Program.ApplicationDataRoot, "ObservedRunningProcesses.json");
 	}
 }

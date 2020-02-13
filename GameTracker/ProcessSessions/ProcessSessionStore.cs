@@ -1,4 +1,4 @@
-﻿using GameTracker.RunningProcesses;
+﻿using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -54,6 +54,13 @@ namespace GameTracker.ProcessSessions
 
 		private void WriteProcessSessions(IReadOnlyList<PendingProcessSession> pendingProcessSessions, DateTimeOffset currentTime)
 		{
+			if (!pendingProcessSessions.Any())
+			{
+				return;
+			}
+
+			Log.Information("Writing {CountOfWrittenProcesses} process completions to file.", pendingProcessSessions.Count);
+
 			using (var streamWriter = new StreamWriter(File.Open(DataFilePath, FileMode.Append)))
 			{
 				foreach(var pendingProcessSession in pendingProcessSessions)
@@ -63,9 +70,9 @@ namespace GameTracker.ProcessSessions
 			}
 		}
 
-		private IDictionary<string, PendingProcessSession> _pendingProcessSessionsByFilePath;
+		public static string DataFilePath => Program.FilePathInAppData("ProcessSessions.csv");
 
+		private IDictionary<string, PendingProcessSession> _pendingProcessSessionsByFilePath;
 		private static ConcurrentDictionary<string, PendingProcessSession> StaticPendingProcessSessions { get; } = new ConcurrentDictionary<string, PendingProcessSession>();
-		private static string DataFilePath = Path.Combine(Program.ApplicationDataRoot, "ProcessSessions.csv");
 	}
 }

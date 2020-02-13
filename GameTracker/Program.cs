@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
+using System.Diagnostics;
 using System.IO;
 using Topshelf;
 
@@ -8,34 +9,30 @@ namespace GameTracker
 {
 	public class Program
 	{
-		public static int Main(string[] args)
+		public static int Main()
 		{
-			ApplicationDataRoot = Directory
-				.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GameTracker"))
-				.FullName;
-
-			Configuration = new ConfigurationBuilder()
-				.SetBasePath(Directory.GetCurrentDirectory())
-				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-				.AddCommandLine(args)
-				.Build();
-
 			return (int)HostFactory.Run(x =>
 			{
 				Log.Logger = new LoggerConfiguration()
 					.MinimumLevel.Debug()
 					.WriteTo.ColoredConsole()
-					.WriteTo.RollingFile("app-{Date}.log")
+					.WriteTo.RollingFile(Path.Combine(ExecutablePath, "app-{Date}.log"))
 					.CreateLogger();
 
+				x.Service<GameTrackerService>(s =>
+				{
+					s.ConstructUsing(hostSettings => new GameTrackerService());
+					s.WhenStarted(service => service.Start());
+					s.WhenStopped(service => service.Stop());
+				});
+
+				x.SetDisplayName("Game Tracker");
+				x.SetServiceName("GameTracker");
+				x.SetDescription("GameTracker");
+				x.StartAutomaticallyDelayed();
+
 				x.UseSerilog();
-
-				x.UseAssemblyInfoForServiceInfo();
-
-				x.Service(settings => new ProcessScanService());
-
-				x.SetStartTimeout(TimeSpan.FromSeconds(10));
-				x.SetStopTimeout(TimeSpan.FromSeconds(10));
+				x.RunAsLocalService();
 
 				x.EnableServiceRecovery(r =>
 				{
@@ -44,12 +41,18 @@ namespace GameTracker
 
 				x.OnException((exception) =>
 				{
-					Log.Error(exception, "Service level exception");
+					Log.Error(exception, "Something went wrong with the service!");
 				});
 			});
 		}
 
-		public static IConfigurationRoot Configuration { get; private set; }
-		public static string ApplicationDataRoot { get; private set; }
+		public static string ExecutablePath { get; } = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+		public static string AppDataPath => ExecutablePath;
+
+		public static string FilePathInExecutableFolder(string fileName) => Path.Combine(ExecutablePath, fileName);
+		public static string FilePathInAppData(string fileName) => Path.Combine(AppDataPath, fileName);
+
+		public static IConfigurationRoot Configuration => LazyConfiguration.Value;
+		private static readonly Lazy<IConfigurationRoot> LazyConfiguration = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(ExecutablePath).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build());
 	}
 }
