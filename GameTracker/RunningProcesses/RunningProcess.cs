@@ -8,14 +8,15 @@ namespace GameTracker.RunningProcesses
 		public DateTime StartTime { get; set; }
 		public string FilePath { get; set; }
 
-		public override bool Equals(object other)
+		public override bool Equals(object otherObject)
 		{
-			return other is RunningProcess otherAsProcess && otherAsProcess.FilePath == FilePath;
+			return otherObject is RunningProcess other
+				&& other.FilePath.Equals(FilePath, StringComparison.CurrentCultureIgnoreCase);
 		}
 
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(FilePath);
+			return FilePath.GetHashCode();
 		}
 	}
 }

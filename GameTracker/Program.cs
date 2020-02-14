@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -13,8 +15,10 @@ namespace GameTracker
 		{
 			return (int)HostFactory.Run(x =>
 			{
+				LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Debug);
+
 				Log.Logger = new LoggerConfiguration()
-					.MinimumLevel.Debug()
+					.MinimumLevel.ControlledBy(LoggingLevelSwitch)
 					.WriteTo.ColoredConsole()
 					.WriteTo.RollingFile(Path.Combine(ExecutableFolderPath, "app-{Date}.log"))
 					.CreateLogger();
@@ -54,6 +58,7 @@ namespace GameTracker
 		public static string FilePathInAppData(string fileName) => Path.Combine(AppDataFolderPath, fileName);
 
 		public static IConfigurationRoot Configuration => LazyConfiguration.Value;
+		public static LoggingLevelSwitch LoggingLevelSwitch { get; set; }
 
 		private static readonly Lazy<IConfigurationRoot> LazyConfiguration 
 			= new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(ExecutableFolderPath).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build());

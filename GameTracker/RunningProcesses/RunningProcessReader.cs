@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +10,7 @@ namespace GameTracker.RunningProcesses
 {
 	public interface IRunningProcessReader
 	{
-		IEnumerable<RunningProcess> FindRunningProcesses();
+		IReadOnlyList<RunningProcess> FindRunningProcesses();
 	}
 
 	public class RunningProcessReader : IRunningProcessReader
@@ -22,9 +23,11 @@ namespace GameTracker.RunningProcesses
 			_startsWithExclusions = startsWithExclusions ?? LazyStartsWithExclusions;
 		}
 
-		public IEnumerable<RunningProcess> FindRunningProcesses()
+		public IReadOnlyList<RunningProcess> FindRunningProcesses()
 		{
-			foreach(var process in Process.GetProcesses())
+			var allProcesses = new List<RunningProcess>();
+
+			foreach (var process in Process.GetProcesses())
 			{
 				if (!TryGetValueForProcess(process, process => process.HasExited, out var hasExited) || hasExited)
 				{
@@ -41,13 +44,15 @@ namespace GameTracker.RunningProcesses
 					continue;
 				}
 
-				yield return new RunningProcess
+				allProcesses.Add(new RunningProcess
 				{
 					FilePath = filePath,
 					ProcessName = processName,
 					StartTime = TryGetValueForProcess(process, (process) => process.StartTime, out var startTime) ? startTime : DateTime.Now,
-				};
+				});
 			}
+
+			return allProcesses.Distinct().ToList();
 		}
 
 		private bool TryGetValueForProcess<TData, TValue>(TData data, Func<TData, TValue> getValueFunc, out TValue gotValue)
@@ -81,7 +86,7 @@ namespace GameTracker.RunningProcesses
 
 		private bool MatchesStartsWithExclusions(string filePath)
 		{
-			return _startsWithExclusions.Value.Any(exclusion => filePath.StartsWith(exclusion, StringComparison.CurrentCultureIgnoreCase));
+			return filePath.StartsWithAny(_startsWithExclusions.Value, StringComparison.CurrentCultureIgnoreCase);
 		}
 
 		private bool MatchesProcessNameExclusion(string processName)

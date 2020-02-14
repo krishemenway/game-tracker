@@ -1,4 +1,5 @@
 ﻿using GameTracker.RunningProcesses;
+using Serilog;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -63,6 +64,8 @@ namespace GameTracker.ObservedProcesses
 
 		private void SaveObservedRunningProcesses()
 		{
+			Log.Debug("Writing Observed Running Processes to file: {FilePath}", DataFilePath);
+
 			using (var streamWriter = new StreamWriter(File.Open(DataFilePath, FileMode.Truncate)))
 			{
 				streamWriter.Write(JsonSerializer.Serialize(_observedRunningProcessesByFilePath));

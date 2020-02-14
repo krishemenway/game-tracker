@@ -27,7 +27,7 @@ namespace GameTracker
 					.Where(runningProcess => !_observedRunningProcessStore.ShouldIgnoreByUserDecision(runningProcess.FilePath))
 					.ToList();
 
-				Log.Information("Found {RelevantRunningProcessCount} Distinct Running Processes", runningProcesses.Count);
+				Log.Debug("Found {RelevantRunningProcessCount} Distinct Running Processes", runningProcesses.Count);
 
 				_observedRunningProcessStore.UpdateWithRunningProcesses(runningProcesses);
 				_processSessionStore.UpdatePendingProcessSessions(runningProcesses);

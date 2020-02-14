@@ -15,18 +15,20 @@ namespace GameTracker.ProcessSessions
 
 	public class ProcessSessionStore : IProcessSessionStore
 	{
-		public ProcessSessionStore(IDictionary<string, PendingProcessSession> pendingProcessSessionsByFilePath = null)
+		public ProcessSessionStore(
+			IDictionary<string, PendingProcessSession> pendingProcessSessionsByFilePath = null,
+			Func<DateTimeOffset> currentTimeFunc = null)
 		{
 			_pendingProcessSessionsByFilePath = pendingProcessSessionsByFilePath ?? StaticPendingProcessSessions;
+			_currentTimeFunc = currentTimeFunc ?? (() => DateTimeOffset.Now);
 		}
 
 		public void UpdatePendingProcessSessions(IReadOnlyList<RunningProcess> runningProcesses)
 		{
-			var currentTime = DateTimeOffset.Now;
 			var endedProcesses = FindEndedProcesses(runningProcesses);
 
 			AddRunningProcessesThatHaveStarted(runningProcesses);
-			WriteProcessSessions(endedProcesses, currentTime);
+			WriteProcessSessions(endedProcesses);
 			RemoveEndedProcessSessions(endedProcesses);
 		}
 
@@ -53,14 +55,16 @@ namespace GameTracker.ProcessSessions
 			}
 		}
 
-		private void WriteProcessSessions(IReadOnlyList<PendingProcessSession> pendingProcessSessions, DateTimeOffset currentTime)
+		private void WriteProcessSessions(IReadOnlyList<PendingProcessSession> pendingProcessSessions)
 		{
+			var currentTime = _currentTimeFunc();
+
 			if (!pendingProcessSessions.Any())
 			{
 				return;
 			}
 
-			Log.Information("Writing {CountOfWrittenProcesses} process completions to file.", pendingProcessSessions.Count);
+			Log.Debug("Writing {CountOfWrittenProcesses} process completions to file.", pendingProcessSessions.Count);
 
 			using (var streamWriter = new StreamWriter(File.Open(DataFilePath, FileMode.Append)))
 			{
@@ -73,7 +77,9 @@ namespace GameTracker.ProcessSessions
 
 		public static string DataFilePath => Program.FilePathInAppData("ProcessSessions.csv");
 
-		private IDictionary<string, PendingProcessSession> _pendingProcessSessionsByFilePath;
+		private readonly IDictionary<string, PendingProcessSession> _pendingProcessSessionsByFilePath;
+		private readonly Func<DateTimeOffset> _currentTimeFunc;
+
 		private static ConcurrentDictionary<string, PendingProcessSession> StaticPendingProcessSessions { get; } = new ConcurrentDictionary<string, PendingProcessSession>();
 	}
 }
