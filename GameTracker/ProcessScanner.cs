@@ -23,15 +23,14 @@ namespace GameTracker
 		{
 			try
 			{
-				var relevantCurrentProcesses = _runningProcessReader.FindRunningProcesses()
-					.Where(filePath => !_observedRunningProcessStore.IsDismissed(filePath.FilePath))
-					.Distinct()
+				var runningProcesses = _runningProcessReader.FindRunningProcesses()
+					.Where(runningProcess => !_observedRunningProcessStore.ShouldIgnoreByUserDecision(runningProcess.FilePath))
 					.ToList();
 
-				Log.Information("Found {RelevantRunningProcessCount} Distinct Running Processes", relevantCurrentProcesses.Count);
+				Log.Information("Found {RelevantRunningProcessCount} Distinct Running Processes", runningProcesses.Count);
 
-				_observedRunningProcessStore.UpdateWithRunningProcesses(relevantCurrentProcesses);
-				_processSessionStore.UpdatePendingProcessSessions(relevantCurrentProcesses);
+				_observedRunningProcessStore.UpdateWithRunningProcesses(runningProcesses);
+				_processSessionStore.UpdatePendingProcessSessions(runningProcesses);
 			}
 			catch (Exception exception)
 			{

@@ -11,7 +11,7 @@ namespace GameTracker.ObservedProcesses
 		IReadOnlyList<ObservedRunningProcess> FindAll();
 		void UpdateWithRunningProcesses(IReadOnlyList<RunningProcess> processes);
 		void DismissProcessByPath(string filePath);
-		bool IsDismissed(string filePath);
+		bool ShouldIgnoreByUserDecision(string filePath);
 	}
 
 	public class ObservedRunningProcessStore : IObservedRunningProcessStore
@@ -31,16 +31,16 @@ namespace GameTracker.ObservedProcesses
 			return _observedRunningProcessesByFilePath.Select(x => x.Value).ToList();
 		}
 
-		public bool IsDismissed(string filePath)
+		public bool ShouldIgnoreByUserDecision(string filePath)
 		{
-			return _observedRunningProcessesByFilePath.TryGetValue(filePath, out var observedRunningProcess) && observedRunningProcess.IsDismissed;
+			return _observedRunningProcessesByFilePath.TryGetValue(filePath, out var observedRunningProcess) && observedRunningProcess.Ignore;
 		}
 
 		public void DismissProcessByPath(string filePath)
 		{
 			if (_observedRunningProcessesByFilePath.TryGetValue(filePath, out var observedRunningProcess))
 			{
-				observedRunningProcess.IsDismissed = true;
+				observedRunningProcess.Ignore = true;
 				SaveObservedRunningProcesses();
 			}
 		}
@@ -52,7 +52,7 @@ namespace GameTracker.ObservedProcesses
 				var observedProcess = new ObservedRunningProcess
 				{
 					ProcessPath = process.FilePath,
-					IsDismissed = false,
+					Ignore = false,
 				};
 
 				_observedRunningProcessesByFilePath.TryAdd(process.FilePath, observedProcess);

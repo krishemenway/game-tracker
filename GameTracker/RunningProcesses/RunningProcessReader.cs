@@ -31,12 +31,12 @@ namespace GameTracker.RunningProcesses
 					continue;
 				}
 
-				if (!TryGetValueForProcess(process, (process) => process.ProcessName, out var processName) || MatchesProcessNameExclusion(processName))
+				if (!TryGetValueForProcess(process, process => process.ProcessName, out var processName) || MatchesProcessNameExclusion(processName))
 				{
 					continue;
 				}
 
-				if (!TryGetValueForProcess(process, (process) => process.MainModule.FileName, out var filePath) || MatchesExecutableFilePath(filePath) || MatchesStartsWithExclusions(filePath))
+				if (!TryGetValueForProcess(process, process => process.MainModule.FileName, out var filePath) || MatchesExecutableFilePath(filePath) || MatchesStartsWithExclusions(filePath))
 				{
 					continue;
 				}
@@ -74,11 +74,6 @@ namespace GameTracker.RunningProcesses
 			}
 		}
 
-		private bool MatchesProcessNameExclusion(string processName)
-		{
-			return _processNameExclusions.Value.ContainsKey(processName);
-		}
-
 		private bool MatchesExecutableFilePath(string filePath)
 		{
 			return filePath.Equals(Program.ExecutablePath, StringComparison.CurrentCultureIgnoreCase);
@@ -87,6 +82,11 @@ namespace GameTracker.RunningProcesses
 		private bool MatchesStartsWithExclusions(string filePath)
 		{
 			return _startsWithExclusions.Value.Any(exclusion => filePath.StartsWith(exclusion, StringComparison.CurrentCultureIgnoreCase));
+		}
+
+		private bool MatchesProcessNameExclusion(string processName)
+		{
+			return _processNameExclusions.Value.ContainsKey(processName);
 		}
 
 		private readonly Lazy<IReadOnlyDictionary<string, string>> _processNameExclusions;
