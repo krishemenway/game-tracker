@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GameTracker.RunningProcesses;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -8,7 +9,7 @@ namespace GameTracker.ObservedProcesses
 	public interface IObservedRunningProcessStore
 	{
 		IReadOnlyList<ObservedRunningProcess> FindAll();
-		void UpdateWithRunningProcesses(IReadOnlyList<string> processes);
+		void UpdateWithRunningProcesses(IReadOnlyList<RunningProcess> processes);
 		void DismissProcessByPath(string filePath);
 		bool IsDismissed(string filePath);
 	}
@@ -44,17 +45,17 @@ namespace GameTracker.ObservedProcesses
 			}
 		}
 
-		public void UpdateWithRunningProcesses(IReadOnlyList<string> processFilePaths)
+		public void UpdateWithRunningProcesses(IReadOnlyList<RunningProcess> runningProcesses)
 		{
-			foreach (var filePath in processFilePaths)
+			foreach (var process in runningProcesses)
 			{
 				var observedProcess = new ObservedRunningProcess
 				{
-					ProcessPath = filePath,
+					ProcessPath = process.FilePath,
 					IsDismissed = false,
 				};
 
-				_observedRunningProcessesByFilePath.TryAdd(filePath, observedProcess);
+				_observedRunningProcessesByFilePath.TryAdd(process.FilePath, observedProcess);
 			}
 
 			SaveObservedRunningProcesses();

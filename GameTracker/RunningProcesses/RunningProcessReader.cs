@@ -9,68 +9,91 @@ namespace GameTracker.RunningProcesses
 {
 	public interface IRunningProcessReader
 	{
-		IReadOnlyList<string> FindRunningProcesses();
+		IEnumerable<RunningProcess> FindRunningProcesses();
 	}
 
 	public class RunningProcessReader : IRunningProcessReader
 	{
-		public IReadOnlyList<string> FindRunningProcesses()
+		public RunningProcessReader(
+			Lazy<IReadOnlyDictionary<string, string>> processNameExclusions = null,
+			Lazy<IReadOnlyList<string>> startsWithExclusions = null)
 		{
-			return Process.GetProcesses()
-				.Where(process => !LazyProcessNameExclusions.Value.Contains(process.ProcessName))
-				.Select(ExtractFilePathOrNull)
-				.Where(RunningProcessFilePathIsAllowed)
-				.Distinct().ToList();
+			_processNameExclusions = processNameExclusions ?? LazyProcessNameExclusions;
+			_startsWithExclusions = startsWithExclusions ?? LazyStartsWithExclusions;
 		}
 
-		private bool RunningProcessFilePathIsAllowed(string runningProcessFilePath)
+		public IEnumerable<RunningProcess> FindRunningProcesses()
 		{
-			if (runningProcessFilePath == null)
+			foreach(var process in Process.GetProcesses())
 			{
-				return false;
-			}
+				if (process.HasExited)
+				{
+					continue;
+				}
 
-			if (MatchesStartsWithExclusions(runningProcessFilePath))
-			{
-				return false;
-			}
+				if (!TryGetValueForProcess(process, (process) => process.ProcessName, out var processName) || MatchesProcessNameExclusion(processName))
+				{
+					continue;
+				}
 
-			if (MatchesExecutableFilePath(runningProcessFilePath))
-			{
-				return false;
-			}
+				if (!TryGetValueForProcess(process, (process) => process.MainModule.FileName, out var filePath) || MatchesExecutableFilePath(filePath) || MatchesStartsWithExclusions(filePath))
+				{
+					continue;
+				}
 
-			return true;
+				yield return new RunningProcess
+				{
+					FilePath = filePath,
+					ProcessName = processName,
+					StartTime = TryGetValueForProcess(process, (process) => process.StartTime, out var startTime) ? startTime : DateTime.Now,
+				};
+			}
 		}
 
-		private string ExtractFilePathOrNull(Process process)
+		private bool TryGetValueForProcess<TData, TValue>(TData data, Func<TData, TValue> getValueFunc, out TValue gotValue)
 		{
 			try
 			{
-				return process.MainModule.FileName;
+				gotValue = getValueFunc(data);
+				return true;
 			}
 			catch (InvalidOperationException) // Cannot process request because the process (####) has exited.
 			{
-				return null; // Cannot do anything with a process without a filename, so they're useless.
+				gotValue = default;
+				return false;
 			}
 			catch (Win32Exception) // Access is denied.
 			{
-				return null; // Cannot do anything with a process without a filename, so they're useless.
+				gotValue = default;
+				return false;
+			}
+			catch (NotSupportedException)
+			{
+				gotValue = default;
+				return false;
 			}
 		}
 
-		private bool MatchesExecutableFilePath(string runningProcessPath)
+		private bool MatchesProcessNameExclusion(string processName)
 		{
-			return runningProcessPath.Equals(Program.ExecutablePath, StringComparison.CurrentCultureIgnoreCase);
+			return _processNameExclusions.Value.ContainsKey(processName);
 		}
 
-		private bool MatchesStartsWithExclusions(string runningProcessPath)
+		private bool MatchesExecutableFilePath(string filePath)
 		{
-			return LazyStartsWithExclusions.Value.Any(exclusion => runningProcessPath.StartsWith(exclusion, StringComparison.CurrentCultureIgnoreCase));
+			return filePath.Equals(Program.ExecutablePath, StringComparison.CurrentCultureIgnoreCase);
 		}
 
-		private static readonly Lazy<IReadOnlyList<string>> LazyProcessNameExclusions
-			= new Lazy<IReadOnlyList<string>>(() => Program.Configuration.GetSection("ProcessNameExclusions").Get<string[]>(), false);
+		private bool MatchesStartsWithExclusions(string filePath)
+		{
+			return _startsWithExclusions.Value.Any(exclusion => filePath.StartsWith(exclusion, StringComparison.CurrentCultureIgnoreCase));
+		}
+
+		private readonly Lazy<IReadOnlyDictionary<string, string>> _processNameExclusions;
+		private readonly Lazy<IReadOnlyList<string>> _startsWithExclusions;
+
+		private static readonly Lazy<IReadOnlyDictionary<string, string>> LazyProcessNameExclusions
+			= new Lazy<IReadOnlyDictionary<string, string>>(() => Program.Configuration.GetSection("ProcessNameExclusions").Get<string[]>().Distinct().ToDictionary(x => x, x => x), false);
 
 		private static readonly Lazy<IReadOnlyList<string>> LazyStartsWithExclusions
 			= new Lazy<IReadOnlyList<string>>(() => Program.Configuration.GetSection("StartsWithExclusions").Get<string[]>(), false);

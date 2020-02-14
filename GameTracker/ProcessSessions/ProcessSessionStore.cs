@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using GameTracker.RunningProcesses;
+using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace GameTracker.ProcessSessions
 {
 	public interface IProcessSessionStore
 	{
-		void UpdatePendingProcessSessions(IReadOnlyList<string> runningProcessFilePaths);
+		void UpdatePendingProcessSessions(IReadOnlyList<RunningProcess> runningProcessFilePaths);
 	}
 
 	public class ProcessSessionStore : IProcessSessionStore
@@ -19,12 +20,12 @@ namespace GameTracker.ProcessSessions
 			_pendingProcessSessionsByFilePath = pendingProcessSessionsByFilePath ?? StaticPendingProcessSessions;
 		}
 
-		public void UpdatePendingProcessSessions(IReadOnlyList<string> runningProcessFilePaths)
+		public void UpdatePendingProcessSessions(IReadOnlyList<RunningProcess> runningProcesses)
 		{
 			var currentTime = DateTimeOffset.Now;
-			var endedProcesses = FindEndedProcesses(runningProcessFilePaths);
+			var endedProcesses = FindEndedProcesses(runningProcesses);
 
-			AddRunningProcessesThatHaveStarted(runningProcessFilePaths, currentTime);
+			AddRunningProcessesThatHaveStarted(runningProcesses);
 			WriteProcessSessions(endedProcesses, currentTime);
 			RemoveEndedProcessSessions(endedProcesses);
 		}
@@ -37,18 +38,18 @@ namespace GameTracker.ProcessSessions
 			}
 		}
 
-		private IReadOnlyList<PendingProcessSession> FindEndedProcesses(IReadOnlyList<string> runningProcessFilePaths)
+		private IReadOnlyList<PendingProcessSession> FindEndedProcesses(IReadOnlyList<RunningProcess> runningProcesses)
 		{
 			return _pendingProcessSessionsByFilePath.Values
-				.Where(x => !runningProcessFilePaths.Contains(x.FilePath))
+				.Where(pendingProcess => !runningProcesses.Any(p => pendingProcess.FilePath == p.FilePath ))
 				.ToList();
 		}
 
-		private void AddRunningProcessesThatHaveStarted(IReadOnlyList<string> runningProcessFilePaths, DateTimeOffset currentTime)
+		private void AddRunningProcessesThatHaveStarted(IReadOnlyList<RunningProcess> runningProcesses)
 		{
-			foreach (var filePath in runningProcessFilePaths)
+			foreach (var process in runningProcesses)
 			{
-				_pendingProcessSessionsByFilePath.TryAdd(filePath, new PendingProcessSession { FilePath = filePath, StartTime = currentTime });
+				_pendingProcessSessionsByFilePath.TryAdd(process.FilePath, new PendingProcessSession { FilePath = process.FilePath, StartTime = process.StartTime });
 			}
 		}
 

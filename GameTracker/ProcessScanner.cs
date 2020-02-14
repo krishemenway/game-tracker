@@ -24,7 +24,7 @@ namespace GameTracker
 			try
 			{
 				var relevantCurrentProcesses = _runningProcessReader.FindRunningProcesses()
-					.Where(filePath => !_observedRunningProcessStore.IsDismissed(filePath))
+					.Where(filePath => !_observedRunningProcessStore.IsDismissed(filePath.FilePath))
 					.Distinct()
 					.ToList();
 
