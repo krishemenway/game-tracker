@@ -26,7 +26,7 @@ namespace GameTracker.RunningProcesses
 		{
 			foreach(var process in Process.GetProcesses())
 			{
-				if (process.HasExited)
+				if (!TryGetValueForProcess(process, process => process.HasExited, out var hasExited) || hasExited)
 				{
 					continue;
 				}
