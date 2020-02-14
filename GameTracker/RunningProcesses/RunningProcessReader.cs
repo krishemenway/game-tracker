@@ -19,8 +19,28 @@ namespace GameTracker.RunningProcesses
 			return Process.GetProcesses()
 				.Where(process => !LazyProcessNameExclusions.Value.Contains(process.ProcessName))
 				.Select(ExtractFilePathOrNull)
-				.Where(runningProcess => runningProcess != null)
+				.Where(RunningProcessFilePathIsAllowed)
 				.Distinct().ToList();
+		}
+
+		private bool RunningProcessFilePathIsAllowed(string runningProcessFilePath)
+		{
+			if (runningProcessFilePath == null)
+			{
+				return false;
+			}
+
+			if (MatchesStartsWithExclusions(runningProcessFilePath))
+			{
+				return false;
+			}
+
+			if (MatchesExecutableFilePath(runningProcessFilePath))
+			{
+				return false;
+			}
+
+			return true;
 		}
 
 		private string ExtractFilePathOrNull(Process process)
@@ -29,17 +49,30 @@ namespace GameTracker.RunningProcesses
 			{
 				return process.MainModule.FileName;
 			}
-			catch (InvalidOperationException)
+			catch (InvalidOperationException) // Cannot process request because the process (####) has exited.
 			{
-				return null; // Cannot process request because the process (####) has exited. Process has exited already and should not be considered running.
+				return null; // Cannot do anything with a process without a filename, so they're useless.
 			}
-			catch (Win32Exception)
+			catch (Win32Exception) // Access is denied.
 			{
-				return null; // Access is denied. Can't match without a file path so not going to care.
+				return null; // Cannot do anything with a process without a filename, so they're useless.
 			}
+		}
+
+		private bool MatchesExecutableFilePath(string runningProcessPath)
+		{
+			return runningProcessPath.Equals(Program.ExecutablePath, StringComparison.CurrentCultureIgnoreCase);
+		}
+
+		private bool MatchesStartsWithExclusions(string runningProcessPath)
+		{
+			return LazyStartsWithExclusions.Value.Any(exclusion => runningProcessPath.StartsWith(exclusion, StringComparison.CurrentCultureIgnoreCase));
 		}
 
 		private static readonly Lazy<IReadOnlyList<string>> LazyProcessNameExclusions
 			= new Lazy<IReadOnlyList<string>>(() => Program.Configuration.GetSection("ProcessNameExclusions").Get<string[]>(), false);
+
+		private static readonly Lazy<IReadOnlyList<string>> LazyStartsWithExclusions
+			= new Lazy<IReadOnlyList<string>>(() => Program.Configuration.GetSection("StartsWithExclusions").Get<string[]>(), false);
 	}
 }

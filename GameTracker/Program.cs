@@ -16,7 +16,7 @@ namespace GameTracker
 				Log.Logger = new LoggerConfiguration()
 					.MinimumLevel.Debug()
 					.WriteTo.ColoredConsole()
-					.WriteTo.RollingFile(Path.Combine(ExecutablePath, "app-{Date}.log"))
+					.WriteTo.RollingFile(Path.Combine(ExecutableFolderPath, "app-{Date}.log"))
 					.CreateLogger();
 
 				x.Service<GameTrackerService>(s =>
@@ -46,13 +46,14 @@ namespace GameTracker
 			});
 		}
 
-		public static string ExecutablePath { get; } = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
-		public static string AppDataPath => ExecutablePath;
+		public static string ExecutablePath { get; } = Process.GetCurrentProcess().MainModule.FileName;
+		public static string ExecutableFolderPath { get; } = Path.GetDirectoryName(ExecutablePath);
+		public static string AppDataFolderPath => ExecutableFolderPath;
 
-		public static string FilePathInExecutableFolder(string fileName) => Path.Combine(ExecutablePath, fileName);
-		public static string FilePathInAppData(string fileName) => Path.Combine(AppDataPath, fileName);
+		public static string FilePathInExecutableFolder(string fileName) => Path.Combine(ExecutableFolderPath, fileName);
+		public static string FilePathInAppData(string fileName) => Path.Combine(AppDataFolderPath, fileName);
 
 		public static IConfigurationRoot Configuration => LazyConfiguration.Value;
-		private static readonly Lazy<IConfigurationRoot> LazyConfiguration = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(ExecutablePath).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build());
+		private static readonly Lazy<IConfigurationRoot> LazyConfiguration = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(ExecutableFolderPath).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build());
 	}
 }
