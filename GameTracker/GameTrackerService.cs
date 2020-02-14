@@ -9,7 +9,7 @@ namespace GameTracker
 	{
 		public GameTrackerService()
 		{
-			Timer = new Timer(5000) { AutoReset = true };
+			Timer = new Timer(15000) { AutoReset = true };
 			Timer.Elapsed += new ElapsedEventHandler((sender, args) => new ProcessScanner().ScanProcesses());
 		}
 
