@@ -22,7 +22,7 @@ namespace GameTracker
 				.UseStartup<WebHostConfiguration>()
 				.UseConfiguration(Program.Configuration)
 				.UseSerilog()
-				.UseUrls(WebHostConfiguration.WebHostListenAddress)
+				.UseUrls(WebHostListenAddress)
 				.Build();
 		}
 
@@ -44,34 +44,34 @@ namespace GameTracker
 		{
 			Log.Information("Writing ProcessSessions to {ProcessSessionsPath}", ProcessSessionStore.DataFilePath);
 			Log.Information("Writing ObservedProcesses to {ObservedProcessesPath}", ObservedRunningProcessStore.DataFilePath);
-			Log.Information("Starting web host on {WebHostListenAddress}", WebHostConfiguration.WebHostListenAddress);
+			Log.Information("Starting web host on {WebHostListenAddress}", WebHostListenAddress);
 		}
 
-		private Timer Timer { get; set; }
-		private IWebHost WebHost { get; set; }
-	}
-
-	public class WebHostConfiguration
-	{
-		// This method gets called by the runtime. Use this method to add services to the container.
-		public void ConfigureServices(IServiceCollection services)
+		private class WebHostConfiguration
 		{
-			services.AddMvcCore().AddJsonOptions(FixJsonCamelCasing);
-		}
+			// This method gets called by the runtime. Use this method to add services to the container.
+			public void ConfigureServices(IServiceCollection services)
+			{
+				services.AddMvcCore().AddJsonOptions(FixJsonCamelCasing);
+			}
 
-		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app)
-		{
-			app.UseRouting();
-			app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-		}
+			// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+			public void Configure(IApplicationBuilder app)
+			{
+				app.UseRouting();
+				app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+			}
 
-		private void FixJsonCamelCasing(JsonOptions options)
-		{
-			// this unsets the default behavior (camelCase); "what you see is what you get" is now default
-			options.JsonSerializerOptions.PropertyNamingPolicy = null;
+			private void FixJsonCamelCasing(JsonOptions options)
+			{
+				// this unsets the default behavior (camelCase); "what you see is what you get" is now default
+				options.JsonSerializerOptions.PropertyNamingPolicy = null;
+			}
 		}
 
 		public static string WebHostListenAddress => $"http://*:{Program.Configuration.GetValue<string>("WebPort")}";
+
+		private Timer Timer { get; set; }
+		private IWebHost WebHost { get; set; }
 	}
 }
