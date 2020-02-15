@@ -1,6 +1,8 @@
 ﻿using GameTracker.ObservedProcesses;
 using GameTracker.ProcessSessions;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
+using Serilog.Events;
 
 namespace GameTracker
 {
@@ -22,6 +24,14 @@ namespace GameTracker
 				ProcessSessionDataFilePath = ProcessSessionStore.DataFilePath,
 				ObservedRunningProcessFilePath = ObservedRunningProcessStore.DataFilePath,
 			};
+		}
+
+		[HttpGet(nameof(ChangeLogLevel))]
+		public ActionResult ChangeLogLevel([FromQuery]LogEventLevel logLevel)
+		{
+			Program.LoggingLevelSwitch.MinimumLevel = logLevel;
+			Log.Information("Changed LogLevel to {NewLogLevel}", logLevel);
+			return Ok();
 		}
 
 		public class StatusResponse
