@@ -15,7 +15,7 @@ namespace GameTracker
 		public GameTrackerService()
 		{
 			Timer = new Timer(Program.Configuration.GetValue<int>("ProcessScanIntervalInSeconds") * 1000) { AutoReset = true };
-			Timer.Elapsed += new ElapsedEventHandler((sender, args) => new ProcessScanner().ScanProcesses());
+			Timer.Elapsed += (sender, args) => new ProcessScanner().ScanProcesses();
 
 			WebHost = new WebHostBuilder()
 				.UseKestrel()
