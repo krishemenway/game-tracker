@@ -1,0 +1,37 @@
+name: GameTracker
+
+on: [push]
+
+jobs:
+  build-service:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.102
+    - name: Build with dotnet
+      run: dotnet publish GameTracker --configuration Release --output ./gametracker
+    - uses: actions/upload-artifact@v1
+      with:
+        name: GameTracker
+        path: ./gametracker
+
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.x'
+        registry-url: 'https://registry.npmjs.org'
+    - run: npm ci
+      working-directory: ./GameTracker.Web
+    - run: npm run build
+      working-directory: ./GameTracker.Web
+    - uses: actions/upload-artifact@v1
+      with:
+        name: web
+        path: ./GameTracker.Web/dist
