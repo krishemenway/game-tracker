@@ -10,7 +10,7 @@ namespace GameTracker.Games
 		Id<Game> GameId { get; }
 		string Name { get; }
 		DateTimeOffset? ReleaseDate { get; }
-		Glob Match { get; }
+		Glob Pattern { get; }
 	}
 
 	public class Game : IGame
@@ -20,6 +20,6 @@ namespace GameTracker.Games
 		public DateTimeOffset? ReleaseDate { get; set; }
 
 		[JsonConverter(typeof(GlobJsonConverter))]
-		public Glob Match { get; set; }
+		public Glob Pattern { get; set; }
 	}
 }

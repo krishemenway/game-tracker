@@ -18,7 +18,7 @@ namespace GameTracker.GameMatching
 		{
 			foreach(var (gameId, game) in _gameStore.FindAll())
 			{
-				if (game.Match.IsMatch(filePath))
+				if (game.Pattern.IsMatch(filePath))
 				{
 					gameOrNull = game;
 					return true;
