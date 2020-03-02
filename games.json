@@ -1,0 +1,4 @@
+﻿[
+	{ "GameId": "Titanfall2-2016", "Name": "Titanfall 2", "Match": "*/Titanfall2/Titanfall2.exe" },
+	{ "GameId": "RiskOfRain2-2019", "Name": "Risk of Rain 2", "Match": "*/Risk of Rain 2/Risk of Rain 2.exe" }
+]
