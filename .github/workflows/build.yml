@@ -13,11 +13,11 @@ jobs:
       with:
         dotnet-version: 3.1.102
     - name: Build with dotnet
-      run: dotnet publish GameTracker --configuration Release --output ./gametracker
+      run: dotnet publish GameTracker.Service --configuration Release --output ./service
     - uses: actions/upload-artifact@v1
       with:
-        name: GameTracker
-        path: ./gametracker
+        name: Service
+        path: ./service
 
   build-web:
     runs-on: ubuntu-latest
