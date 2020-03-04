@@ -33,12 +33,12 @@ namespace GameTracker.UserActivities
 		{
 			public ClassMap()
 			{
-				Map(m => m.UserActivityId).Index(0).Name("UserActivityId");
-				Map(m => m.ProcessSessionId).Index(1).Name("ProcessSessionId");
+				Map(m => m.UserActivityId).Index(0).Name("UserActivityId").TypeConverter(new GuidIdTypeConverter<UserActivity>());
+				Map(m => m.ProcessSessionId).Index(1).Name("ProcessSessionId").TypeConverter(new GuidIdTypeConverter<ProcessSession>());
 				Map(m => m.StartTime).Index(2).Name("StartTime").TypeConverterOption.Format("o");
 				Map(m => m.EndTime).Index(3).Name("EndTime").TypeConverterOption.Format("o");
 				Map(m => m.AssignedToDate).Index(4).Name("AssignedToDate").TypeConverterOption.Format("o");
-				Map(m => m.GameId).Index(5).Name("GameId");
+				Map(m => m.GameId).Index(5).Name("GameId").TypeConverter(new StringIdTypeConverter<Game>());
 			}
 		}
 	}

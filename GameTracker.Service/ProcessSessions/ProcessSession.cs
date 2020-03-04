@@ -1,5 +1,4 @@
-﻿using CsvHelper.TypeConversion;
-using StronglyTyped.GuidIds;
+﻿using StronglyTyped.GuidIds;
 using System;
 
 namespace GameTracker.ProcessSessions
@@ -23,10 +22,10 @@ namespace GameTracker.ProcessSessions
 		{
 			public ClassMap()
 			{
-				Map(m => m.ProcessSessionId).Index(0).Name("ProcessSessionId");
-				Map(m => m.StartTime).Index(1).Name("StartTime").TypeConverterOption.Format("o");
-				Map(m => m.EndTime).Index(2).Name("EndTime").TypeConverterOption.Format("o");
-				Map(m => m.FilePath).Index(4).Name("FilePath");
+				Map(m => m.ProcessSessionId).Index(0).TypeConverter(new GuidIdTypeConverter<ProcessSession>());
+				Map(m => m.StartTime).Index(1).TypeConverterOption.Format("o");
+				Map(m => m.EndTime).Index(2).TypeConverterOption.Format("o");
+				Map(m => m.FilePath).Index(3);
 			}
 		}
 	}
