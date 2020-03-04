@@ -68,8 +68,6 @@ namespace GameTracker.ObservedProcesses
 
 		private void SaveObservedRunningProcesses()
 		{
-			Log.Debug("Writing Observed Running Processes to file: {FilePath}", DataFilePath);
-
 			using (var streamWriter = new StreamWriter(File.Open(DataFilePath, FileMode.Truncate)))
 			{
 				streamWriter.Write(JsonSerializer.Serialize(_observedRunningProcessesByFilePath));
