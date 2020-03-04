@@ -1,9 +1,6 @@
 ﻿namespace GameTracker.ObservedProcesses
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class ObservedRunningProcess
+	public class ObservedProcess
 	{
 		/// <summary>ProcessName recorded from Process</summary>
 		public string ProcessName { get; set; }

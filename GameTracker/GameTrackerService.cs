@@ -1,4 +1,4 @@
-﻿using GameTracker.ObservedProcesses;
+using GameTracker.ObservedProcesses;
 using GameTracker.ProcessSessions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,7 +43,7 @@ namespace GameTracker
 		private void LogUsefulInformation()
 		{
 			Log.Information("Writing ProcessSessions to {ProcessSessionsPath}", ProcessSessionStore.DataFilePath);
-			Log.Information("Writing ObservedProcesses to {ObservedProcessesPath}", ObservedRunningProcessStore.DataFilePath);
+			Log.Information("Writing ObservedProcesses to {ObservedProcessesPath}", ObservedProcessStore.DataFilePath);
 			Log.Information("Starting web host on {WebHostListenAddress}", WebHostListenAddress);
 		}
 

@@ -9,25 +9,25 @@ namespace GameTracker.ObservedProcesses
 {
 	public interface IObservedRunningProcessStore
 	{
-		IReadOnlyList<ObservedRunningProcess> FindAll();
+		IReadOnlyList<ObservedProcess> FindAll();
 		void UpdateWithRunningProcesses(IReadOnlyList<RunningProcess> processes);
 		void IgnoreProcessesByPath(IReadOnlyList<string> filePaths);
 		bool ShouldIgnoreByUserDecision(string filePath);
 	}
 
-	public class ObservedRunningProcessStore : IObservedRunningProcessStore
+	public class ObservedProcessStore : IObservedRunningProcessStore
 	{
-		static ObservedRunningProcessStore()
+		static ObservedProcessStore()
 		{
 			LoadObservedRunningProcessesFromStream();
 		}
 
-		public ObservedRunningProcessStore(IDictionary<string, ObservedRunningProcess> observedRunningProcessesByFilePath = null)
+		public ObservedProcessStore(IDictionary<string, ObservedProcess> observedRunningProcessesByFilePath = null)
 		{
 			_observedRunningProcessesByFilePath = observedRunningProcessesByFilePath ?? StaticObservedRunningProcessesByFilePath;
 		}
 
-		public IReadOnlyList<ObservedRunningProcess> FindAll()
+		public IReadOnlyList<ObservedProcess> FindAll()
 		{
 			return _observedRunningProcessesByFilePath.Select(x => x.Value).ToList();
 		}
@@ -54,7 +54,7 @@ namespace GameTracker.ObservedProcesses
 		{
 			foreach (var process in runningProcesses)
 			{
-				var observedProcess = new ObservedRunningProcess
+				var observedProcess = new ObservedProcess
 				{
 					ProcessPath = process.FilePath,
 					Ignore = false,
@@ -81,7 +81,7 @@ namespace GameTracker.ObservedProcesses
 				var serializedObservedRunningProcesses = streamReader.ReadToEnd();
 				serializedObservedRunningProcesses = !string.IsNullOrEmpty(serializedObservedRunningProcesses) ? serializedObservedRunningProcesses : "{}";
 
-				var observedRunningProcessesFromFile = JsonSerializer.Deserialize<Dictionary<string, ObservedRunningProcess>>(serializedObservedRunningProcesses);
+				var observedRunningProcessesFromFile = JsonSerializer.Deserialize<Dictionary<string, ObservedProcess>>(serializedObservedRunningProcesses);
 
 				foreach(var (filePath, observedRunningProcess) in observedRunningProcessesFromFile)
 				{
@@ -92,7 +92,7 @@ namespace GameTracker.ObservedProcesses
 
 		public static string DataFilePath => Program.FilePathInAppData("ObservedRunningProcesses.json");
 
-		private readonly IDictionary<string, ObservedRunningProcess> _observedRunningProcessesByFilePath;
-		private static Dictionary<string, ObservedRunningProcess> StaticObservedRunningProcessesByFilePath { get; } = new Dictionary<string, ObservedRunningProcess>();
+		private readonly IDictionary<string, ObservedProcess> _observedRunningProcessesByFilePath;
+		private static Dictionary<string, ObservedProcess> StaticObservedRunningProcessesByFilePath { get; } = new Dictionary<string, ObservedProcess>();
 	}
 }
