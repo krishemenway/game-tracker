@@ -1,4 +1,5 @@
-﻿using GameTracker.ObservedProcesses;
+﻿using GameTracker.Games;
+using GameTracker.ObservedProcesses;
 using GameTracker.ProcessSessions;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -6,7 +7,7 @@ using Serilog.Events;
 
 namespace GameTracker
 {
-	[ApiController, Route("webapi")]
+	[ApiController]
 	public class StatusController : ControllerBase
 	{
 		[HttpGet(nameof(Ping))]
@@ -23,6 +24,8 @@ namespace GameTracker
 				WebHostListenAddress = GameTrackerService.WebHostListenAddress,
 				ProcessSessionDataFilePath = ProcessSessionStore.DataFilePath,
 				ObservedRunningProcessFilePath = ObservedRunningProcessStore.DataFilePath,
+				GamesPath = GameStore.GamesPath,
+				TotalGamesLoaded = new GameStore().FindAll().Count,
 			};
 		}
 
@@ -39,6 +42,9 @@ namespace GameTracker
 			public string WebHostListenAddress { get; set; }
 			public string ProcessSessionDataFilePath { get; set; }
 			public string ObservedRunningProcessFilePath { get; set; }
+
+			public string GamesPath { get; set; }
+			public int TotalGamesLoaded { get; set; }
 		}
 	}
 }
