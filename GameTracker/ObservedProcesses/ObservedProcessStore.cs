@@ -1,5 +1,4 @@
 ﻿using GameTracker.RunningProcesses;
-using Serilog;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,7 +6,7 @@ using System.Text.Json;
 
 namespace GameTracker.ObservedProcesses
 {
-	public interface IObservedRunningProcessStore
+	public interface IObservedProcessStore
 	{
 		IReadOnlyList<ObservedProcess> FindAll();
 		void UpdateWithRunningProcesses(IReadOnlyList<RunningProcess> processes);
@@ -15,7 +14,7 @@ namespace GameTracker.ObservedProcesses
 		bool ShouldIgnoreByUserDecision(string filePath);
 	}
 
-	public class ObservedProcessStore : IObservedRunningProcessStore
+	public class ObservedProcessStore : IObservedProcessStore
 	{
 		static ObservedProcessStore()
 		{
@@ -90,7 +89,7 @@ namespace GameTracker.ObservedProcesses
 			}
 		}
 
-		public static string DataFilePath => Program.FilePathInAppData("ObservedRunningProcesses.json");
+		public static string DataFilePath => Program.FilePathInAppData("ObservedProcesses.json");
 
 		private readonly IDictionary<string, ObservedProcess> _observedRunningProcessesByFilePath;
 		private static Dictionary<string, ObservedProcess> StaticObservedRunningProcessesByFilePath { get; } = new Dictionary<string, ObservedProcess>();
