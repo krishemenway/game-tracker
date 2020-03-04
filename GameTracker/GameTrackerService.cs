@@ -1,11 +1,13 @@
-using GameTracker.ObservedProcesses;
+﻿using GameTracker.ObservedProcesses;
 using GameTracker.ProcessSessions;
+using GameTracker.UserActivities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using System;
 using System.Timers;
 
 namespace GameTracker
@@ -14,8 +16,11 @@ namespace GameTracker
 	{
 		public GameTrackerService()
 		{
-			Timer = new Timer(Program.Configuration.GetValue<int>("ProcessScanIntervalInSeconds") * 1000) { AutoReset = true };
-			Timer.Elapsed += (sender, args) => new ProcessScanner().ScanProcesses();
+			ProcessScannerTimer = new Timer(Program.Configuration.GetValue<int>("ProcessScanIntervalInSeconds") * 1000) { AutoReset = true };
+			ProcessScannerTimer.Elapsed += (sender, args) => new ProcessScanner().ScanProcesses();
+
+			UserActivityBackfillerTimer = new Timer(TimeSpan.FromHours(1).TotalMilliseconds) { AutoReset = true };
+			UserActivityBackfillerTimer.Elapsed += (sender, args) => new UserActivityBackfiller().Backfill();
 
 			WebHost = new WebHostBuilder()
 				.UseKestrel()
@@ -29,14 +34,17 @@ namespace GameTracker
 		public bool Start()
 		{
 			LogUsefulInformation();
-			Timer.Start();
+			ProcessScannerTimer.Start();
+			UserActivityBackfillerTimer.Start();
 			WebHost.Start();
 			return true;
 		}
 
 		public bool Stop()
 		{
-			Timer.Stop();
+			ProcessScannerTimer.Stop();
+			UserActivityBackfillerTimer.Stop();
+			WebHost.StopAsync().Wait();
 			return true;
 		}
 
@@ -71,7 +79,9 @@ namespace GameTracker
 
 		public static string WebHostListenAddress => $"http://*:{Program.Configuration.GetValue<string>("WebPort")}";
 
-		private Timer Timer { get; set; }
+		private Timer ProcessScannerTimer { get; set; }
+		private Timer UserActivityBackfillerTimer { get; set; }
+
 		private IWebHost WebHost { get; set; }
 	}
 }

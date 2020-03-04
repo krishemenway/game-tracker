@@ -1,8 +1,13 @@
-﻿using GameTracker.RunningProcesses;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using GameTracker.RunningProcesses;
+using GameTracker.UserActivities;
 using Serilog;
+using StronglyTyped.GuidIds;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -15,12 +20,31 @@ namespace GameTracker.ProcessSessions
 
 	public class ProcessSessionStore : IProcessSessionStore
 	{
+		static ProcessSessionStore()
+		{
+			CsvConfiguration = new CsvConfiguration(CultureInfo.CurrentCulture);
+			CsvConfiguration.RegisterClassMap<ProcessSession.ClassMap>();
+			CsvConfiguration.ShouldQuote = (a, b) => true;
+			CsvConfiguration.HasHeaderRecord = false;
+		}
+
 		public ProcessSessionStore(
 			IDictionary<string, PendingProcessSession> pendingProcessSessionsByFilePath = null,
-			Func<DateTimeOffset> currentTimeFunc = null)
+			Func<DateTimeOffset> currentTimeFunc = null,
+			IUserActivityService userActivityService = null)
 		{
 			_pendingProcessSessionsByFilePath = pendingProcessSessionsByFilePath ?? StaticPendingProcessSessions;
 			_currentTimeFunc = currentTimeFunc ?? (() => DateTimeOffset.Now);
+			_userActivityService = userActivityService ?? new UserActivityService();
+		}
+
+		public IReadOnlyList<ProcessSession> FindAll()
+		{
+			using (var reader = new StreamReader(File.Open(DataFilePath, FileMode.OpenOrCreate)))
+			using (var csv = new CsvReader(reader, CsvConfiguration))
+			{
+				return csv.GetRecords<ProcessSession>().ToList();
+			}
 		}
 
 		public void UpdatePendingProcessSessions(IReadOnlyList<RunningProcess> runningProcesses)
@@ -28,8 +52,17 @@ namespace GameTracker.ProcessSessions
 			var endedProcesses = FindEndedProcesses(runningProcesses);
 
 			AddRunningProcessesThatHaveStarted(runningProcesses);
-			WriteProcessSessions(endedProcesses);
+			WriteProcessSessions(endedProcesses, out var endedProcessSessions);
 			RemoveEndedProcessSessions(endedProcesses);
+			PerformMatchForProcesses(endedProcessSessions);
+		}
+
+		private void PerformMatchForProcesses(IReadOnlyList<ProcessSession> processSessions)
+		{
+			foreach(var process in processSessions)
+			{
+				_userActivityService.TryCreateActivity(process, out _);
+			}
 		}
 
 		private void RemoveEndedProcessSessions(IReadOnlyList<PendingProcessSession> endedProcesses)
@@ -55,30 +88,44 @@ namespace GameTracker.ProcessSessions
 			}
 		}
 
-		private void WriteProcessSessions(IReadOnlyList<PendingProcessSession> pendingProcessSessions)
+		private void WriteProcessSessions(IReadOnlyList<PendingProcessSession> pendingProcessSessions, out IReadOnlyList<ProcessSession> processSessions)
 		{
 			var currentTime = _currentTimeFunc();
+			var localProcessSessions = processSessions = new List<ProcessSession>();
 
 			if (!pendingProcessSessions.Any())
 			{
+				processSessions = new List<ProcessSession>();
 				return;
 			}
 
-			Log.Debug("Writing {CountOfWrittenProcesses} process completions to file.", pendingProcessSessions.Count);
-
-			using (var streamWriter = new StreamWriter(File.Open(DataFilePath, FileMode.Append)))
+			using (var writer = new StreamWriter(File.Open(DataFilePath, FileMode.Append)))
+			using (var csv = new CsvWriter(writer, CsvConfiguration))
 			{
-				foreach(var pendingProcessSession in pendingProcessSessions)
-				{
-					streamWriter.WriteLine(string.Join(",", new[] { pendingProcessSession.FilePath, pendingProcessSession.StartTime.ToString("o"), currentTime.ToString("o") }));
-				}
+				processSessions = pendingProcessSessions.Select(pendingProcessSession => CreateProcessSession(pendingProcessSession, currentTime)).ToList();
+				csv.WriteRecords(processSessions);
+				Log.Debug("Wrote {CountOfWrittenProcesses} process completions to file.", processSessions.Count);
 			}
+		}
+
+		private ProcessSession CreateProcessSession(PendingProcessSession pendingProcessSession, DateTimeOffset currentTime)
+		{
+			return new ProcessSession
+			{
+				ProcessSessionId = Id<ProcessSession>.NewId(),
+				FilePath = pendingProcessSession.FilePath,
+				StartTime = pendingProcessSession.StartTime,
+				EndTime = currentTime,
+			};
 		}
 
 		public static string DataFilePath => Program.FilePathInAppData("ProcessSessions.csv");
 
 		private readonly IDictionary<string, PendingProcessSession> _pendingProcessSessionsByFilePath;
 		private readonly Func<DateTimeOffset> _currentTimeFunc;
+		private readonly IUserActivityService _userActivityService;
+
+		private static CsvConfiguration CsvConfiguration { get; }
 
 		private static ConcurrentDictionary<string, PendingProcessSession> StaticPendingProcessSessions { get; } = new ConcurrentDictionary<string, PendingProcessSession>();
 	}

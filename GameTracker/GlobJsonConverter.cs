@@ -9,7 +9,7 @@ namespace GameTracker
 	{
 		public override Glob Read(ref Utf8JsonReader reader, Type objectType, JsonSerializerOptions options)
 		{
-			return new Glob(reader.GetString());
+			return new Glob(reader.GetString().Replace("/", "\\"));
 		}
 
 		public override void Write(Utf8JsonWriter writer, Glob value, JsonSerializerOptions options)
