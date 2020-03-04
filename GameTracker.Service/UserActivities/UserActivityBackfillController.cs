@@ -8,7 +8,7 @@ namespace GameTracker.UserActivities
 		[HttpPost(nameof(BackfillActivities))]
 		public ActionResult BackfillActivities()
 		{
-			new UserActivityBackfiller().Backfill();
+			new UserActivityBackfiller().Backfill(true);
 			return Ok();
 		}
 	}
