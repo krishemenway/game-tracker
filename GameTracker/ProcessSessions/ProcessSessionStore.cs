@@ -15,6 +15,7 @@ namespace GameTracker.ProcessSessions
 {
 	public interface IProcessSessionStore
 	{
+		IReadOnlyList<ProcessSession> FindAll();
 		void UpdatePendingProcessSessions(IReadOnlyList<RunningProcess> runningProcessFilePaths);
 	}
 

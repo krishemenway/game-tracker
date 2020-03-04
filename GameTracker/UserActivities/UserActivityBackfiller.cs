@@ -6,22 +6,32 @@ namespace GameTracker.UserActivities
 {
 	public class UserActivityBackfiller
 	{
-		public void Backfill()
+		public UserActivityBackfiller(
+			IProcessSessionStore processSessionStore = null,
+			IUserActivityStore userActivityStore = null,
+			IUserActivityService userActivityService = null)
 		{
-			if (HasAlreadyExecutionToday())
+			_processSessionStore = processSessionStore ?? new ProcessSessionStore();
+			_userActivityStore = userActivityStore ?? new UserActivityStore();
+			_userActivityService = userActivityService ?? new UserActivityService();
+		}
+
+		public void Backfill(bool forceExecute = false)
+		{
+			if (HasAlreadyExecutionToday() && !forceExecute)
 			{
 				return;
 			}
 
 			var executionTime = DateTimeOffset.Now;
-			var allUserActivityByProcessSessionId = new UserActivityStore().FindAllUserActivity().ToDictionary(x => x.ProcessSessionId, x => x);
-			var processes = new ProcessSessionStore().FindAll();
+			var allUserActivityByProcessSessionId = _userActivityStore.FindAllUserActivity().ToDictionary(x => x.ProcessSessionId, x => x);
+			var processes = _processSessionStore.FindAll();
 
 			foreach(var process in processes)
 			{
 				if (!allUserActivityByProcessSessionId.TryGetValue(process.ProcessSessionId, out var _))
 				{
-					new UserActivityService().TryCreateActivity(process, out _);
+					_userActivityService.TryCreateActivity(process, out _);
 				}
 			}
 
@@ -32,6 +42,10 @@ namespace GameTracker.UserActivities
 		{
 			return LastExecutionTime.HasValue && LastExecutionTime.Value.Date == DateTimeOffset.Now.Date;
 		}
+
+		private readonly IProcessSessionStore _processSessionStore;
+		private readonly IUserActivityStore _userActivityStore;
+		private readonly IUserActivityService _userActivityService;
 
 		private static DateTimeOffset? LastExecutionTime { get; set; } = null;
 	}
