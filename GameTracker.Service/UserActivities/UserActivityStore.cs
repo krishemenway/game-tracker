@@ -25,6 +25,8 @@ namespace GameTracker.UserActivities
 		{
 			CsvConfiguration = new CsvConfiguration(CultureInfo.CurrentCulture);
 			CsvConfiguration.RegisterClassMap<UserActivity.ClassMap>();
+			CsvConfiguration.ShouldQuote = (a, b) => true;
+			CsvConfiguration.HasHeaderRecord = false;
 
 			StaticAllUserActivity = new Lazy<IReadOnlyList<UserActivity>>(FindAllUserActivities);
 		}
@@ -61,10 +63,10 @@ namespace GameTracker.UserActivities
 				ProcessSessionId = processSession.ProcessSessionId,
 			};
 
-			using (var writer = new StreamWriter(DataFilePath))
+			using (var writer = new StreamWriter(File.Open(DataFilePath, FileMode.Append)))
 			using (var csv = new CsvWriter(writer, CsvConfiguration))
 			{
-				csv.WriteRecord(userActivity);
+				csv.WriteRecords(new[] { userActivity });
 			}
 
 			return userActivity;
