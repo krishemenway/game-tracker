@@ -3,7 +3,7 @@
 	{ "GameId": "RiskOfRain2-2019", "Name": "Risk of Rain 2", "Pattern": "**/Risk of Rain 2/Risk of Rain 2.exe" },
 	{ "GameId": "BeatSaber-2018", "Name": "Beat Saber", "Pattern": "**/Beat Saber/Beat Saber.exe" },
 	{ "GameId": "20XX-2017", "Name": "20XX", "Pattern": "**/20XX/20XX.exe" },
-	{ "GameId": "Borderlands3-2020", "Name": "Borderlands 3", "**/OakGame/Binaries/Win64/Borderlands3.exe" },
-	{ "GameId": "Borderlands2-2012", "Name": "Borderlands 2", "**/Binaries/Borderlands2.exe" },
-	{ "GameId": "CastleCrashers-2012", "Name": "Castle Crashers", "**/CastleCrashers/castle.exe" }
+	{ "GameId": "Borderlands3-2020", "Name": "Borderlands 3", "Pattern": "**/OakGame/Binaries/Win64/Borderlands3.exe" },
+	{ "GameId": "Borderlands2-2012", "Name": "Borderlands 2", "Pattern": "**/Binaries/Borderlands2.exe" },
+	{ "GameId": "CastleCrashers-2012", "Name": "Castle Crashers", "Pattern": "**/CastleCrashers/castle.exe" }
 ]
