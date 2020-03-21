@@ -8,6 +8,7 @@
 		{ "GameId": "20XX-2017", "Name": "20XX", "Pattern": "**/20XX/20XX.exe" },
 		{ "GameId": "Borderlands3-2020", "Name": "Borderlands 3", "Pattern": "**/OakGame/Binaries/Win64/Borderlands3.exe" },
 		{ "GameId": "Borderlands2-2012", "Name": "Borderlands 2", "Pattern": "**/Binaries/Borderlands2.exe" },
-		{ "GameId": "CastleCrashers-2012", "Name": "Castle Crashers", "Pattern": "**/CastleCrashers/castle.exe" }
+		{ "GameId": "CastleCrashers-2012", "Name": "Castle Crashers", "Pattern": "**/CastleCrashers/castle.exe" },
+		{ "GameId": "KillingFloor2-2016", "Name": "Killing Floor 2", "Pattern": "**/killingfloor2/Binaries/Win64/KFGame.exe" }
 	]
 }
