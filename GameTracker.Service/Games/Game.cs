@@ -1,7 +1,6 @@
 ﻿using GlobExpressions;
 using StronglyTyped.StringIds;
 using System;
-using System.Text.Json.Serialization;
 
 namespace GameTracker.Games
 {
@@ -18,8 +17,6 @@ namespace GameTracker.Games
 		public Id<Game> GameId { get; set; }
 		public string Name { get; set; }
 		public DateTimeOffset? ReleaseDate { get; set; }
-
-		[JsonConverter(typeof(GlobJsonConverter))]
 		public Glob Pattern { get; set; }
 	}
 }

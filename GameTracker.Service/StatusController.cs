@@ -24,7 +24,7 @@ namespace GameTracker
 				WebHostListenAddress = GameTrackerService.WebHostListenAddress,
 				ProcessSessionDataFilePath = ProcessSessionStore.DataFilePath,
 				ObservedProcessesFilePath = ObservedProcessStore.DataFilePath,
-				GamesPath = GameStore.GamesPath,
+				GamesFilePath = GameStore.GamesFilePath,
 				TotalGamesLoaded = new GameStore().FindAll().Count,
 			};
 		}
@@ -42,8 +42,8 @@ namespace GameTracker
 			public string WebHostListenAddress { get; set; }
 			public string ProcessSessionDataFilePath { get; set; }
 			public string ObservedProcessesFilePath { get; set; }
+			public string GamesFilePath { get; set; }
 
-			public string GamesPath { get; set; }
 			public int TotalGamesLoaded { get; set; }
 		}
 	}

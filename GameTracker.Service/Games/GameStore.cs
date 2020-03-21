@@ -1,9 +1,12 @@
-﻿using StronglyTyped.StringIds;
+﻿using Microsoft.Extensions.Configuration;
+using Serilog;
+using StronglyTyped.StringIds;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
+using System.Net;
+using System.Net.Http;
 
 namespace GameTracker.Games
 {
@@ -15,42 +18,53 @@ namespace GameTracker.Games
 
 	public class GameStore : IGameStore
 	{
-		static GameStore()
-		{
-			StaticAllGames = new Lazy<Dictionary<Id<Game>, IGame>>(LoadAllGames);
-		}
-
-		public GameStore(Lazy<Dictionary<Id<Game>, IGame>> allGamesByGameId = null)
-		{
-			_lazyAllGames = allGamesByGameId ?? StaticAllGames;
-		}
-
 		public IReadOnlyDictionary<Id<Game>, IGame> FindAll()
 		{
-			return _lazyAllGames.Value;
+			return AllGames.ToDictionary(x => x.GameId, x => x as IGame);
 		}
 
 		public IReadOnlyDictionary<Id<Game>, IGame> FindGames(IReadOnlyList<Id<Game>> gameIds)
 		{
+			var allGamesByGameId = FindAll();
+
 			return gameIds.Distinct()
-				.Select(gameId => _lazyAllGames.Value.TryGetValue(gameId, out var game) ? game : null)
+				.Select(gameId => allGamesByGameId.TryGetValue(gameId, out var game) ? game : null)
 				.Where(game => game != null)
 				.ToDictionary(game => game.GameId, game => game);
 		}
 
-		private static Dictionary<Id<Game>, IGame> LoadAllGames()
+		public void ReloadGamesFromCentralRepository()
 		{
-			using (var streamReader = new StreamReader(File.Open(GamesPath, FileMode.OpenOrCreate)))
-			{
-				var serializedObservedRunningProcesses = streamReader.ReadToEnd();
-				serializedObservedRunningProcesses = !string.IsNullOrEmpty(serializedObservedRunningProcesses) ? serializedObservedRunningProcesses : "{}";
-				return JsonSerializer.Deserialize<List<Game>>(serializedObservedRunningProcesses).ToDictionary(game => game.GameId, game => (IGame)game);
-			}
+			var uri = Program.Configuration.GetValue<string>("GamesUrl");
+			Log.Information("Starting request for updated game information: {Uri}", uri);
+			HttpClient.GetAsync(uri).ContinueWith((responseTask) => WriteUpdatedGamesData(responseTask.Result));
 		}
 
-		public static string GamesPath => Program.FilePathInAppData("games.json");
+		private void WriteUpdatedGamesData(HttpResponseMessage response)
+		{
+			if (response.StatusCode != HttpStatusCode.OK)
+			{
+				Log.Error("Failed to update games data. Received response {Message} with Status {Status}", response.ReasonPhrase, response.StatusCode);
+			}
 
-		private static Lazy<Dictionary<Id<Game>, IGame>> StaticAllGames { get; }
-		private readonly Lazy<Dictionary<Id<Game>, IGame>> _lazyAllGames;
+			response.Content.ReadAsStringAsync().ContinueWith(contentTask =>
+			{
+				Log.Information("Updating {GamesJsonPath} with new game information", GamesFilePath);
+				File.WriteAllText(GamesFilePath, contentTask.Result);
+			});
+		}
+
+		public static string GamesFilePath = Path.Combine(Program.ExecutableFolderPath, "games.json");
+		private IReadOnlyList<Game> AllGames => LazyGamesConfiguration.Value.Get<GamesConfiguration>().Games;
+
+		private static readonly HttpClient HttpClient = new HttpClient();
+
+		private static readonly Lazy<IConfigurationRoot> LazyGamesConfiguration
+			= new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(Program.ExecutableFolderPath).AddJsonFile("games.json", optional: false, reloadOnChange: true).Build());
+	}
+
+	public class GamesConfiguration
+	{
+		public List<Game> Games { get; set; }
 	}
 }
