@@ -32,11 +32,11 @@ namespace GameTracker
 
 				x.SetDisplayName("Game Tracker");
 				x.SetServiceName("GameTracker");
-				x.SetDescription("Game Tracker");
+				x.SetDescription("A system for helping track what and when you are playing games on your computer!");
 				x.StartAutomaticallyDelayed();
 
 				x.UseSerilog();
-				x.RunAsLocalService();
+				x.RunAsLocalSystem();
 
 				x.EnableServiceRecovery(r =>
 				{
