@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Timers;
 
