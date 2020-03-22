@@ -1,9 +1,11 @@
 ﻿using GameTracker.Games;
 using GameTracker.ObservedProcesses;
 using GameTracker.ProcessSessions;
+using GameTracker.UserActivities;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Serilog.Events;
+using System;
 
 namespace GameTracker
 {
@@ -25,6 +27,7 @@ namespace GameTracker
 				ProcessSessionDataFilePath = ProcessSessionStore.DataFilePath,
 				ObservedProcessesFilePath = ObservedProcessStore.DataFilePath,
 				GamesFilePath = GameStore.GamesFilePath,
+				LastUserActivityBackfillTime = UserActivityBackfiller.LastExecutionTime,
 				TotalGamesLoaded = new GameStore().FindAll().Count,
 			};
 		}
@@ -43,6 +46,8 @@ namespace GameTracker
 			public string ProcessSessionDataFilePath { get; set; }
 			public string ObservedProcessesFilePath { get; set; }
 			public string GamesFilePath { get; set; }
+			
+			public DateTimeOffset? LastUserActivityBackfillTime { get; set; }
 
 			public int TotalGamesLoaded { get; set; }
 		}
