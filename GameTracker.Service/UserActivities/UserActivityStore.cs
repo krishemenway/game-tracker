@@ -38,7 +38,7 @@ namespace GameTracker.UserActivities
 		{
 			var searchRange = new Range<DateTimeOffset>(startTime ?? DateTimeOffset.MinValue, endTime ?? DateTimeOffset.MaxValue);
 
-			return _allUserActivity.Value
+			return FindAllUserActivities()
 				.Where(userActivity => userActivity.DateRange.Intersects(searchRange))
 				.GroupBy(userActivity => userActivity.AssignedToDate.Date)
 				.ToDictionary(gameActivities => gameActivities.Key.ToString("YYYY-mm-dd"), gameActivities => (IReadOnlyList<IUserActivity>) gameActivities.Cast<IUserActivity>().ToList());
@@ -93,8 +93,6 @@ namespace GameTracker.UserActivities
 				return csv.GetRecords<UserActivity>().ToList();
 			}
 		}
-
-		private readonly Lazy<IReadOnlyList<UserActivity>> _allUserActivity;
 
 		private static CsvConfiguration CsvConfiguration { get; }
 		private static Lazy<IReadOnlyList<UserActivity>> StaticAllUserActivity { get; set; }
