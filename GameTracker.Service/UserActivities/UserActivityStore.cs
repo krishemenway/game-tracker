@@ -27,18 +27,11 @@ namespace GameTracker.UserActivities
 			CsvConfiguration.RegisterClassMap<UserActivity.ClassMap>();
 			CsvConfiguration.ShouldQuote = (a, b) => true;
 			CsvConfiguration.HasHeaderRecord = false;
-
-			StaticAllUserActivity = new Lazy<IReadOnlyList<UserActivity>>(FindAllUserActivities);
-		}
-
-		public UserActivityStore(Lazy<IReadOnlyList<UserActivity>> allUserActivity = null)
-		{
-			_allUserActivity = allUserActivity ?? StaticAllUserActivity;
 		}
 
 		public IReadOnlyList<IUserActivity> FindAllUserActivity()
 		{
-			return _allUserActivity.Value;
+			return FindAllUserActivities();
 		}
 
 		public IReadOnlyDictionary<string, IReadOnlyList<IUserActivity>> FindUserActivityByDay(DateTimeOffset? startTime, DateTimeOffset? endTime)

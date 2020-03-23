@@ -34,7 +34,7 @@ namespace GameTracker.UserActivities
 
 			foreach(var process in processes)
 			{
-				if (!allUserActivityByProcessSessionId.TryGetValue(process.ProcessSessionId, out var _))
+				if (!allUserActivityByProcessSessionId.ContainsKey(process.ProcessSessionId))
 				{
 					_userActivityService.TryCreateActivity(process, out _);
 				}
