@@ -7,8 +7,7 @@ using System.Linq;
 
 namespace GameTracker.UserActivities
 {
-	[ApiController]
-	[Route("webapi")]
+	[Route("WebAPI")]
 	public class UserActivityPerDayController : ControllerBase
 	{
 		public UserActivityPerDayController(

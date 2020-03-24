@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -81,6 +83,7 @@ namespace GameTracker
 			{
 				app.UseRouting();
 				app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+				app.UseStaticFiles(StaticFileOptions);
 			}
 
 			private void FixJsonCamelCasing(JsonOptions options)
@@ -91,6 +94,12 @@ namespace GameTracker
 		}
 
 		public static string WebHostListenAddress => $"http://*:{Program.Configuration.GetValue<string>("WebPort")}";
+
+		private static readonly StaticFileOptions StaticFileOptions = new StaticFileOptions
+		{
+			FileProvider = new PhysicalFileProvider(Path.Combine(Program.ExecutableFolderPath, "web")),
+			RequestPath = "/web",
+		};
 
 		private Timer GamesDataUpdateTimer { get; set; }
 		private Timer ProcessScannerTimer { get; set; }

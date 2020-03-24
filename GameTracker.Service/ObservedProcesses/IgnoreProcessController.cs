@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace GameTracker.ObservedProcesses
 {
-	[ApiController, Route("webapi")]
-	public class DismissProcessController : ControllerBase
+	[Route("WebAPI")]
+	public class IgnoreProcessController : ControllerBase
 	{
-		[HttpPost(nameof(Dismiss))]
-		public ActionResult Dismiss([FromBody] IgnoreFilePathsRequest request)
+		[HttpPost(nameof(IgnorePaths))]
+		public ActionResult IgnorePaths([FromBody] IgnoreFilePathsRequest request)
 		{
 			new ObservedProcessStore().IgnoreProcessesByPath(request.FilePaths);
 			return Ok();

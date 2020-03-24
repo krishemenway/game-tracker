@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GameTracker.ObservedProcesses
 {
-	[Route("webapi")]
+	[Route("WebAPI")]
 	public class FindAllObservedProcessesController : ControllerBase
 	{
 		[HttpGet(nameof(FindAllObservedProcesses))]
