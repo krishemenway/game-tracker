@@ -32,11 +32,4 @@
 		</None>
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Include="../games.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		</None>
-	</ItemGroup>
-
 </Project>
