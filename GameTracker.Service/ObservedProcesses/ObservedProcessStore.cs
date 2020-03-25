@@ -10,7 +10,7 @@ namespace GameTracker.ObservedProcesses
 	{
 		IReadOnlyList<ObservedProcess> FindAll();
 		void UpdateWithRunningProcesses(IReadOnlyList<RunningProcess> processes);
-		void IgnoreProcessesByPath(IReadOnlyList<string> filePaths);
+		void MarkProcessIgnored(string filePath, bool ignore);
 		bool ShouldIgnoreByUserDecision(string filePath);
 	}
 
@@ -36,16 +36,13 @@ namespace GameTracker.ObservedProcesses
 			return _observedRunningProcessesByFilePath.TryGetValue(filePath, out var observedRunningProcess) && observedRunningProcess.Ignore;
 		}
 
-		public void IgnoreProcessesByPath(IReadOnlyList<string> filePaths)
+		public void MarkProcessIgnored(string filePath, bool ignore)
 		{
-			foreach(var filePath in filePaths)
+			if (_observedRunningProcessesByFilePath.TryGetValue(filePath, out var observedRunningProcess))
 			{
-				if (_observedRunningProcessesByFilePath.TryGetValue(filePath, out var observedRunningProcess))
-				{
-					observedRunningProcess.Ignore = true;
-				}
+				observedRunningProcess.Ignore = ignore;
 			}
-			 
+
 			SaveObservedRunningProcesses();
 		}
 

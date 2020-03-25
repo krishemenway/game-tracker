@@ -14,3 +14,5 @@ project for tracking what games you are playing and when and creating your own p
 	* report of how many times you played the game each month
 	* report of how many times you played the game each week
 	* report of how many times you played the game each day
+	* graph of time spent in game each day
+	* patient gamer? how long did you wait to play this game after release

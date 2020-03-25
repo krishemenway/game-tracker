@@ -1,21 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace GameTracker.ObservedProcesses
 {
 	[Route("WebAPI")]
 	public class IgnoreProcessController : ControllerBase
 	{
-		[HttpPost(nameof(IgnorePaths))]
-		public ActionResult IgnorePaths([FromBody] IgnoreFilePathsRequest request)
+		[HttpPost(nameof(ToggleIgnorePath))]
+		public ActionResult ToggleIgnorePath([FromBody] ToggleIgnorePathRequest request)
 		{
-			new ObservedProcessStore().IgnoreProcessesByPath(request.FilePaths);
+			new ObservedProcessStore().MarkProcessIgnored(request.FilePath, request.Ignore);
 			return Ok();
 		}
 	}
 
-	public class IgnoreFilePathsRequest
+	public class ToggleIgnorePathRequest
 	{
-		public IReadOnlyList<string> FilePaths { get; set; }
+		public string FilePath { get; set; }
+		public bool Ignore { get; set; }
 	}
 }

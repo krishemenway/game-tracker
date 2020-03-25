@@ -13,7 +13,7 @@ namespace GameTracker
 	{
 		public static int Main()
 		{
-			return (int)HostFactory.Run(x =>
+			return (int)HostFactory.Run(config =>
 			{
 				LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Debug);
 
@@ -23,27 +23,27 @@ namespace GameTracker
 					.WriteTo.RollingFile(Path.Combine(ExecutableFolderPath, "app-{Date}.log"))
 					.CreateLogger();
 
-				x.Service<GameTrackerService>(s =>
+				config.Service<GameTrackerService>(s =>
 				{
 					s.ConstructUsing(hostSettings => new GameTrackerService());
 					s.WhenStarted(service => service.Start());
 					s.WhenStopped(service => service.Stop());
 				});
 
-				x.SetDisplayName("Game Tracker");
-				x.SetServiceName("GameTracker");
-				x.SetDescription("A system for helping track what and when you are playing games on your computer!");
-				x.StartAutomaticallyDelayed();
+				config.SetDisplayName("Game Tracker");
+				config.SetServiceName("GameTracker");
+				config.SetDescription("A system for helping track what and when you are playing games on your computer!");
+				config.StartAutomaticallyDelayed();
 
-				x.UseSerilog();
-				x.RunAsLocalSystem();
+				config.UseSerilog();
+				config.RunAsLocalSystem();
 
-				x.EnableServiceRecovery(r =>
+				config.EnableServiceRecovery(r =>
 				{
 					r.RestartService(3);
 				});
 
-				x.OnException((exception) =>
+				config.OnException((exception) =>
 				{
 					Log.Error(exception, "Something went wrong with the service!");
 				});
