@@ -3,8 +3,8 @@ const request = require('request');
 const app = express();
 const port = 3000;
 
-app.use("/webapi", function(req, res) {
-	var url = 'https://localhost:8090/webapi' + req.url;
+app.use("/WebAPI", function(req, res) {
+	var url = 'http://192.168.1.25:8090/WebAPI' + req.url;
 	var r = null;
 
 	if (req.method === 'POST') {
@@ -14,6 +14,14 @@ app.use("/webapi", function(req, res) {
 	}
 
 	req.pipe(r).pipe(res);
+});
+
+app.use("/app.js", function(req, res) {
+	res.sendFile("dist/app.js", { root: __dirname });
+});
+
+app.use("/", function(req, res) {
+	res.sendFile("dist/app.html", { root: __dirname });
 });
 
 app.use(express.static("dist"));
