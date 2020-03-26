@@ -28,7 +28,7 @@ module.exports = {
 		new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
 		new CopyPlugin([
 			// { from: "./favicon.ico", to: ".", flatten: false },
-			{ from: "./App.html", to: "." },
+			{ from: "./app.html", to: "." },
 		]),
 	],
 

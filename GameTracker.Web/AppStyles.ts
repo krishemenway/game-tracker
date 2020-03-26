@@ -60,6 +60,7 @@ export const useLayoutStyles = makeStyles({
 		display: "inline-block",
 	},
 	width100: { width: "100%" },
+	width85: { width: "85%" },
 	width70: { width: "70%" },
 	width50: { width: "50%" },
 	width40: { width: "40%" },
@@ -68,14 +69,14 @@ export const useLayoutStyles = makeStyles({
 	width10: { width: "10%" },
 });
 
-export const textColor = makeStyles({
+export const useTextColorStyles = makeStyles({
 	white: { color: "#E8E8E8" },
 	gray: { color: "#555555" },
 	gray9f: { color: "#9F9F9F" },
 	graye8: { color: "#E8E8E8" },
 });
 
-export const margin = makeStyles({
+export const useMargins = makeStyles({
 	all: { margin: "10px", },
 	half: { margin: "5px", },
 
