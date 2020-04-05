@@ -28,7 +28,7 @@ namespace GameTracker
 			}
 			finally
 			{
-				Log.Information("Request from {RequestIP} for {RequestPath} ({RequestMethod}) took {RequestTimeInMilliseconds}ms", context.Connection.RemoteIpAddress, RequestedPath(context), context.Request.Method, stopWatch.ElapsedMilliseconds);
+				Log.Information("Request from {RequestIP} for {RequestPath} {RequestMethod} took {RequestTimeInMilliseconds}ms", context.Connection.RemoteIpAddress, RequestedPath(context), context.Request.Method, stopWatch.ElapsedMilliseconds);
 			}
 		}
 
