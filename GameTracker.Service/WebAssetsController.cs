@@ -18,10 +18,10 @@ namespace GameTracker
 			return Content(ReadFileContents("app.js"), "application/javascript", Encoding.UTF8);
 		}
 
-		[HttpGet("")]
-		public ContentResult AppMarkup()
+		[HttpGet("{*url}", Order = int.MaxValue)]
+		public ContentResult AppMarkup(string url)
 		{
-			return Content(ReadFileContents("app.html"), "text/html", Encoding.UTF8);
+			return Content(ReadFileContents("app.html").Replace("{url}", url), "text/html", Encoding.UTF8);
 		}
 
 		private string ReadFileContents(string filePath)
