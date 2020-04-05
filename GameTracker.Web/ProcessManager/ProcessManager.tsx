@@ -11,7 +11,7 @@ const ProcessListItem: React.FC<{Process: ObservableProcess}> = (props) => {
 	const isIgnoring = useObservable(props.Process.Ignore);
 
 	return (
-		<li className={`${layout.flexRow} ${layout.marginVertical} ${layout.marginLeft}`}>
+		<li className={`${layout.flexRow} ${layout.paddingVertical} ${layout.paddingLeft}`}>
 			<span className={`${layout.width85} ${text.font16}`}>{props.Process.ProcessPath}</span>
 
 			<input
@@ -28,6 +28,7 @@ const ProcessListItem: React.FC<{Process: ObservableProcess}> = (props) => {
 const NonEmptyProcessList: React.FC<{ObservedProcesses: ObservableProcess[]}> = (props) => {
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
+	const background = useBackgroundStyles();
 
 	return (
 		<>
@@ -35,7 +36,7 @@ const NonEmptyProcessList: React.FC<{ObservedProcesses: ObservableProcess[]}> = 
 				<span className={`${layout.width85}`}></span>
 				<span className={`${layout.width15} ${text.center} ${text.font16}`}>Should Ignore</span>
 			</div>
-			<ul>
+			<ul className={`${background.bgAlternateDarken}`}>
 				{props.ObservedProcesses.map(p => <ProcessListItem key={p.ProcessPath} Process={p} />)}
 			</ul>
 		</>
