@@ -5,6 +5,7 @@ using System.Linq;
 namespace GameTracker.ObservedProcesses
 {
 	[Route("WebAPI")]
+	[RestrictToLocalhost]
 	public class FindAllObservedProcessesController : ControllerBase
 	{
 		[HttpGet(nameof(FindAllObservedProcesses))]

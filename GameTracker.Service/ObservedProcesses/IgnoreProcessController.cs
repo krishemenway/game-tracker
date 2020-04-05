@@ -3,6 +3,7 @@
 namespace GameTracker.ObservedProcesses
 {
 	[Route("WebAPI")]
+	[RestrictToLocalhost]
 	public class IgnoreProcessController : ControllerBase
 	{
 		[HttpPost(nameof(ToggleIgnorePath))]

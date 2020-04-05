@@ -3,6 +3,7 @@
 namespace GameTracker.UserActivities
 {
 	[Route("WebAPI")]
+	[RestrictToLocalhost]
 	public class UserActivityBackfillController : ControllerBase
 	{
 		[HttpPost(nameof(BackfillActivities))]
