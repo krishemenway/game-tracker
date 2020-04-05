@@ -15,7 +15,7 @@ namespace GameTracker
 		{
 			return (int)HostFactory.Run(config =>
 			{
-				LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Debug);
+				LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Information);
 
 				Log.Logger = new LoggerConfiguration()
 					.MinimumLevel.ControlledBy(LoggingLevelSwitch)
