@@ -1,4 +1,5 @@
 ﻿using GameTracker.RunningProcesses;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -48,18 +49,28 @@ namespace GameTracker.ObservedProcesses
 
 		public void UpdateWithRunningProcesses(IReadOnlyList<RunningProcess> runningProcesses)
 		{
+			var updatedObservedProcesses = false;
+
 			foreach (var process in runningProcesses)
 			{
 				var observedProcess = new ObservedProcess
 				{
+					ProcessName = process.ProcessName,
 					ProcessPath = process.FilePath,
 					Ignore = false,
+					FirstObservedTime = DateTimeOffset.Now,
 				};
 
-				_observedRunningProcessesByFilePath.TryAdd(process.FilePath, observedProcess);
+				if (_observedRunningProcessesByFilePath.TryAdd(process.FilePath, observedProcess))
+				{
+					updatedObservedProcesses = true;
+				}
 			}
 
-			SaveObservedRunningProcesses();
+			if (updatedObservedProcesses)
+			{
+				SaveObservedRunningProcesses();
+			}
 		}
 
 		private void SaveObservedRunningProcesses()

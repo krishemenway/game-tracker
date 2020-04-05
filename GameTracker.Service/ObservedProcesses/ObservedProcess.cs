@@ -1,4 +1,6 @@
-﻿namespace GameTracker.ObservedProcesses
+﻿using System;
+
+namespace GameTracker.ObservedProcesses
 {
 	public class ObservedProcess
 	{
@@ -10,5 +12,7 @@
 
 		/// <summary>Represents if the user decided this process is not worth monitoring. Monitoring this process will not happen when this is marked false.</summary>
 		public bool Ignore { get; set; }
+
+		public DateTimeOffset FirstObservedTime { get; set; }
 	}
 }
