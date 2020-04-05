@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GameTracker.ObservedProcesses
 {
@@ -11,7 +12,9 @@ namespace GameTracker.ObservedProcesses
 		{
 			return new ObservedProcessesResponse
 				{
-					ObservedProcesses = new ObservedProcessStore().FindAll(),
+					ObservedProcesses = new ObservedProcessStore().FindAll()
+						.OrderByDescending(x => x.FirstObservedTime)
+						.ToList(),
 				};
 		}
 	}
