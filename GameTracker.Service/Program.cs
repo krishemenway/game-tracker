@@ -15,12 +15,13 @@ namespace GameTracker
 		{
 			return (int)HostFactory.Run(config =>
 			{
-				LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Debug);
+				LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Information);
 
 				Log.Logger = new LoggerConfiguration()
+					.ReadFrom.Configuration(Program.Configuration)
 					.MinimumLevel.ControlledBy(LoggingLevelSwitch)
 					.WriteTo.ColoredConsole()
-					.WriteTo.RollingFile(Path.Combine(ExecutableFolderPath, "app-{Date}.log"))
+					.WriteTo.RollingFile(Path.Combine(ExecutableFolderPath, "app-{Date}.log"), retainedFileCountLimit: 5)
 					.CreateLogger();
 
 				config.Service<GameTrackerService>(s =>
@@ -60,7 +61,7 @@ namespace GameTracker
 		public static IConfigurationRoot Configuration => LazyConfiguration.Value;
 		public static LoggingLevelSwitch LoggingLevelSwitch { get; set; }
 
-		private static readonly Lazy<IConfigurationRoot> LazyConfiguration 
+		private static readonly Lazy<IConfigurationRoot> LazyConfiguration
 			= new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(ExecutableFolderPath).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build());
 	}
 }
