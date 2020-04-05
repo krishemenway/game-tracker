@@ -1,42 +1,67 @@
 import * as React from "react";
-import { useLayoutStyles, useTextColorStyles, useMargins } from "AppStyles";
+import { useLayoutStyles, useTextColorStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { ProcessManagerService, ObservableProcess } from "ProcessManager/ProcessManagerService";
-import { ObservedProcess } from "ProcessManager/ObservedProcess";
+import { ObservedProcess as ProcessListItem } from "ProcessManager/ObservedProcess";
 import { useObservable } from "useObservable";
 
-interface ObservedProcessProps {
-	process: ObservableProcess;
-}
+const ProcessListItem: React.FC<{Process: ObservableProcess}> = (props) => {
+	const layout = useLayoutStyles();
+	const text = useTextStyles();
 
-const ObservedProcess: React.FC<ObservedProcessProps> = (props) => {
-	const layoutClasses = useLayoutStyles();
-	const margins = useMargins();
-	const ignore = useObservable(props.process.Ignore);
+	const isIgnoring = useObservable(props.Process.Ignore);
 
 	return (
-		<div className={`${layoutClasses.flexRow} ${margins.verticalHalf}`}>
-			<span className={layoutClasses.width85}>{props.process.ProcessPath}</span>
+		<li className={`${layout.flexRow} ${layout.marginVertical} ${layout.marginLeft}`}>
+			<span className={`${layout.width85} ${text.font16}`}>{props.Process.ProcessPath}</span>
 
 			<input
-				className={layoutClasses.width15}
+				className={`${layout.width15} ${text.font32}`}
 				type="checkbox"
-				checked={ignore}
+				checked={isIgnoring}
 				style={{alignSelf: "end"}}
-				onChange={(evt) => ProcessManagerService.Instance.OnToggleIgnored(props.process, evt.target.checked)}
+				onChange={(evt) => ProcessManagerService.Instance.OnToggleIgnored(props.Process, evt.target.checked)}
 			/>
-		</div>
+		</li>
 	);
 }
 
+const NonEmptyProcessList: React.FC<{ObservedProcesses: ObservableProcess[]}> = (props) => {
+	const layout = useLayoutStyles();
+	const text = useTextStyles();
+
+	return (
+		<>
+			<div className={`${layout.flexRow}`}>
+				<span className={`${layout.width85}`}></span>
+				<span className={`${layout.width15} ${text.center} ${text.font16}`}>Should Ignore</span>
+			</div>
+			<ul>
+				{props.ObservedProcesses.map(p => <ProcessListItem key={p.ProcessPath} Process={p} />)}
+			</ul>
+		</>
+	);
+}
+
+const EmptyProcessList: React.FC = () => (
+	<div>No processes have been found yet. Some should appear shortly...</div>
+);
+
 export default () => {
+	const background = useBackgroundStyles();
 	const layout = useLayoutStyles();
 	const textColors = useTextColorStyles();
+	const text = useTextStyles();
+
 	const observedProcesses = useObservable(ProcessManagerService.Instance.CurrentObservedProcesses);
 	React.useEffect(() => { ProcessManagerService.Instance.ReloadProcesses() }, []);
 
 	return (
-		<div className={`${layout.centerLayout1000} ${textColors.white}`}>
-			{observedProcesses.map(p => <ObservedProcess key={p.ProcessPath} process={p} />)}
+		<div className={`${layout.centerLayout1000} ${textColors.white} ${background.default} ${layout.paddingTop} ${layout.paddingHorizontal}`} style={{height: "100%"}}>
+			<h1 className={`${textColors.white} ${text.font32} ${layout.marginBottom}`}>Observed Process Manager</h1>
+			<summary className={`${textColors.white} ${text.font20} ${layout.marginBottom}`}>Tool for managing all the observed processes to reduce logged information.</summary>
+			<hr className={`${layout.horzRule}`} />
+
+			{observedProcesses.length == 0 ? <EmptyProcessList /> : <NonEmptyProcessList ObservedProcesses={observedProcesses} />}
 		</div>
 	);
 };

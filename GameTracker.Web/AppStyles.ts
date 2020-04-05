@@ -1,6 +1,9 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-export const background = makeStyles({
+export const useBackgroundStyles = makeStyles({
+	default: {
+		background: "rgba(0,0,0,.5)",
+	},
 	bgAlternateDarken: {
 		"& li:nth-child(even), & tr:nth-child(even)": {
 			backgroundColor: "rgba(50,50,50,0.15)",
@@ -8,7 +11,7 @@ export const background = makeStyles({
 	},
 });
 
-export const events = makeStyles({
+export const useEventStyles = makeStyles({
 	clickable: {
 		cursor: "pointer",
 
@@ -32,7 +35,6 @@ export const useLayoutStyles = makeStyles({
 	},
 	horzRule: {
 		height: "1px",
-		width: "90%",
 		borderBottom: "1px solid rgba(255,255,255,.2)",
 		borderTop: "1px solid rgba(255,255,255,.4)",
 	},
@@ -67,6 +69,56 @@ export const useLayoutStyles = makeStyles({
 	width25: { width: "25%" },
 	width15: { width: "15%" },
 	width10: { width: "10%" },
+
+	paddingAll: { padding: "10px", },
+	paddingHalf: { padding: "5px", },
+
+	paddingVertical: { paddingTop: "10px", paddingBottom: "10px", },
+	paddingVerticalHalf: { paddingTop: "5px", paddingBottom: "5px", },
+
+	paddingHorizontal: { paddingLeft: "10px", paddingRight: "10px", },
+	paddingHorizontalHalf: { paddingLeft: "5px", paddingRight: "5px", },
+
+	paddingRight: { paddingRight: "10px", },
+	paddingRightHalf: { paddingRight: "5px", },
+	paddingRightDouble: { paddingRight: "20px", },
+
+	paddingLeft : { paddingLeft: "10px", },
+	paddingLeftHalf: { paddingLeft: "5px", },
+	paddingLeftDouble: { paddingLeft: "20px", },
+
+	paddingTop: { paddingTop: "10px", },
+	paddingTopHalf: { paddingTop: "5px", },
+	paddingTopDouble: { paddingTop: "20px", },
+
+	paddingBottom : { paddingBottom: "10px", },
+	paddingBottomHalf: { paddingBottom: "5px", },
+	paddingBottomDouble: { paddingBottom: "20px", },
+
+	marginAll: { margin: "10px", },
+	marginHalf: { margin: "5px", },
+
+	marginVertical: { marginTop: "10px", marginBottom: "10px", },
+	marginVerticalHalf: { marginTop: "5px", marginBottom: "5px", },
+
+	marginHorizontal: { marginLeft: "10px", marginRight: "10px", },
+	marginHorizontalHalf: { marginLeft: "5px", marginRight: "5px", },
+
+	marginRight: { marginRight: "10px", },
+	marginRightHalf: { marginRight: "5px", },
+	marginRightDouble: { marginRight: "20px", },
+
+	marginLeft : { marginLeft: "10px", },
+	marginLeftHalf: { marginLeft: "5px", },
+	marginLeftDouble: { marginLeft: "20px", },
+
+	marginTop: { marginTop: "10px", },
+	marginTopHalf: { marginTop: "5px", },
+	marginTopDouble: { marginTop: "20px", },
+
+	marginBottom : { marginBottom: "10px", },
+	marginBottomHalf: { marginBottom: "5px", },
+	marginBottomDouble: { marginBottom: "20px", },
 });
 
 export const useTextColorStyles = makeStyles({
@@ -76,61 +128,7 @@ export const useTextColorStyles = makeStyles({
 	graye8: { color: "#E8E8E8" },
 });
 
-export const useMargins = makeStyles({
-	all: { margin: "10px", },
-	half: { margin: "5px", },
-
-	vertical: { marginTop: "10px", marginBottom: "10px", },
-	verticalHalf: { marginTop: "5px", marginBottom: "5px", },
-
-	horizontal: { marginLeft: "10px", marginRight: "10px", },
-	horizontalHalf: { marginLeft: "5px", marginRight: "5px", },
-
-	right: { marginRight: "10px", },
-	rightHalf: { marginRight: "5px", },
-	rightDouble: { marginRight: "20px", },
-
-	left : { marginLeft: "10px", },
-	leftHalf: { marginLeft: "5px", },
-	leftDouble: { marginLeft: "20px", },
-
-	top: { marginTop: "10px", },
-	topHalf: { marginTop: "5px", },
-	topDouble: { marginTop: "20px", },
-
-	bottom : { marginBottom: "10px", },
-	bottomHalf: { marginBottom: "5px", },
-	bottomDouble: { marginBottom: "20px", },
-});
-
-export const padding = makeStyles({
-	all: { padding: "10px", },
-	half: { padding: "5px", },
-
-	vertical: { paddingTop: "10px", paddingBottom: "10px", },
-	verticalHalf: { paddingTop: "5px", paddingBottom: "5px", },
-
-	horizontal: { paddingLeft: "10px", paddingRight: "10px", },
-	horizontalHalf: { paddingLeft: "5px", paddingRight: "5px", },
-
-	right: { paddingRight: "10px", },
-	rightHalf: { paddingRight: "5px", },
-	rightDouble: { paddingRight: "20px", },
-
-	left : { paddingLeft: "10px", },
-	leftHalf: { paddingLeft: "5px", },
-	leftDouble: { paddingLeft: "20px", },
-
-	top: { paddingTop: "10px", },
-	topHalf: { paddingTop: "5px", },
-	topDouble: { paddingTop: "20px", },
-
-	bottom : { paddingBottom: "10px", },
-	bottomHalf: { paddingBottom: "5px", },
-	bottomDouble: { paddingBottom: "20px", },
-});
-
-export const text = makeStyles({
+export const useTextStyles = makeStyles({
 	light: { fontWeight: 100 },
 	bold: { fontWeight: "bold" },
 
