@@ -1,17 +1,20 @@
 ﻿using GameTracker.GameProfiles;
 using GameTracker.Games;
-using StronglyTyped.GuidIds;
+using StronglyTyped.StringIds;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GameTracker.UserActivities
 {
 	public class UserProfile
 	{
-		public string Name { get; set; }
+		public string UserName { get; set; }
 		public DateTimeOffset? StartedCollectingDataTime { get; set; }
-		public DateTimeOffset? MostRecentActivityTime { get; set; }
-		public int TotalGamesPlayed { get; set; }
-		public IReadOnlyDictionary<Id<Game>, GameProfile> GameProfilesByGameId { get; set; }
+
+		public IUserActivity MostRecentActivity { get; set; }
+
+		public int TotalGamesPlayed => GameProfilesByGameId.Keys.Count();
+		public Dictionary<Id<Game>, GameProfile> GameProfilesByGameId { get; set; }
 	}
 }
