@@ -13,6 +13,8 @@ namespace GameTracker.UserActivities
 		public DateTimeOffset? StartedCollectingDataTime { get; set; }
 		public IUserActivity MostRecentActivity { get; set; }
 
+		public List<IUserActivity> RecentActivities { get; internal set; }
+
 		public int TotalGamesPlayed => GameProfilesByGameId.Keys.Count();
 		public Dictionary<string, GameProfile> GameProfilesByGameId { get; set; }
 	}

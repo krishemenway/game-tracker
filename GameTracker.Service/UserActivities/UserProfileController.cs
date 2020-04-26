@@ -32,6 +32,7 @@ namespace GameTracker.UserActivities
 				UserName = userProfileData.UserName,
 				MostRecentActivity = mostRecentActivity,
 				StartedCollectingDataTime = oldestActivity.StartTime,
+				RecentActivities = orderedActivity.Take(10).ToList(),
 				GameProfilesByGameId = orderedActivity.GroupBy(activity => activity.GameId).ToDictionary(activity => activity.Key.Value, activity => _gameProfileFactory.Create(activity.ToList())),
 			};
 		}
