@@ -7,10 +7,10 @@ namespace GameTracker.ObservedProcesses
 	public class IgnoreProcessController : ControllerBase
 	{
 		[HttpPost(nameof(ToggleIgnorePath))]
-		public ActionResult ToggleIgnorePath([FromBody] ToggleIgnorePathRequest request)
+		public ActionResult<ToggleIgnorePathResponse> ToggleIgnorePath([FromBody] ToggleIgnorePathRequest request)
 		{
 			new ObservedProcessStore().MarkProcessIgnored(request.FilePath, request.Ignore);
-			return Ok();
+			return new ToggleIgnorePathResponse { Success = true };
 		}
 	}
 
@@ -18,5 +18,10 @@ namespace GameTracker.ObservedProcesses
 	{
 		public string FilePath { get; set; }
 		public bool Ignore { get; set; }
+	}
+
+	public class ToggleIgnorePathResponse
+	{
+		public bool Success { get; set; }
 	}
 }
