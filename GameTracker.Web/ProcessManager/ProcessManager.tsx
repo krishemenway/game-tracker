@@ -57,7 +57,7 @@ export default () => {
 	React.useEffect(() => { ProcessManagerService.Instance.ReloadProcesses() }, []);
 
 	return (
-		<div className={`${layout.centerLayout1000} ${textColors.white} ${background.default} ${layout.paddingTop} ${layout.paddingHorizontal}`} style={{height: "100%"}}>
+		<div className={`${layout.centerLayout1000} ${textColors.white} ${background.default} ${layout.paddingTop} ${layout.paddingHorizontal}`} style={{minHeight: "100%"}}>
 			<h1 className={`${textColors.white} ${text.font32} ${layout.marginBottom}`}>Observed Process Manager</h1>
 			<summary className={`${textColors.white} ${text.font20} ${layout.marginBottom}`}>Tool for managing all the observed processes to reduce logged information.</summary>
 			<hr className={`${layout.horzRule}`} />
