@@ -1,10 +1,10 @@
-import { Observable } from "@residualeffect/reactor";
 import { UserActivity } from "UserProfile/UserActivity";
 import { GameProfile } from "GameProfile/GameProfile";
 import { Http } from "Common/Http";
+import { ObservableLoading } from "Common/ObservableLoading";
 
 export interface UserProfile {
-	DisplayName: string;
+	UserName: string;
 	StartedCollectingDataTime: string;
 	MostRecentActivity: UserActivity;
 
@@ -14,31 +14,18 @@ export interface UserProfile {
 
 export class UserProfileService {
 	constructor() {
-		this.UserProfile = new Observable(null);
-		this.IsLoading = new Observable(true);
-		this.LoadErrorMessage = new Observable(null);
+		this.LoadingUserProfile = new ObservableLoading<UserProfile>();
 	}
 
 	public LoadProfile(): void {
-		this.IsLoading.Value = true;
+		this.LoadingUserProfile.StartLoading();
 
 		Http.get<UserProfile>("/WebAPI/UserProfile")
-			.then((response) => {
-				this.UserProfile.Value = response;
-				this.LoadErrorMessage.Value = null;
-			})
-			.catch(() => {
-				this.UserProfile.Value = null;
-				this.LoadErrorMessage.Value = "Something went wrong loading the user profile!";
-			})
-			.finally(() => {
-				this.IsLoading.Value = false;
-			});
+			.then((response) => { this.LoadingUserProfile.SucceededLoading(response); })
+			.catch(() => { this.LoadingUserProfile.FailedLoading("Something went wrong loading the user profile!"); });
 	}
 
-	public UserProfile: Observable<UserProfile|null>;
-	public IsLoading: Observable<boolean>;
-	public LoadErrorMessage: Observable<string|null>;
+	public LoadingUserProfile: ObservableLoading<UserProfile>;
 
 	static get Instance(): UserProfileService {
 		if (this._instance === undefined) {

@@ -1,19 +1,22 @@
 import * as React from "react";
 import { CircularProgress } from "@material-ui/core";
+import { ObservableLoading } from "Common/ObservableLoading";
+import { useObservable } from "Common/useObservable";
 
 interface LoadingProps<TSuccessData> {
-	isLoading: boolean;
-	renderLoading?: () => JSX.Element;
-
-	successData: TSuccessData|undefined|null;
+	observableLoading: ObservableLoading<TSuccessData>;
 	renderSuccess: (successData: TSuccessData) => JSX.Element;
 
-	errorMessage: string|null;
+	renderLoading?: () => JSX.Element;
 	renderError?: (error: string) => JSX.Element;
 }
 
 function Loading<TSuccessData>(props: LoadingProps<TSuccessData>) {
-	if (props.isLoading) {
+	const successData = useObservable(props.observableLoading.SuccessData);
+	const isLoading = useObservable(props.observableLoading.IsLoading);
+	const errorMessage = useObservable(props.observableLoading.ErrorMessage);
+
+	if (isLoading) {
 		if (props.renderLoading !== undefined) {
 			return props.renderLoading();
 		} else {
@@ -21,16 +24,16 @@ function Loading<TSuccessData>(props: LoadingProps<TSuccessData>) {
 		}
 	}
 
-	if (props.errorMessage !== null) {
+	if (errorMessage !== null) {
 		if (props.renderError !== undefined) {
-			return props.renderError(props.errorMessage);
+			return props.renderError(errorMessage);
 		} else {
-			return <>{props.errorMessage}</>;
+			return <>{errorMessage}</>;
 		}
 	}
 
-	if (props.successData !== undefined && props.successData !== null) {
-		return props.renderSuccess(props.successData);
+	if (successData !== undefined && successData !== null) {
+		return props.renderSuccess(successData);
 	} else {
 		throw Error("Tried to render success without data");
 	}
