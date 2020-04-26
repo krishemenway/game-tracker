@@ -2,7 +2,7 @@ import * as React from "react";
 import * as reactDom from "react-dom";
 import { BrowserRouter, Switch, Route, RouteComponentProps } from "react-router-dom";
 import UserProfile from "UserProfile/UserProfile";
-import GameProfile from "GameProfile/GameProfile";
+import GameProfile from "GameProfile/GameProfileView";
 import ProcessManager from "ProcessManager/ProcessManager";
 
 const App: React.FC = () => {

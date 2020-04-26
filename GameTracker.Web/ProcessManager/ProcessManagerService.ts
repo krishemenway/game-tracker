@@ -1,5 +1,6 @@
 import { Observable } from "@residualeffect/reactor";
 import { ObservedProcess } from "ProcessManager/ObservedProcess";
+import { Http } from "Common/Http";
 
 interface ObservedProcessesResponse {
 	ObservedProcesses: ObservedProcess[];
@@ -7,7 +8,6 @@ interface ObservedProcessesResponse {
 
 export class ObservableProcess {
 	constructor(process: ObservedProcess) {
-		console.log(process.Ignore);
 		this.Ignore = new Observable<boolean>(process.Ignore);
 		this.ProcessPath = process.ProcessPath;
 	}
@@ -19,27 +19,28 @@ export class ObservableProcess {
 export class ProcessManagerService {
 	constructor() {
 		this.CurrentObservedProcesses = new Observable<ObservableProcess[]>([]);
+		this.IsLoading = new Observable(true);
+		this.LoadErrorMessage = new Observable(null);
+		this.ToggleIgnoredErrorMessage = new Observable(null);
 	}
 
 	public ReloadProcesses(): void {
-		fetch('/WebAPI/FindAllObservedProcesses')
-			.then((response) => response.json())
-			.then((data: ObservedProcessesResponse) => {
-				// todo add sorting
-				this.CurrentObservedProcesses.Value = data.ObservedProcesses.sort((a, b) => a.ProcessPath < b.ProcessPath ? -1 : 1).map((p) => new ObservableProcess(p));
-			});
+		Http.get<ObservedProcessesResponse>("/WebAPI/FindAllObservedProcesses")
+			.then((response) => { this.CurrentObservedProcesses.Value = response.ObservedProcesses.sort((a, b) => a.ProcessPath < b.ProcessPath ? -1 : 1).map((p) => new ObservableProcess(p)); })
+			.catch((_) => { this.LoadErrorMessage.Value = "Something went wrong loading observed processes from the server. Can only view this tool on the device running the service."; })
+			.finally(() => { this.IsLoading.Value = false; });
 	}
 
 	public OnToggleIgnored(observableProcess: ObservableProcess, ignore: boolean): void {
-		fetch('/WebAPI/ToggleIgnorePath', { 
-			body: JSON.stringify({ FilePath: observableProcess.ProcessPath, Ignore: ignore }),
-			method: "post",
-			headers: { "Content-Type": "application/json" },
-		})
-		.then(() => { observableProcess.Ignore.Value = ignore; });
+		Http.post("/WebAPI/ToggleIgnorePath", { FilePath: observableProcess.ProcessPath, Ignore: ignore })
+			.then((_) => { observableProcess.Ignore.Value = ignore; })
+			.catch((_) => { this.ToggleIgnoredErrorMessage.Value = `Failed to toggle ignore status for: ${observableProcess.ProcessPath}`; });
 	}
 
 	public CurrentObservedProcesses: Observable<ObservableProcess[]>;
+	public IsLoading: Observable<boolean>;
+	public LoadErrorMessage: Observable<string|null>;
+	public ToggleIgnoredErrorMessage: Observable<string|null>
 
 	static get Instance(): ProcessManagerService {
 		if (this._instance === undefined) {

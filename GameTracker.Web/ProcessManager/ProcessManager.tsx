@@ -2,7 +2,7 @@ import * as React from "react";
 import { useLayoutStyles, useTextColorStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { ProcessManagerService, ObservableProcess } from "ProcessManager/ProcessManagerService";
 import { ObservedProcess as ProcessListItem } from "ProcessManager/ObservedProcess";
-import { useObservable } from "useObservable";
+import { useObservable } from "Common/useObservable";
 
 const ProcessListItem: React.FC<{Process: ObservableProcess}> = (props) => {
 	const layout = useLayoutStyles();
