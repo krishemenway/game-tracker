@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using System.IO;
 using System.Text;
 
 namespace GameTracker
@@ -26,7 +25,7 @@ namespace GameTracker
 
 		private string ReadFileContents(string filePath)
 		{
-			return _memoryCache.GetOrCreate($"AssetsContents-{filePath}", (cache) => System.IO.File.ReadAllText(Path.Combine(Program.FilePathInAppData(filePath))));
+			return _memoryCache.GetOrCreate($"AssetsContents-{filePath}", (cache) => System.IO.File.ReadAllText(Program.FilePathInAppData(filePath)));
 		}
 
 		private readonly IMemoryCache _memoryCache;
