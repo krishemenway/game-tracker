@@ -1,4 +1,4 @@
-import { Observable } from "@residualeffect/reactor";
+import { Observable, Computed, ReadOnlyObservable } from "@residualeffect/reactor";
 
 export class ObservableLoading<TSuccessData> {
 	constructor() {

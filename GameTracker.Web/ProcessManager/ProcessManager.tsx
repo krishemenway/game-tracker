@@ -3,6 +3,7 @@ import { useLayoutStyles, useTextColorStyles, useTextStyles, useBackgroundStyles
 import { ProcessManagerService, ObservableProcess } from "ProcessManager/ProcessManagerService";
 import { ObservedProcess as ProcessListItem } from "ProcessManager/ObservedProcess";
 import { useObservable } from "Common/useObservable";
+import Loading from "Common/Loading";
 
 const ProcessListItem: React.FC<{Process: ObservableProcess}> = (props) => {
 	const layout = useLayoutStyles();
@@ -53,7 +54,6 @@ export default () => {
 	const textColors = useTextColorStyles();
 	const text = useTextStyles();
 
-	const observedProcesses = useObservable(ProcessManagerService.Instance.CurrentObservedProcesses);
 	React.useEffect(() => { ProcessManagerService.Instance.ReloadProcesses() }, []);
 
 	return (
@@ -62,7 +62,10 @@ export default () => {
 			<summary className={`${textColors.white} ${text.font20} ${layout.marginBottom}`}>Tool for managing all the observed processes to reduce logged information.</summary>
 			<hr className={`${layout.horzRule}`} />
 
-			{observedProcesses.length == 0 ? <EmptyProcessList /> : <NonEmptyProcessList ObservedProcesses={observedProcesses} />}
+			<Loading
+				observableLoading={ProcessManagerService.Instance.LoadingObservable}
+				renderSuccess={(observedProcesses) => observedProcesses.length == 0 ? <EmptyProcessList /> : <NonEmptyProcessList ObservedProcesses={observedProcesses} />}
+			/>
 		</div>
 	);
 };

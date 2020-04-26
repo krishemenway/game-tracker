@@ -1,22 +1,22 @@
 import * as React from "react";
-import { useLayoutStyles } from "AppStyles";
 import { UserProfileService } from "UserProfile/UserProfileService";
-import { useObservable } from "Common/useObservable";
+import Loading from "Common/Loading";
 
 interface GameProfileProps {
 	gameId: string;
 }
 
 export default (props: GameProfileProps) => {
-	const classes = useLayoutStyles();
-	const userProfile = useObservable(UserProfileService.Instance.UserProfile);
-
 	React.useEffect(() => { UserProfileService.Instance.LoadProfile(); }, []);
 
 	return (
 		<>
 			<div>GameProfile {props.gameId}</div>
-			<div>{JSON.stringify(userProfile?.GameProfilesByGameId[props.gameId] ?? "{}")}</div>
+
+			<Loading
+				observableLoading={UserProfileService.Instance.LoadingUserProfile}
+				renderSuccess={(data) => <div>{JSON.stringify(data.GameProfilesByGameId[props.gameId] ?? "{}")}</div>}
+			/>
 		</>
 	);
 };
