@@ -13,6 +13,8 @@ namespace GameTracker.UserActivities
 		String.Id<Game> GameId { get; }
 		DateTimeOffset StartTime { get; }
 		DateTimeOffset EndTime { get; }
+		DateTimeOffset AssignedToDate { get; }
+		double TimeSpentInSeconds { get; }
 		Guid.Id<ProcessSession> ProcessSessionId { get; }
 	}
 
@@ -24,6 +26,8 @@ namespace GameTracker.UserActivities
 		public DateTimeOffset StartTime { get; set; }
 		public DateTimeOffset EndTime { get; set; }
 		public DateTimeOffset AssignedToDate { get; set; }
+
+		public double TimeSpentInSeconds => (EndTime - StartTime).TotalSeconds;
 
 		public String.Id<Game> GameId { get; set; }
 
