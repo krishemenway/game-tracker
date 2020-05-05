@@ -9,6 +9,7 @@ export interface UserProfile {
 	MostRecentActivity: UserActivity;
 
 	TotalGamesPlayed: number;
+	ActivitiesByDate: Dictionary<UserActivity[]>;
 	GameProfilesByGameId: Dictionary<GameProfile>;
 }
 
