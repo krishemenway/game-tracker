@@ -1,7 +1,6 @@
 ﻿using GameTracker.GameProfiles;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace GameTracker.UserActivities
@@ -13,7 +12,8 @@ namespace GameTracker.UserActivities
 		public DateTimeOffset? StartedCollectingDataTime { get; set; }
 		public IUserActivity MostRecentActivity { get; set; }
 
-		public List<IUserActivity> RecentActivities { get; internal set; }
+		public List<IUserActivity> RecentActivities { get; set; }
+		public Dictionary<string, List<IUserActivity>> ActivitiesByDate { get; set; }
 
 		public int TotalGamesPlayed => GameProfilesByGameId.Keys.Count();
 		public Dictionary<string, GameProfile> GameProfilesByGameId { get; set; }
