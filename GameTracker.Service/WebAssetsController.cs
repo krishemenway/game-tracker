@@ -11,6 +11,12 @@ namespace GameTracker
 			_memoryCache = memoryCache;
 		}
 
+		[HttpGet("favicon.ico")]
+		public ContentResult Icon()
+		{
+			return Content(ReadFileContents("favicon.ico"), "image/x-icon", Encoding.UTF8);
+		}
+
 		[HttpGet("app.js")]
 		public ContentResult AppJavascript()
 		{
