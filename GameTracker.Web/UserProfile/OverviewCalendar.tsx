@@ -1,23 +1,24 @@
 import * as React from "react";
 import * as moment from "moment";
+import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import { UserProfile } from "UserProfile/UserProfileService";
 import { UserActivity } from "UserProfile/UserActivity";
 import Popover from "@material-ui/core/Popover";
+import { Observable } from "@residualeffect/reactor";
+import { TimeSpan } from "Common/TimeSpan";
 
-const OverviewCalendar: React.FC<{ userProfile: UserProfile }> = (props) => {
+const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity[]> }> = (props) => {
 	const classes = useStyles();
 
 	return (
 		<div className={classes.allCalendarMonths}>
-			{createFirstDaysInMonths().map((firstDayInMonth) => <OverviewCalendarMonth key={firstDayInMonth.format("YYYY-MM")} firstDayInMonth={firstDayInMonth} userProfile={props.userProfile} />)}
+			{createFirstDaysInMonths().map((firstDayInMonth) => <OverviewCalendarMonth key={firstDayInMonth.format("YYYY-MM")} firstDayInMonth={firstDayInMonth} userActivitiesByDate={props.userActivitiesByDate} />)}
 		</div>
 	);
-}
+};
 
-interface CurrentPopover {  }
-
-const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userProfile: UserProfile }> = (props) => {
+const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActivitiesByDate: Dictionary<UserActivity[]> }> = (props) => {
 	const classes = useStyles();
 	const daysInMonth = createDaysInMonth(props.firstDayInMonth);
 	const [currentPopoverAnchor, setPopoverAnchor] = React.useState<HTMLDivElement|null>(null);
@@ -30,35 +31,41 @@ const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userProf
 
 			<div className={classes.calendarMonthDays}>
 				{daysInMonth.map((dayInMonth) => {
-					const activities = acitivitesForDate(props.firstDayInMonth, dayInMonth, props.userProfile);
+					const activities = acitivitesForDate(props.firstDayInMonth, dayInMonth, props.userActivitiesByDate);
 
 					return (
 						<div
 							key={dayInMonth}
-							className={classes.calendarDay}
+							className={clsx(classes.calendarDay, activities.length > 0 ? classes.gameReportButton : undefined, dayInMonth === currentPopoverDayOfMonth ? classes.selectedDay : undefined)}
 							style={{marginLeft: dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined}}
-							onClick={(evt) => { setCurrentPopoverDayOfMonth(dayInMonth); setPopoverAnchor(evt.currentTarget); }}>
+							onClick={activities.length > 0 ? (evt) => { setCurrentPopoverDayOfMonth(dayInMonth); setPopoverAnchor(evt.currentTarget); } : () => undefined}
+						>
 							<OverviewCalendarMonthDayIcon activities={activities} />
 						</div>
 					);
 				})}
 			</div>
 
-			<Popover
-				open={popoverIsOpen}
-				anchorEl={currentPopoverAnchor}
-				onClose={() => { setPopoverAnchor(null); setCurrentPopoverDayOfMonth(null); }}
-				PaperProps={{ style: { background: "#181818" } }}
-			>
-				<GameReportForDayOfMonth
-					dayOfMonth={currentPopoverDayOfMonth ?? 1}
-					firstDayInMonth={props.firstDayInMonth}
-					activities={acitivitesForDate(props.firstDayInMonth, currentPopoverDayOfMonth ?? 1, props.userProfile)}
-				/>
-			</Popover>
+			{
+				!popoverIsOpen ? <></> :
+				<Popover
+					open={popoverIsOpen}
+					anchorEl={currentPopoverAnchor}
+					onClose={() => { setPopoverAnchor(null); setCurrentPopoverDayOfMonth(null); }}
+					PaperProps={{ style: { background: "#181818" } }}
+					anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+					transformOrigin={{ vertical: "top", horizontal: "center" }}
+				>
+					<GameReportForDayOfMonth
+						dayOfMonth={currentPopoverDayOfMonth ?? 1}
+						firstDayInMonth={props.firstDayInMonth}
+						activities={acitivitesForDate(props.firstDayInMonth, currentPopoverDayOfMonth ?? 1, props.userActivitiesByDate)}
+					/>
+				</Popover>
+			}
 		</div>
 	)
-}
+};
 
 const GameReportForDayOfMonth: React.FC<{dayOfMonth: number; firstDayInMonth: moment.Moment; activities: UserActivity[]}> = (props) => {
 	const classes = useStyles();
@@ -72,24 +79,25 @@ const GameReportForDayOfMonth: React.FC<{dayOfMonth: number; firstDayInMonth: mo
 		.map((gameId) => ({ GameId: gameId, TimeSpentInSeconds: timeInSecondsByGameId[gameId] }))
 		.sort((a, b) => b.TimeSpentInSeconds - a.TimeSpentInSeconds);
 
-	console.log(props.firstDayInMonth.format("YYYY-MM-") + padNumber(props.dayOfMonth, 2));
-
 	return (
 		<>
-			<div className={classes.gameReportDate}>{moment(props.firstDayInMonth.format("YYYY-MM-") + padNumber(props.dayOfMonth, 2)).format("MMMM Do, YYYY")}</div>
+			<div className={classes.gameReportDate}>
+				{moment(props.firstDayInMonth.format("YYYY-MM-") + padNumber(props.dayOfMonth, 2)).format("MMMM Do, YYYY")}
+			</div>
+
 			<table className={classes.gameReport}>
 				<tbody>
 				{gameReports.map((gameReport) => (
 					<tr key={gameReport.GameId}>
 						<td>{gameReport.GameId}</td>
-						<td>{(gameReport.TimeSpentInSeconds / 60).toFixed(2)} minutes</td>
+						<td>{TimeSpan.Readable(gameReport.TimeSpentInSeconds * 1000)}</td>
 					</tr>
 				))}
 				</tbody>
 			</table>
 		</>
 	)
-}
+};
 
 const OverviewCalendarMonthDayIcon: React.FC<{ activities: UserActivity[] }> = (props) => {
 	const classes = useStyles();
@@ -107,19 +115,19 @@ const OverviewCalendarMonthDayIcon: React.FC<{ activities: UserActivity[] }> = (
 
 const NoActivityIcon: React.FC<{ className: string }> = (props) => {
 	return <div className={props.className}>&ndash;</div>;
-}
+};
 
 const SingleActivityIcon: React.FC<{ className: string }> = (props) => {
 	return <div className={props.className}>1</div>;
-}
+};
 
 const MultipleActivityIcon: React.FC<{ className: string; count: number }> = (props) => {
 	return <div className={props.className}>{props.count}</div>;
-}
+};
 
-function acitivitesForDate(firstDayInMonth: moment.Moment, dayInMonth: number, userProfile: UserProfile): UserActivity[] {
+function acitivitesForDate(firstDayInMonth: moment.Moment, dayInMonth: number, userActivitiesByDate: Dictionary<UserActivity[]>): UserActivity[] {
 	const dateKey = firstDayInMonth.format("YYYY-MM-") + padNumber(dayInMonth, 2);
-	return userProfile.ActivitiesByDate[dateKey] ?? [];
+	return userActivitiesByDate[dateKey] ?? [];
 }
 
 function createDaysInMonth(firstDayInMonth: moment.Moment): number[] {
@@ -148,7 +156,7 @@ function distinct<T>(array: T[]): T[] {
 	return array.filter((value, index) => array.indexOf(value) === index);
 }
 
-function padNumber(value: number, size: number) {
+function padNumber(value: number, size: number): string {
 	var s = String(value);
 
 	while (s.length < (size || 2)) {
@@ -181,7 +189,11 @@ const useStyles = makeStyles((t) => ({
 		},
 	},
 	calendarMonthName: {
-		marginBottom: "16px",
+		width: "100%",
+		textAlign: "center",
+		marginBottom: "8px",
+		paddingBottom: "16px",
+		borderBottom: "1px solid #383838",
 	},
 	calendarMonthDays: {
 		display: "flex",
@@ -189,12 +201,27 @@ const useStyles = makeStyles((t) => ({
 		flexWrap: "wrap",
 	},
 	calendarDay: {
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
 		width: "14.285714285714%", // 7 days of week
 		minWidth: "32px",
 		minHeight: "32px",
 		textAlign: "center",
 	},
+	gameReportButton: {
+		cursor: "pointer",
+		background: "#181818",
+		"&:hover": {
+			background: "#202020",
+		},
+	},
+	selectedDay: {
+		border: "1px solid #383838",
+	},
 	calendarDayIcon: {
+		textAlign: "center",
+		width: "100%",
 	},
 	gameReport: {
 		borderSpacing: "16px",
@@ -202,8 +229,12 @@ const useStyles = makeStyles((t) => ({
 	},
 	gameReportDate: {
 		textAlign: "center",
+		paddingBottom: "8px",
 		marginTop: "16px",
-	}
+		marginLeft: "8px",
+		marginRight: "8px",
+		borderBottom: "1px solid #383838",
+	},
 }));
 
 export default OverviewCalendar;

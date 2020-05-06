@@ -34,7 +34,7 @@ function LoadedUserProfile(props: { userProfile: UserProfile }) {
 
 			<section>
 				<h2>Recent History</h2>
-				<OverviewCalendar userProfile={props.userProfile} />
+				<OverviewCalendar userActivitiesByDate={props.userProfile.ActivitiesByDate} />
 			</section>
 		</>
 	);
