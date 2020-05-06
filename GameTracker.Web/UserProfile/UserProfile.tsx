@@ -3,6 +3,7 @@ import { useLayoutStyles } from "AppStyles";
 import { UserProfileService, UserProfile } from "UserProfile/UserProfileService";
 import RecentActivities from "UserProfile/RecentActivities";
 import Loading from "Common/Loading";
+import OverviewCalendar from "UserProfile/OverviewCalendar";
 
 const GameIcon: React.FC = () => <div>Game Icon</div>;
 
@@ -33,6 +34,7 @@ function LoadedUserProfile(props: { userProfile: UserProfile }) {
 
 			<section>
 				<h2>Recent History</h2>
+				<OverviewCalendar userActivitiesByDate={props.userProfile.ActivitiesByDate} />
 			</section>
 		</>
 	);
