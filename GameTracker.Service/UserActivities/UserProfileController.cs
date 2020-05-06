@@ -1,4 +1,5 @@
 ﻿using GameTracker.GameProfiles;
+using GameTracker.Games;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -11,11 +12,13 @@ namespace GameTracker.UserActivities
 		public UserProfileController(
 			UserProfileStore userProfileStore = null,
 			UserActivityStore userActivityStore = null,
-			GameProfileFactory gameProfileFactory = null)
+			GameProfileFactory gameProfileFactory = null,
+			GameStore gameStore = null)
 		{
 			_userProfileStore = userProfileStore ?? new UserProfileStore();
 			_userActivityStore = userActivityStore ?? new UserActivityStore();
 			_gameProfileFactory = gameProfileFactory ?? new GameProfileFactory();
+			_gameStore = gameStore ?? new GameStore();
 		}
 
 		[HttpGet(nameof(UserProfile))]
@@ -32,6 +35,9 @@ namespace GameTracker.UserActivities
 			var mostRecentActivity = orderedActivities.FirstOrDefault();
 			var oldestActivity = orderedActivities.LastOrDefault();
 
+			var uniqueGameIds = orderedActivities.Select(x => x.GameId).Distinct().ToList();
+			var gamesByGameId = _gameStore.FindGames(uniqueGameIds);
+
 			return new UserProfile
 			{
 				UserName = userProfileData.UserName,
@@ -39,6 +45,7 @@ namespace GameTracker.UserActivities
 				StartedCollectingDataTime = oldestActivity.StartTime,
 				RecentActivities = orderedActivities.Take(10).ToList(),
 				ActivitiesByDate = orderedActivities.GroupBy(x => x.AssignedToDate).ToDictionary(x => x.Key.ToString("yyyy-MM-dd"), x => x.ToList()),
+				GamesByGameId = gamesByGameId.ToDictionary(x => x.Key.Value, x => x.Value),
 				GameProfilesByGameId = orderedActivities.GroupBy(activity => activity.GameId).ToDictionary(activity => activity.Key.Value, activity => _gameProfileFactory.Create(activity.ToList())),
 			};
 		}
@@ -54,5 +61,6 @@ namespace GameTracker.UserActivities
 		private readonly UserProfileStore _userProfileStore;
 		private readonly UserActivityStore _userActivityStore;
 		private readonly GameProfileFactory _gameProfileFactory;
+		private readonly GameStore _gameStore;
 	}
 }

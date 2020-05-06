@@ -1,4 +1,6 @@
 ﻿using GameTracker.GameProfiles;
+using GameTracker.Games;
+using StronglyTyped.StringIds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +19,6 @@ namespace GameTracker.UserActivities
 
 		public int TotalGamesPlayed => GameProfilesByGameId.Keys.Count();
 		public Dictionary<string, GameProfile> GameProfilesByGameId { get; set; }
+		public Dictionary<string, IGame> GamesByGameId { get; set; }
 	}
 }
