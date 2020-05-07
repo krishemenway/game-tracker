@@ -22,6 +22,9 @@ export const useEventStyles = makeStyles({
 });
 
 export const useLayoutStyles = makeStyles({
+	relative: { position: "relative" },
+	absolute: { position: "absolute" },
+	bottomRight: { bottom: "0", right: "0" },
 	invisible: {
 		opacity: 0,
 		cursor: "default",
@@ -38,21 +41,26 @@ export const useLayoutStyles = makeStyles({
 		borderBottom: "1px solid rgba(255,255,255,.2)",
 		borderTop: "1px solid rgba(255,255,255,.4)",
 	},
-	flexRow: {
-		display: "flex",
-		flexDirection: "row",
-		flexWrap: "nowrap",
+	flexColumn: { display: "flex", flexDirection: "column", },
+	flexRow: { display: "flex", flexDirection: "row", },
+	flexCenter: { alignItems: "center" },
+	flexWrap: { flexWrap: "wrap", },
+	flexWrapSpacing: {
+		marginLeft: "-10px",
+		marginRight: "-10px",
+
+		"& > *": {
+			paddingLeft: "8px",
+			paddingRight: "8px",
+		}
 	},
 	flexEvenDistribution: {
 		flexGrow: 1,
 		flexBasis: 0,
+		flexWrap: "nowrap",
 	},
 	flexFillRemaining: {
 		flexGrow: 1
-	},
-	flexWrapContent: {
-		flexGrow: 0,
-		flexBasis: 0,
 	},
 	blockCenter: { 
 		marginLeft: "auto",
@@ -63,12 +71,12 @@ export const useLayoutStyles = makeStyles({
 	},
 	width100: { width: "100%" },
 	width85: { width: "85%" },
-	width70: { width: "70%" },
+	width75: { width: "75%" },
+	width66: { width: "66.66666%" },
 	width50: { width: "50%" },
-	width40: { width: "40%" },
+	width33: { width: "33.33333%" },
 	width25: { width: "25%" },
 	width15: { width: "15%" },
-	width10: { width: "10%" },
 
 	paddingAll: { padding: "10px", },
 	paddingHalf: { padding: "5px", },

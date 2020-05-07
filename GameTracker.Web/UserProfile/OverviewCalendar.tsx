@@ -2,17 +2,17 @@ import * as React from "react";
 import * as moment from "moment";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
-import { UserProfile } from "UserProfile/UserProfileService";
 import { UserActivity } from "UserProfile/UserActivity";
 import Popover from "@material-ui/core/Popover";
-import { Observable } from "@residualeffect/reactor";
 import { TimeSpan } from "Common/TimeSpan";
+import { useLayoutStyles, useTextStyles } from "AppStyles";
 
-const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity[]> }> = (props) => {
+const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity[]>; className?: string }> = (props) => {
 	const classes = useStyles();
+	const layout = useLayoutStyles();
 
 	return (
-		<div className={classes.allCalendarMonths}>
+		<div className={clsx(props.className, layout.flexRow, layout.flexWrap, layout.flexWrapSpacing, classes.allCalendarMonths)}>
 			{createFirstDaysInMonths().map((firstDayInMonth) => <OverviewCalendarMonth key={firstDayInMonth.format("YYYY-MM")} firstDayInMonth={firstDayInMonth} userActivitiesByDate={props.userActivitiesByDate} />)}
 		</div>
 	);
@@ -20,23 +20,26 @@ const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity
 
 const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActivitiesByDate: Dictionary<UserActivity[]> }> = (props) => {
 	const classes = useStyles();
+	const layout = useLayoutStyles();
+	const text = useTextStyles();
+
 	const daysInMonth = createDaysInMonth(props.firstDayInMonth);
 	const [currentPopoverAnchor, setPopoverAnchor] = React.useState<HTMLDivElement|null>(null);
 	const [currentPopoverDayOfMonth, setCurrentPopoverDayOfMonth] = React.useState<number|null>(null);
 	const popoverIsOpen = currentPopoverAnchor !== null;
 
 	return (
-		<div className={classes.calendarMonth}>
+		<div className={clsx(layout.width33, layout.flexColumn, layout.flexCenter, classes.calendarMonth)}>
 			<div className={classes.calendarMonthName}>{props.firstDayInMonth.format("MMMM")}</div>
 
-			<div className={classes.calendarMonthDays}>
+			<div className={clsx(layout.flexRow, layout.flexWrap)}>
 				{daysInMonth.map((dayInMonth) => {
 					const activities = acitivitesForDate(props.firstDayInMonth, dayInMonth, props.userActivitiesByDate);
 
 					return (
 						<div
 							key={dayInMonth}
-							className={clsx(classes.calendarDay, activities.length > 0 ? classes.gameReportButton : undefined, dayInMonth === currentPopoverDayOfMonth ? classes.selectedDay : undefined)}
+							className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, activities.length > 0 ? classes.gameReportButton : undefined, dayInMonth === currentPopoverDayOfMonth ? classes.selectedDay : undefined)}
 							style={{marginLeft: dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined}}
 							onClick={activities.length > 0 ? (evt) => { setCurrentPopoverDayOfMonth(dayInMonth); setPopoverAnchor(evt.currentTarget); } : () => undefined}
 						>
@@ -168,22 +171,11 @@ function padNumber(value: number, size: number): string {
 
 const useStyles = makeStyles((t) => ({
 	allCalendarMonths: {
-		display: "flex",
-		flexDirection: "row",
-		flexWrap: "wrap",
-		marginLeft: "-8px",
-		marginRight: "-8px",
 		[t.breakpoints.down(600)]: {
 			flexDirection: "column-reverse",
 		},
 	},
 	calendarMonth: {
-		display: "flex",
-		flexDirection: "column",
-		width: "33.33333%",
-		alignItems: "center",
-		paddingLeft: "8px",
-		paddingRight: "8px",
 		[t.breakpoints.down(600)]: {
 			width: "100%",
 		},
@@ -195,19 +187,10 @@ const useStyles = makeStyles((t) => ({
 		paddingBottom: "16px",
 		borderBottom: "1px solid #383838",
 	},
-	calendarMonthDays: {
-		display: "flex",
-		flexDirection: "row",
-		flexWrap: "wrap",
-	},
 	calendarDay: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
 		width: "14.285714285714%", // 7 days of week
 		minWidth: "32px",
 		minHeight: "32px",
-		textAlign: "center",
 	},
 	gameReportButton: {
 		cursor: "pointer",

@@ -8,6 +8,7 @@ export interface UserProfile {
 	StartedCollectingDataTime: string;
 	MostRecentActivity: UserActivity;
 
+	RecentActivities: UserActivity[];
 	TotalGamesPlayed: number;
 	ActivitiesByDate: Dictionary<UserActivity[]>;
 	GameProfilesByGameId: Dictionary<GameProfile>;

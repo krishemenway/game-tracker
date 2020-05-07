@@ -1,20 +1,49 @@
+import clsx from "clsx";
 import * as React from "react";
+import * as moment from "moment";
 import { UserActivity } from "UserProfile/UserActivity";
+import { useBackgroundStyles, useLayoutStyles, useTextStyles, useTextColorStyles } from "AppStyles";
+import { TimeSpan } from "Common/TimeSpan";
+import GameIcon from "Games/GameIcon";
+import GameName from "Games/GameName";
 
-const RecentActivities: React.FC<{recentActivity: UserActivity[]}> = (props) => {
+const RecentActivities: React.FC<{ recentActivity: UserActivity[]; className?: string }> = (props) => {
+	const layout = useLayoutStyles();
+
 	return (
-		<ul>
+		<ul className={clsx(layout.flexRow, layout.flexWrap, layout.flexWrapSpacing, props.className)}>
 			{props.recentActivity.map((activity) => <RecentActivityItem key={activity.UserActivityId} activity={activity} />)}
 		</ul>
 	);
 };
 
-const RecentActivityItem: React.FC<{activity: UserActivity}> = (props) => {
+const RecentActivityItem: React.FC<{ activity: UserActivity }> = (props) => {
+	const layout = useLayoutStyles();
+	const background = useBackgroundStyles();
+	const text = useTextStyles();
+	const textColor = useTextColorStyles();
+
+	const assignedDate = React.useMemo(() => moment(props.activity.AssignedToDate).format("MMMM Do YYYY"), [props.activity.AssignedToDate]);
+	const startTime = React.useMemo(() => moment(props.activity.StartTime).format("h:mm:ss a"), [props.activity.StartTime]);
+	const endTime = React.useMemo(() => moment(props.activity.EndTime).format("h:mm:ss a"), [props.activity.EndTime]);
+	const timeSpentInSeconds = React.useMemo(() => TimeSpan.Readable(props.activity.TimeSpentInSeconds * 1000), [props.activity.TimeSpentInSeconds]);
+
 	return (
-		<li>
-			{props.activity.GameId}
+		<li className={clsx(layout.width50, layout.marginBottomHalf)}>
+			<div className={clsx(background.default, layout.paddingAll, layout.flexRow)}>
+				<div className={clsx(layout.marginRight)}>
+					<GameIcon gameId={props.activity.GameId} width={64} height={64} />
+				</div>
+
+				<div className={clsx(layout.relative, layout.flexFillRemaining)}>
+					<div className={clsx(text.font16, layout.marginBottomHalf)}><GameName gameId={props.activity.GameId} /></div>
+					<div className={clsx(text.font14, textColor.gray9f, layout.marginBottomHalf)}>{startTime} &ndash; {endTime}</div>
+					<div className={clsx(text.font14, textColor.gray9f, layout.marginBottomHalf)}>{timeSpentInSeconds}</div>
+					<div className={clsx(text.font14, layout.absolute, layout.bottomRight)}>{assignedDate}</div>
+				</div>
+			</div>
 		</li>
-	)
+	);
 }
 
 export default RecentActivities;
