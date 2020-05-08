@@ -23,7 +23,7 @@ const RecentActivityItem: React.FC<{ activity: UserActivity }> = (props) => {
 	const text = useTextStyles();
 	const textColor = useTextColorStyles();
 
-	const assignedDate = React.useMemo(() => moment.parseZone(props.activity.AssignedToDate).format("MMMM Do YYYY"), [props.activity.AssignedToDate]);
+	const assignedDate = React.useMemo(() => moment.parseZone(props.activity.AssignedToDate).format("MMMM Do, YYYY"), [props.activity.AssignedToDate]);
 	const startTime = React.useMemo(() => moment.parseZone(props.activity.StartTime).format("h:mm:ss a"), [props.activity.StartTime]);
 	const endTime = React.useMemo(() => moment.parseZone(props.activity.EndTime).format("h:mm:ss a"), [props.activity.EndTime]);
 	const timeSpentInSeconds = React.useMemo(() => TimeSpan.Readable(props.activity.TimeSpentInSeconds * 1000), [props.activity.TimeSpentInSeconds]);
