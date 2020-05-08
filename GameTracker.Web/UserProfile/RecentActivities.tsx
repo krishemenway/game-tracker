@@ -2,7 +2,7 @@ import clsx from "clsx";
 import * as React from "react";
 import * as moment from "moment";
 import { UserActivity } from "UserProfile/UserActivity";
-import { useBackgroundStyles, useLayoutStyles, useTextStyles, useTextColorStyles } from "AppStyles";
+import { useBackgroundStyles, useLayoutStyles, useTextStyles } from "AppStyles";
 import { TimeSpan } from "Common/TimeSpan";
 import GameIcon from "Games/GameIcon";
 import GameName from "Games/GameName";
@@ -22,7 +22,6 @@ const RecentActivityItem: React.FC<{ activity: UserActivity }> = (props) => {
 	const layout = useLayoutStyles();
 	const background = useBackgroundStyles();
 	const text = useTextStyles();
-	const textColor = useTextColorStyles();
 
 	const assignedDate = React.useMemo(() => moment.parseZone(props.activity.AssignedToDate).format("MMMM Do, YYYY"), [props.activity.AssignedToDate]);
 	const startTime = React.useMemo(() => moment.parseZone(props.activity.StartTime).format("h:mm:ss a"), [props.activity.StartTime]);
@@ -38,8 +37,8 @@ const RecentActivityItem: React.FC<{ activity: UserActivity }> = (props) => {
 
 				<div className={clsx(layout.relative, layout.flexFillRemaining)}>
 					<div className={clsx(text.font16, layout.marginBottomHalf)}><GameLink gameId={props.activity.GameId}><GameName gameId={props.activity.GameId} /></GameLink></div>
-					<div className={clsx(text.font14, textColor.gray9f, layout.marginBottomHalf)}>{startTime} &ndash; {endTime}</div>
-					<div className={clsx(text.font14, textColor.gray9f, layout.marginBottomHalf)}>{timeSpentInSeconds}</div>
+					<div className={clsx(text.font14, text.gray9f, layout.marginBottomHalf)}>{startTime} &ndash; {endTime}</div>
+					<div className={clsx(text.font14, text.gray9f, layout.marginBottomHalf)}>{timeSpentInSeconds}</div>
 					<div className={clsx(text.font14, layout.absolute, layout.bottomRight)}>{assignedDate}</div>
 				</div>
 			</div>

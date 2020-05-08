@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useLayoutStyles, useTextColorStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
+import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { ProcessManagerService, ObservableProcess } from "ProcessManager/ProcessManagerService";
 import { ObservedProcess as ProcessListItem } from "ProcessManager/ObservedProcess";
 import { useObservable } from "Common/useObservable";
@@ -56,9 +56,9 @@ export default () => {
 	React.useEffect(() => { ProcessManagerService.Instance.ReloadProcesses() }, []);
 
 	return (
-		<div className={`${layout.centerLayout1000} ${text.white} ${background.default} ${layout.paddingTop} ${layout.paddingHorizontal}`} style={{minHeight: "100%"}}>
-			<h1 className={`${text.white} ${text.font32} ${layout.marginBottom}`}>Observed Process Manager</h1>
-			<summary className={`${text.white} ${text.font20} ${layout.marginBottom}`}>Tool for managing all the observed processes to reduce logged information.</summary>
+		<div className={`${layout.centerLayout1000} ${text.content} ${background.default} ${layout.paddingTop} ${layout.paddingHorizontal}`} style={{minHeight: "100%"}}>
+			<h1 className={`${text.content} ${text.font32} ${layout.marginBottom}`}>Observed Process Manager</h1>
+			<summary className={`${text.content} ${text.font20} ${layout.marginBottom}`}>Tool for managing all the observed processes to reduce logged information.</summary>
 			<hr className={`${layout.horzRule}`} />
 
 			<Loading
