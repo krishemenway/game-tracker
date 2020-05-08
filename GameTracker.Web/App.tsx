@@ -4,6 +4,7 @@ import { BrowserRouter, Switch, Route, RouteComponentProps } from "react-router-
 import UserProfile from "UserProfile/UserProfile";
 import GameProfile from "GameProfile/GameProfileView";
 import ProcessManager from "ProcessManager/ProcessManager";
+import NotFound from "Common/NotFound";
 
 const App: React.FC = () => {
 	return (
@@ -11,18 +12,25 @@ const App: React.FC = () => {
 			<Switch>
 
 				<Route
+					exact
 					path="/game/:gameId"
 					component={(props: RouteComponentProps<{gameId: string}>) => <GameProfile gameId={props.match.params.gameId} />}
 				/>
 
 				<Route
+					exact
 					path="/process-manager"
 					component={() => <ProcessManager />}
 				/>
 
 				<Route
+					exact
 					path="/"
 					component={() => <UserProfile />}
+				/>
+
+				<Route
+					component={() => <NotFound />}
 				/>
 
 			</Switch>

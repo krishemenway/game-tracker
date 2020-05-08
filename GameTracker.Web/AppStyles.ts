@@ -1,9 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 export const useBackgroundStyles = makeStyles({
-	default: {
-		background: "rgba(0,0,0,.4)",
-	},
+	default: { background: "rgba(0,0,0,.4)", },
 	bgAlternateDarken: {
 		"& li:nth-child(even), & tr:nth-child(even)": {
 			backgroundColor: "rgba(50,50,50,0.15)",
@@ -25,17 +23,9 @@ export const useLayoutStyles = makeStyles({
 	relative: { position: "relative" },
 	absolute: { position: "absolute" },
 	bottomRight: { bottom: "0", right: "0" },
-	invisible: {
-		opacity: 0,
-		cursor: "default",
-	},
-	centerLayout1000: {
-		maxWidth: "1000px",
-		margin: "0 auto"
-	},
-	vertMiddle: {
-		verticalAlign: "middle",
-	},
+	invisible: { opacity: 0, cursor: "default", },
+	centerLayout1000: { maxWidth: "1000px", margin: "0 auto" },
+	vertMiddle: { verticalAlign: "middle", },
 	horzRule: {
 		height: "1px",
 		borderBottom: "1px solid rgba(255,255,255,.2)",
@@ -59,16 +49,8 @@ export const useLayoutStyles = makeStyles({
 		flexBasis: 0,
 		flexWrap: "nowrap",
 	},
-	flexFillRemaining: {
-		flexGrow: 1
-	},
-	blockCenter: { 
-		marginLeft: "auto",
-		marginRight: "auto",
-	},
-	inlineBlock: {
-		display: "inline-block",
-	},
+	flexFillRemaining: { flexGrow: 1 },
+
 	width100: { width: "100%" },
 	width85: { width: "85%" },
 	width75: { width: "75%" },
@@ -85,6 +67,7 @@ export const useLayoutStyles = makeStyles({
 
 	paddingVertical: { paddingTop: "10px", paddingBottom: "10px", },
 	paddingVerticalHalf: { paddingTop: "5px", paddingBottom: "5px", },
+	paddingVerticalDouble: { paddingTop: "20px", paddingBottom: "20px", },
 
 	paddingHorizontal: { paddingLeft: "10px", paddingRight: "10px", },
 	paddingHorizontalHalf: { paddingLeft: "5px", paddingRight: "5px", },
@@ -129,13 +112,6 @@ export const useLayoutStyles = makeStyles({
 	marginBottom : { marginBottom: "10px", },
 	marginBottomHalf: { marginBottom: "5px", },
 	marginBottomDouble: { marginBottom: "20px", },
-});
-
-export const useTextColorStyles = makeStyles({
-	white: { color: "#E8E8E8" },
-	gray: { color: "#555555" },
-	gray9f: { color: "#9F9F9F" },
-	graye8: { color: "#E8E8E8" },
 });
 
 export const useTextStyles = makeStyles({
@@ -188,4 +164,9 @@ export const useTextStyles = makeStyles({
 		textTransform: "uppercase",
 		letterSpacing: "5px",
 	},
+
+	content: { color: "#E8E8E8" },
+	gray: { color: "#555555" },
+	gray9f: { color: "#9F9F9F" },
+	graye8: { color: "#E8E8E8" },
 });
