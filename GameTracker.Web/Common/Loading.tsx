@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CircularProgress } from "@material-ui/core";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { ObservableLoading } from "Common/ObservableLoading";
 import { useObservable } from "Common/useObservable";
 
