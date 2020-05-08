@@ -5,7 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { UserActivity } from "UserProfile/UserActivity";
 import Popover from "@material-ui/core/Popover";
 import { TimeSpan } from "Common/TimeSpan";
-import { useLayoutStyles, useTextStyles } from "AppStyles";
+import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import GameName from "Games/GameName";
 
 const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity[]>; className?: string }> = (props) => {
@@ -23,6 +23,7 @@ const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActi
 	const classes = useStyles();
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
+	const background = useBackgroundStyles();
 
 	const daysInMonth = createDaysInMonth(props.firstDayInMonth);
 	const [currentPopoverAnchor, setPopoverAnchor] = React.useState<HTMLDivElement|null>(null);
@@ -30,24 +31,26 @@ const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActi
 	const popoverIsOpen = currentPopoverAnchor !== null;
 
 	return (
-		<div className={clsx(layout.width33, layout.flexColumn, layout.flexCenter, classes.calendarMonth)}>
-			<div className={classes.calendarMonthName}>{props.firstDayInMonth.format("MMMM")}</div>
+		<div className={clsx(layout.width33, classes.calendarMonth)}>
+			<div className={clsx(background.default, layout.height100, layout.paddingHorizontalHalf, layout.paddingBottomHalf)}>
+				<div className={clsx(layout.width100, layout.marginBottom, layout.paddingVertical, text.center, classes.calendarMonthName)}>{props.firstDayInMonth.format("MMMM")}</div>
 
-			<div className={clsx(layout.flexRow, layout.flexWrap)}>
-				{daysInMonth.map((dayInMonth) => {
-					const activities = acitivitesForDate(props.firstDayInMonth, dayInMonth, props.userActivitiesByDate);
+				<div className={clsx(layout.flexRow, layout.flexWrap)}>
+					{daysInMonth.map((dayInMonth) => {
+						const activities = acitivitesForDate(props.firstDayInMonth, dayInMonth, props.userActivitiesByDate);
 
-					return (
-						<div
-							key={dayInMonth}
-							className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, activities.length > 0 ? classes.gameReportButton : undefined, dayInMonth === currentPopoverDayOfMonth ? classes.selectedDay : undefined)}
-							style={{marginLeft: dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined}}
-							onClick={activities.length > 0 ? (evt) => { setCurrentPopoverDayOfMonth(dayInMonth); setPopoverAnchor(evt.currentTarget); } : () => undefined}
-						>
-							<OverviewCalendarMonthDayIcon activities={activities} />
-						</div>
-					);
-				})}
+						return (
+							<div
+								key={dayInMonth}
+								className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, activities.length > 0 ? classes.gameReportButton : undefined, dayInMonth === currentPopoverDayOfMonth ? classes.selectedDay : undefined)}
+								style={{marginLeft: dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined}}
+								onClick={activities.length > 0 ? (evt) => { setCurrentPopoverDayOfMonth(dayInMonth); setPopoverAnchor(evt.currentTarget); } : () => undefined}
+							>
+								<OverviewCalendarMonthDayIcon activities={activities} />
+							</div>
+						);
+					})}
+				</div>
 			</div>
 
 			{
@@ -182,10 +185,6 @@ const useStyles = makeStyles((t) => ({
 		},
 	},
 	calendarMonthName: {
-		width: "100%",
-		textAlign: "center",
-		marginBottom: "8px",
-		paddingBottom: "16px",
 		borderBottom: "1px solid #383838",
 	},
 	calendarDay: {
