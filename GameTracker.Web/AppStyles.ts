@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export const useBackgroundStyles = makeStyles({
 	default: {
-		background: "rgba(0,0,0,.5)",
+		background: "rgba(0,0,0,.4)",
 	},
 	bgAlternateDarken: {
 		"& li:nth-child(even), & tr:nth-child(even)": {
@@ -77,6 +77,8 @@ export const useLayoutStyles = makeStyles({
 	width33: { width: "33.33333%" },
 	width25: { width: "25%" },
 	width15: { width: "15%" },
+
+	height100: { height: "100%" },
 
 	paddingAll: { padding: "10px", },
 	paddingHalf: { padding: "5px", },
