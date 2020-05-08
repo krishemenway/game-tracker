@@ -6,6 +6,7 @@ import { UserActivity } from "UserProfile/UserActivity";
 import Popover from "@material-ui/core/Popover";
 import { TimeSpan } from "Common/TimeSpan";
 import { useLayoutStyles, useTextStyles } from "AppStyles";
+import GameName from "Games/GameName";
 
 const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity[]>; className?: string }> = (props) => {
 	const classes = useStyles();
@@ -92,7 +93,7 @@ const GameReportForDayOfMonth: React.FC<{dayOfMonth: number; firstDayInMonth: mo
 				<tbody>
 				{gameReports.map((gameReport) => (
 					<tr key={gameReport.GameId}>
-						<td>{gameReport.GameId}</td>
+						<td><GameName gameId={gameReport.GameId} /></td>
 						<td>{TimeSpan.Readable(gameReport.TimeSpentInSeconds * 1000)}</td>
 					</tr>
 				))}

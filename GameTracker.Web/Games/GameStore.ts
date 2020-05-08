@@ -1,6 +1,6 @@
 import { Observable } from "@residualeffect/reactor";
 
-export interface GameMetadata {
+export interface Game {
 	GameId: string;
 	Name: string;
 	ReleaseDate: string;
@@ -11,11 +11,11 @@ export class GameStore {
 		this.GamesByGameId = new Observable({});
 	}
 
-	public LoadGames(gamesByGameId: Dictionary<GameMetadata>): void {
-		this.GamesByGameId.Value = Object.assign({}, gamesByGameId, this.GamesByGameId.Value);
+	public LoadGames(gamesByGameId: Dictionary<Game>): void {
+		this.GamesByGameId.Value = Object.assign({}, this.GamesByGameId.Value, gamesByGameId);
 	}
 
-	public GamesByGameId: Observable<Dictionary<GameMetadata>>;
+	public GamesByGameId: Observable<Dictionary<Game>>;
 
 	static get Instance(): GameStore {
 		if (this._instance === undefined) {

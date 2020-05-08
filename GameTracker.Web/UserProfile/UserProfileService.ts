@@ -2,6 +2,7 @@ import { UserActivity } from "UserProfile/UserActivity";
 import { GameProfile } from "GameProfile/GameProfile";
 import { Http } from "Common/Http";
 import { ObservableLoading } from "Common/ObservableLoading";
+import { Game, GameStore } from "Games/GameStore";
 
 export interface UserProfile {
 	UserName: string;
@@ -12,6 +13,7 @@ export interface UserProfile {
 	TotalGamesPlayed: number;
 	ActivitiesByDate: Dictionary<UserActivity[]>;
 	GameProfilesByGameId: Dictionary<GameProfile>;
+	GamesByGameId: Dictionary<Game>;
 }
 
 export class UserProfileService {
@@ -23,7 +25,10 @@ export class UserProfileService {
 		this.LoadingUserProfile.StartLoading();
 
 		Http.get<UserProfile>("/WebAPI/UserProfile")
-			.then((response) => { this.LoadingUserProfile.SucceededLoading(response); })
+			.then((response) => {
+				GameStore.Instance.LoadGames(response.GamesByGameId);
+				this.LoadingUserProfile.SucceededLoading(response);
+			})
 			.catch(() => { this.LoadingUserProfile.FailedLoading("Something went wrong loading the user profile!"); });
 	}
 
