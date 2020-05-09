@@ -1,6 +1,7 @@
-﻿using StronglyTyped.StringIds;
+﻿using GameTracker.UserActivities;
+using StronglyTyped.StringIds;
 
-namespace GameTracker.UserActivities
+namespace GameTracker.Service.UserProfiles
 {
 	public class UserProfileValidator
 	{

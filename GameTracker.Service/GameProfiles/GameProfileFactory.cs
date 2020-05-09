@@ -1,4 +1,5 @@
-﻿using GameTracker.UserActivities;
+﻿using GameTracker.Games;
+using GameTracker.UserActivities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,6 +21,7 @@ namespace GameTracker.GameProfiles
 
 	public class GameProfile
 	{
+		public IGame Game { get; set; }
 		public IReadOnlyList<IUserActivity> AllActivity { get; set; }
 		public IUserActivity MostRecent { get; set; }
 	}
