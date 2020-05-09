@@ -20,7 +20,7 @@
   "devDependencies": {
     "@material-ui/core": "4.9.7",
     "@material-ui/icons": "4.9.1",
-    "@residualeffect/reactor": "1.3.0",
+    "@residualeffect/reactor": "2.3.0",
     "@types/jquery": "3.3.33",
     "@types/react": "16.9.25",
     "@types/react-dom": "16.9.5",
@@ -32,7 +32,7 @@
     "moment": "^2.24.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-router-dom": "^5.1.2",
+    "react-router-dom": "5.1.2",
     "request": "2.88.2",
     "ts-loader": "6.2.2",
     "tsconfig-paths-webpack-plugin": "3.2.0",

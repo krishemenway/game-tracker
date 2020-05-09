@@ -2,17 +2,19 @@ import * as React from "react";
 import * as moment from "moment";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
-import { UserProfile } from "UserProfile/UserProfileService";
 import { UserActivity } from "UserProfile/UserActivity";
 import Popover from "@material-ui/core/Popover";
-import { Observable } from "@residualeffect/reactor";
 import { TimeSpan } from "Common/TimeSpan";
+import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
+import GameName from "Games/GameName";
+import GameLink from "Games/GameLink";
 
-const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity[]> }> = (props) => {
+const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity[]>; className?: string }> = (props) => {
 	const classes = useStyles();
+	const layout = useLayoutStyles();
 
 	return (
-		<div className={classes.allCalendarMonths}>
+		<div className={clsx(props.className, layout.flexRow, layout.flexWrap, layout.flexWrapSpacing, classes.allCalendarMonths)}>
 			{createFirstDaysInMonths().map((firstDayInMonth) => <OverviewCalendarMonth key={firstDayInMonth.format("YYYY-MM")} firstDayInMonth={firstDayInMonth} userActivitiesByDate={props.userActivitiesByDate} />)}
 		</div>
 	);
@@ -20,30 +22,36 @@ const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity
 
 const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActivitiesByDate: Dictionary<UserActivity[]> }> = (props) => {
 	const classes = useStyles();
+	const layout = useLayoutStyles();
+	const text = useTextStyles();
+	const background = useBackgroundStyles();
+
 	const daysInMonth = createDaysInMonth(props.firstDayInMonth);
 	const [currentPopoverAnchor, setPopoverAnchor] = React.useState<HTMLDivElement|null>(null);
 	const [currentPopoverDayOfMonth, setCurrentPopoverDayOfMonth] = React.useState<number|null>(null);
 	const popoverIsOpen = currentPopoverAnchor !== null;
 
 	return (
-		<div className={classes.calendarMonth}>
-			<div className={classes.calendarMonthName}>{props.firstDayInMonth.format("MMMM")}</div>
+		<div className={clsx(layout.width33, classes.calendarMonth)}>
+			<div className={clsx(background.default, layout.height100, layout.paddingHorizontalHalf, layout.paddingBottomHalf)}>
+				<div className={clsx(layout.width100, layout.marginBottom, layout.paddingVertical, text.center, classes.calendarMonthName)}>{props.firstDayInMonth.format("MMMM")}</div>
 
-			<div className={classes.calendarMonthDays}>
-				{daysInMonth.map((dayInMonth) => {
-					const activities = acitivitesForDate(props.firstDayInMonth, dayInMonth, props.userActivitiesByDate);
+				<div className={clsx(layout.flexRow, layout.flexWrap)}>
+					{daysInMonth.map((dayInMonth) => {
+						const activities = acitivitesForDate(props.firstDayInMonth, dayInMonth, props.userActivitiesByDate);
 
-					return (
-						<div
-							key={dayInMonth}
-							className={clsx(classes.calendarDay, activities.length > 0 ? classes.gameReportButton : undefined, dayInMonth === currentPopoverDayOfMonth ? classes.selectedDay : undefined)}
-							style={{marginLeft: dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined}}
-							onClick={activities.length > 0 ? (evt) => { setCurrentPopoverDayOfMonth(dayInMonth); setPopoverAnchor(evt.currentTarget); } : () => undefined}
-						>
-							<OverviewCalendarMonthDayIcon activities={activities} />
-						</div>
-					);
-				})}
+						return (
+							<div
+								key={dayInMonth}
+								className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, activities.length > 0 ? classes.gameReportButton : undefined, dayInMonth === currentPopoverDayOfMonth ? classes.selectedDay : undefined)}
+								style={{marginLeft: dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined}}
+								onClick={activities.length > 0 ? (evt) => { setCurrentPopoverDayOfMonth(dayInMonth); setPopoverAnchor(evt.currentTarget); } : () => undefined}
+							>
+								<OverviewCalendarMonthDayIcon activities={activities} />
+							</div>
+						);
+					})}
+				</div>
 			</div>
 
 			{
@@ -69,6 +77,9 @@ const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActi
 
 const GameReportForDayOfMonth: React.FC<{dayOfMonth: number; firstDayInMonth: moment.Moment; activities: UserActivity[]}> = (props) => {
 	const classes = useStyles();
+	const layout = useLayoutStyles();
+	const text = useTextStyles();
+
 	const timeInSecondsByGameId: Dictionary<number> = {};
 
 	props.activities.forEach((activity) => {
@@ -81,15 +92,15 @@ const GameReportForDayOfMonth: React.FC<{dayOfMonth: number; firstDayInMonth: mo
 
 	return (
 		<>
-			<div className={classes.gameReportDate}>
+			<div className={clsx(layout.paddingBottom, layout.marginHorizontal, layout.marginTopDouble, text.center)} style={{ border: "1px solid #383838" }}>
 				{moment(props.firstDayInMonth.format("YYYY-MM-") + padNumber(props.dayOfMonth, 2)).format("MMMM Do, YYYY")}
 			</div>
 
-			<table className={classes.gameReport}>
+			<table className={clsx(classes.gameReport)}>
 				<tbody>
 				{gameReports.map((gameReport) => (
 					<tr key={gameReport.GameId}>
-						<td>{gameReport.GameId}</td>
+						<td><GameLink gameId={gameReport.GameId}><GameName gameId={gameReport.GameId} /></GameLink></td>
 						<td>{TimeSpan.Readable(gameReport.TimeSpentInSeconds * 1000)}</td>
 					</tr>
 				))}
@@ -100,16 +111,18 @@ const GameReportForDayOfMonth: React.FC<{dayOfMonth: number; firstDayInMonth: mo
 };
 
 const OverviewCalendarMonthDayIcon: React.FC<{ activities: UserActivity[] }> = (props) => {
-	const classes = useStyles();
+	const layout = useLayoutStyles();
+	const text = useTextStyles();
+
 	const uniqueGames = distinct(props.activities.map((activity) => activity.GameId));
 
 	switch (uniqueGames.length) {
 		case 0:
-			return <NoActivityIcon className={classes.calendarDayIcon} />
+			return <NoActivityIcon className={clsx(layout.width100, text.center)} />
 		case 1:
-			return <SingleActivityIcon className={classes.calendarDayIcon} />
+			return <SingleActivityIcon className={clsx(layout.width100, text.center)} />
 		default:
-			return <MultipleActivityIcon count={uniqueGames.length} className={classes.calendarDayIcon} />
+			return <MultipleActivityIcon count={uniqueGames.length} className={clsx(layout.width100, text.center)} />
 	}
 }
 
@@ -168,46 +181,22 @@ function padNumber(value: number, size: number): string {
 
 const useStyles = makeStyles((t) => ({
 	allCalendarMonths: {
-		display: "flex",
-		flexDirection: "row",
-		flexWrap: "wrap",
-		marginLeft: "-8px",
-		marginRight: "-8px",
 		[t.breakpoints.down(600)]: {
 			flexDirection: "column-reverse",
 		},
 	},
 	calendarMonth: {
-		display: "flex",
-		flexDirection: "column",
-		width: "33.33333%",
-		alignItems: "center",
-		paddingLeft: "8px",
-		paddingRight: "8px",
 		[t.breakpoints.down(600)]: {
 			width: "100%",
 		},
 	},
 	calendarMonthName: {
-		width: "100%",
-		textAlign: "center",
-		marginBottom: "8px",
-		paddingBottom: "16px",
 		borderBottom: "1px solid #383838",
 	},
-	calendarMonthDays: {
-		display: "flex",
-		flexDirection: "row",
-		flexWrap: "wrap",
-	},
 	calendarDay: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
 		width: "14.285714285714%", // 7 days of week
 		minWidth: "32px",
 		minHeight: "32px",
-		textAlign: "center",
 	},
 	gameReportButton: {
 		cursor: "pointer",
@@ -219,21 +208,9 @@ const useStyles = makeStyles((t) => ({
 	selectedDay: {
 		border: "1px solid #383838",
 	},
-	calendarDayIcon: {
-		textAlign: "center",
-		width: "100%",
-	},
 	gameReport: {
-		borderSpacing: "16px",
+		borderSpacing: "20px",
 		borderCollapse: "separate",
-	},
-	gameReportDate: {
-		textAlign: "center",
-		paddingBottom: "8px",
-		marginTop: "16px",
-		marginLeft: "8px",
-		marginRight: "8px",
-		borderBottom: "1px solid #383838",
 	},
 }));
 
