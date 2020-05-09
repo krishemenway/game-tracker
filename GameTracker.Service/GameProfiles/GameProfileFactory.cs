@@ -7,12 +7,13 @@ namespace GameTracker.GameProfiles
 {
 	public class GameProfileFactory
 	{
-		public GameProfile Create(IReadOnlyList<IUserActivity> userActivities)
+		public GameProfile Create(IGame game, IReadOnlyList<IUserActivity> userActivities)
 		{
 			var orderedUserActivities = userActivities.OrderByDescending(x => x.EndTime).ToList();
 
 			return new GameProfile
 			{
+				Game = game,
 				AllActivity = orderedUserActivities,
 				MostRecent = orderedUserActivities.FirstOrDefault(),
 			};

@@ -11,18 +11,27 @@ namespace GameTracker.GameProfiles
 	public class GameProfileController : ControllerBase
 	{
 		public GameProfileController(
+			GameStore gameStore = null,
 			UserProfileStore userProfileStore = null,
 			GameProfileFactory gameProfileFactory = null,
 			UserActivityStore userActivityStore = null)
 		{
+			_gameStore = gameStore ?? new GameStore();
 			_userProfileStore = userProfileStore ?? new UserProfileStore();
 			_gameProfileFactory = gameProfileFactory ?? new GameProfileFactory();
 			_userActivityStore = userActivityStore ?? new UserActivityStore();
 		}
 
-		[HttpGet(nameof(GameProfile))]
-		public ActionResult<GameProfileResponse> GameProfile([FromQuery] Id<Game> gameId)
+		[HttpGet("GameProfile/{gameId}")]
+		public ActionResult<GameProfileResponse> GameProfile([FromRoute] Id<Game> gameId)
 		{
+			var games = _gameStore.FindGames(new[] { gameId });
+
+			if (!games.TryGetValue(gameId, out var game))
+			{
+				return NotFound();
+			}
+
 			var allGameActivity = _userActivityStore
 				.FindAllUserActivity()
 				.Where(userActivity => userActivity.GameId == gameId)
@@ -31,10 +40,11 @@ namespace GameTracker.GameProfiles
 			return new GameProfileResponse
 			{
 				UserName = _userProfileStore.Find().UserName,
-				GameProfile = _gameProfileFactory.Create(allGameActivity),
+				GameProfile = _gameProfileFactory.Create(game, allGameActivity),
 			};
 		}
 
+		private readonly GameStore _gameStore;
 		private readonly UserProfileStore _userProfileStore;
 		private readonly GameProfileFactory _gameProfileFactory;
 		private readonly UserActivityStore _userActivityStore;
