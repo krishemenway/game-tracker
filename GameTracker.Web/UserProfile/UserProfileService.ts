@@ -1,5 +1,4 @@
 import { UserActivity } from "UserProfile/UserActivity";
-import { GameProfile } from "GameProfile/GameProfile";
 import { Http } from "Common/Http";
 import { ObservableLoading } from "Common/ObservableLoading";
 import { Game, GameStore } from "Games/GameStore";
@@ -12,7 +11,6 @@ export interface UserProfile {
 	RecentActivities: UserActivity[];
 	TotalGamesPlayed: number;
 	ActivitiesByDate: Dictionary<UserActivity[]>;
-	GameProfilesByGameId: Dictionary<GameProfile>;
 	GamesByGameId: Dictionary<Game>;
 }
 

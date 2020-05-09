@@ -9,7 +9,7 @@ import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import GameName from "Games/GameName";
 import GameLink from "Games/GameLink";
 
-const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity[]>; className?: string }> = (props) => {
+const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity[]>; className?: string; }> = (props) => {
 	const classes = useStyles();
 	const layout = useLayoutStyles();
 
@@ -92,7 +92,7 @@ const GameReportForDayOfMonth: React.FC<{dayOfMonth: number; firstDayInMonth: mo
 
 	return (
 		<>
-			<div className={clsx(layout.paddingBottom, layout.marginHorizontal, layout.marginTopDouble, text.center)} style={{ border: "1px solid #383838" }}>
+			<div className={clsx(layout.paddingBottom, layout.marginHorizontal, layout.marginTopDouble, text.center)} style={{ borderBottom: "1px solid #383838" }}>
 				{moment(props.firstDayInMonth.format("YYYY-MM-") + padNumber(props.dayOfMonth, 2)).format("MMMM Do, YYYY")}
 			</div>
 

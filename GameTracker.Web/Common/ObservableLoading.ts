@@ -7,8 +7,9 @@ export class ObservableLoading<TSuccessData> {
 		this.SuccessData = new Observable(null);
 	}
 
-	public StartLoading(): void {
+	public StartLoading(): ObservableLoading<TSuccessData> {
 		this.IsLoading.Value = true;
+		return this;
 	}
 
 	public SucceededLoading(successData: TSuccessData): void {
