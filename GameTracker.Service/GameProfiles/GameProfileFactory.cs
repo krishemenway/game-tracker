@@ -15,6 +15,7 @@ namespace GameTracker.GameProfiles
 			{
 				Game = game,
 				AllActivity = orderedUserActivities,
+				ActivitiesByDate = orderedUserActivities.GroupByDate(),
 				MostRecent = orderedUserActivities.FirstOrDefault(),
 			};
 		}
@@ -23,7 +24,10 @@ namespace GameTracker.GameProfiles
 	public class GameProfile
 	{
 		public IGame Game { get; set; }
+		
 		public IReadOnlyList<IUserActivity> AllActivity { get; set; }
+		public Dictionary<string, List<IUserActivity>> ActivitiesByDate { get; internal set; }
+
 		public IUserActivity MostRecent { get; set; }
 	}
 }

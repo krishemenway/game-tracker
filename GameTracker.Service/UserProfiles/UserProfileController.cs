@@ -45,7 +45,7 @@ namespace GameTracker.Service.UserProfiles
 				MostRecentActivity = mostRecentActivity,
 				StartedCollectingDataTime = oldestActivity.StartTime,
 				RecentActivities = orderedActivities.Take(10).ToList(),
-				ActivitiesByDate = orderedActivities.GroupBy(x => x.AssignedToDate).ToDictionary(x => x.Key.ToString("yyyy-MM-dd"), x => x.ToList()),
+				ActivitiesByDate = orderedActivities.GroupByDate(),
 				GamesByGameId = gamesByGameId.ToDictionary(x => x.Key.Value, x => x.Value),
 			};
 		}
