@@ -1,11 +1,9 @@
-﻿using GameTracker.GameProfiles;
-using GameTracker.Games;
-using StronglyTyped.StringIds;
+﻿using GameTracker.Games;
+using GameTracker.UserActivities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace GameTracker.UserActivities
+namespace GameTracker.Service.UserProfiles
 {
 	public class UserProfile
 	{
@@ -17,8 +15,6 @@ namespace GameTracker.UserActivities
 		public List<IUserActivity> RecentActivities { get; set; }
 		public Dictionary<string, List<IUserActivity>> ActivitiesByDate { get; set; }
 
-		public int TotalGamesPlayed => GameProfilesByGameId.Keys.Count();
-		public Dictionary<string, GameProfile> GameProfilesByGameId { get; set; }
 		public Dictionary<string, IGame> GamesByGameId { get; set; }
 	}
 }

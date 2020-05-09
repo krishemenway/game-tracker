@@ -1,10 +1,11 @@
 ﻿using GameTracker.GameProfiles;
 using GameTracker.Games;
+using GameTracker.UserActivities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 
-namespace GameTracker.UserActivities
+namespace GameTracker.Service.UserProfiles
 {
 	[Route("WebAPI")]
 	public class UserProfileController : ControllerBase
@@ -44,9 +45,8 @@ namespace GameTracker.UserActivities
 				MostRecentActivity = mostRecentActivity,
 				StartedCollectingDataTime = oldestActivity.StartTime,
 				RecentActivities = orderedActivities.Take(10).ToList(),
-				ActivitiesByDate = orderedActivities.GroupBy(x => x.AssignedToDate).ToDictionary(x => x.Key.ToString("yyyy-MM-dd"), x => x.ToList()),
+				ActivitiesByDate = orderedActivities.GroupByDate(),
 				GamesByGameId = gamesByGameId.ToDictionary(x => x.Key.Value, x => x.Value),
-				GameProfilesByGameId = orderedActivities.GroupBy(activity => activity.GameId).ToDictionary(activity => activity.Key.Value, activity => _gameProfileFactory.Create(activity.ToList())),
 			};
 		}
 

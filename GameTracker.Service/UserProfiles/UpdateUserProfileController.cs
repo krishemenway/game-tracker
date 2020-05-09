@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace GameTracker.UserActivities
+namespace GameTracker.Service.UserProfiles
 {
 	[Route("WebAPI")]
 	public class UpdateUserProfileController
