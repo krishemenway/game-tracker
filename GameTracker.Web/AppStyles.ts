@@ -10,12 +10,14 @@ export const useBackgroundStyles = makeStyles({
 	},
 });
 
-export const useEventStyles = makeStyles({
+export const useActionStyles = makeStyles({
 	clickable: {
 		cursor: "pointer",
+		textDecoration: "none",
 
 		"&:hover": {
 			background: "rgba(50,50,50,.3) !important",
+			textDecoration: "underline",
 		},
 	},
 });

@@ -7,6 +7,7 @@ import { TimeSpan } from "Common/TimeSpan";
 import GameIcon from "Games/GameIcon";
 import GameName from "Games/GameName";
 import GameLink from "Games/GameLink";
+import DayLink from "UserActivity/DayLink";
 
 const RecentActivities: React.FC<{ recentActivity: UserActivity[]; className?: string }> = (props) => {
 	const layout = useLayoutStyles();
@@ -23,10 +24,10 @@ const RecentActivityItem: React.FC<{ activity: UserActivity }> = (props) => {
 	const background = useBackgroundStyles();
 	const text = useTextStyles();
 
-	const assignedDate = React.useMemo(() => moment.parseZone(props.activity.AssignedToDate).format("MMMM Do, YYYY"), [props.activity.AssignedToDate]);
-	const startTime = React.useMemo(() => moment.parseZone(props.activity.StartTime).format("h:mm:ss a"), [props.activity.StartTime]);
-	const endTime = React.useMemo(() => moment.parseZone(props.activity.EndTime).format("h:mm:ss a"), [props.activity.EndTime]);
-	const timeSpentInSeconds = React.useMemo(() => TimeSpan.Readable(props.activity.TimeSpentInSeconds), [props.activity.TimeSpentInSeconds]);
+	const assignedDate = React.useMemo<moment.Moment>(() => moment.parseZone(props.activity.AssignedToDate), [props.activity.AssignedToDate]);
+	const startTime = React.useMemo<string>(() => moment.parseZone(props.activity.StartTime).format("h:mm:ss a"), [props.activity.StartTime]);
+	const endTime = React.useMemo<string>(() => moment.parseZone(props.activity.EndTime).format("h:mm:ss a"), [props.activity.EndTime]);
+	const timeSpentInSeconds = React.useMemo<string>(() => TimeSpan.Readable(props.activity.TimeSpentInSeconds), [props.activity.TimeSpentInSeconds]);
 
 	return (
 		<li className={clsx(layout.width50, layout.marginBottomHalf)}>
@@ -39,7 +40,7 @@ const RecentActivityItem: React.FC<{ activity: UserActivity }> = (props) => {
 					<div className={clsx(text.font16, layout.marginBottomHalf)}><GameLink gameId={props.activity.GameId}><GameName gameId={props.activity.GameId} /></GameLink></div>
 					<div className={clsx(text.font14, text.gray9f, layout.marginBottomHalf)}>{startTime} &ndash; {endTime}</div>
 					<div className={clsx(text.font14, text.gray9f, layout.marginBottomHalf)}>{timeSpentInSeconds}</div>
-					<div className={clsx(text.font14, layout.absolute, layout.bottomRight)}>{assignedDate}</div>
+					<div className={clsx(text.font14, layout.absolute, layout.bottomRight)}><DayLink date={assignedDate}>{assignedDate.format("MMMM Do, YYYY")}</DayLink></div>
 				</div>
 			</div>
 		</li>

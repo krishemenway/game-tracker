@@ -6,6 +6,8 @@ import { UserActivity } from "UserProfile/UserActivity";
 import Popover from "@material-ui/core/Popover";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import AggregateGameTableForDay from "GameProfiles/AggregateGameTableForDay";
+import MonthLink from "UserActivity/MonthLink";
+import DayLink from "UserActivity/DayLink";
 
 const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity[]>; className?: string; }> = (props) => {
 	const layout = useLayoutStyles();
@@ -31,14 +33,14 @@ const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActi
 
 	const daysInMonth = createDaysInMonth(props.firstDayInMonth);
 	const [currentPopoverAnchor, setPopoverAnchor] = React.useState<HTMLDivElement|null>(null);
-	const [currentPopoverDayOfMonth, setCurrentPopoverDayOfMonth] = React.useState<number|null>(null);
-	const popoverIsOpen = currentPopoverAnchor !== null;
+	const [currentPopoverDate, setCurrentPopoverDate] = React.useState<moment.Moment|null>(null);
+	const popoverIsOpen = currentPopoverDate !== null;
 
 	return (
 		<div className={clsx(layout.width33, layout.marginBottomDouble)}>
 			<div className={clsx(background.default, layout.height100, layout.paddingHorizontalHalf, layout.paddingBottomHalf)}>
 				<div className={clsx(layout.width100, layout.marginBottom, layout.paddingVertical, text.center, background.borderBottom)}>
-					{props.firstDayInMonth.format("MMMM YYYY")}
+					<MonthLink month={props.firstDayInMonth}>{props.firstDayInMonth.format("MMMM YYYY")}</MonthLink>
 				</div>
 
 				<div className={clsx(layout.flexRow, layout.flexWrap)}>
@@ -48,9 +50,9 @@ const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActi
 						return (
 							<div
 								key={dayInMonth}
-								className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, activities.length > 0 ? classes.gameReportButton : undefined, dayInMonth === currentPopoverDayOfMonth ? classes.selectedDay : undefined)}
+								className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, activities.length > 0 ? classes.gameReportButton : undefined, dayInMonth === currentPopoverDate?.day() ? classes.selectedDay : undefined)}
 								style={{marginLeft: dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined}}
-								onClick={activities.length > 0 ? (evt) => { setCurrentPopoverDayOfMonth(dayInMonth); setPopoverAnchor(evt.currentTarget); } : () => undefined}
+								onClick={activities.length > 0 ? (evt) => { setCurrentPopoverDate(moment(props.firstDayInMonth.format("YYYY-MM-") + padNumber(dayInMonth, 2))); setPopoverAnchor(evt.currentTarget); } : () => undefined}
 							>
 								<OverviewCalendarMonthDayIcon activities={activities} />
 							</div>
@@ -60,24 +62,24 @@ const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActi
 			</div>
 
 			{
-				!popoverIsOpen ? <></> :
+				!popoverIsOpen || currentPopoverDate === null ? <></> :
 				<Popover
 					open={popoverIsOpen}
 					anchorEl={currentPopoverAnchor}
-					onClose={() => { setPopoverAnchor(null); setCurrentPopoverDayOfMonth(null); }}
+					onClose={() => { setPopoverAnchor(null); setCurrentPopoverDate(null); }}
 					PaperProps={{ style: { background: "#181818" } }}
 					anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
 					transformOrigin={{ vertical: "top", horizontal: "center" }}
 				>
 					<>
 						<div className={clsx(layout.paddingBottom, layout.marginHorizontal, layout.marginTopDouble, text.center)} style={{ borderBottom: "1px solid #383838" }}>
-							{moment(props.firstDayInMonth.format("YYYY-MM-") + padNumber(currentPopoverDayOfMonth ?? 1, 2)).format("MMMM Do, YYYY")}
+							<DayLink date={currentPopoverDate}>{currentPopoverDate.format("MMMM Do, YYYY")}</DayLink>
 						</div>
 
 						<AggregateGameTableForDay
-							dayOfMonth={currentPopoverDayOfMonth ?? 1}
+							dayOfMonth={currentPopoverDate?.day() ?? 1}
 							firstDayInMonth={props.firstDayInMonth}
-							activities={acitivitesForDate(props.firstDayInMonth, currentPopoverDayOfMonth ?? 1, props.userActivitiesByDate)}
+							activities={acitivitesForDate(props.firstDayInMonth, currentPopoverDate.day(), props.userActivitiesByDate)}
 						/>
 					</>
 				</Popover>
