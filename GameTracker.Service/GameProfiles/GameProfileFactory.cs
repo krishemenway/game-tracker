@@ -17,6 +17,9 @@ namespace GameTracker.GameProfiles
 				AllActivity = orderedUserActivities,
 				ActivitiesByDate = orderedUserActivities.GroupByDate(),
 				MostRecent = orderedUserActivities.FirstOrDefault(),
+				TotalUserActivityCount = orderedUserActivities.Count,
+				MeanUserActivityTimePlayedInSeconds = orderedUserActivities.Average(x => x.TimeSpentInSeconds),
+				TotalTimePlayedInSeconds = orderedUserActivities.Sum(x => x.TimeSpentInSeconds),
 			};
 		}
 	}
@@ -26,8 +29,12 @@ namespace GameTracker.GameProfiles
 		public IGame Game { get; set; }
 		
 		public IReadOnlyList<IUserActivity> AllActivity { get; set; }
-		public Dictionary<string, List<IUserActivity>> ActivitiesByDate { get; internal set; }
+		public Dictionary<string, List<IUserActivity>> ActivitiesByDate { get; set; }
 
 		public IUserActivity MostRecent { get; set; }
+
+		public int TotalUserActivityCount { get; set; }
+		public double MeanUserActivityTimePlayedInSeconds { get; set; }
+		public double TotalTimePlayedInSeconds { get; set; }
 	}
 }
