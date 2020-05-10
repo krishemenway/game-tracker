@@ -16,6 +16,11 @@ const GameLink: React.FC<{ gameId: string, className?: string }> = (props) => {
 	);
 };
 
+const GameLinkOrLabel: React.FC<{ gameId: string, className?: string }> = (props) => {
+	const isViewingGame = window.location.pathname.match(/^\/game\/[^\/]+$/i) !== null;
+	return isViewingGame ? <span className={props.className}>{props.children}</span> : <GameLink {...props} />;
+};
+
 const useStyles = makeStyles((t) => ({
 	link: {
 		textDecoration: "none",
@@ -26,4 +31,4 @@ const useStyles = makeStyles((t) => ({
 	},
 }));
 
-export default GameLink;
+export default GameLinkOrLabel;

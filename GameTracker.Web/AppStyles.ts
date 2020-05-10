@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export const useBackgroundStyles = makeStyles({
 	default: { background: "rgba(0,0,0,.4)", },
+	borderBottom: { borderBottom: "1px solid #383838" },
 	bgAlternateDarken: {
 		"& li:nth-child(even), & tr:nth-child(even)": {
 			backgroundColor: "rgba(50,50,50,0.15)",
@@ -32,22 +33,22 @@ export const useLayoutStyles = makeStyles({
 		borderTop: "1px solid rgba(255,255,255,.4)",
 	},
 	flexColumn: { display: "flex", flexDirection: "column", },
-	flexRow: { display: "flex", flexDirection: "row", },
+	flexRow: { display: "flex", flexDirection: "row", width: "100%" },
 	flexCenter: { alignItems: "center" },
 	flexWrap: { flexWrap: "wrap", },
-	flexWrapSpacing: {
+	flexItemSpacing: {
 		marginLeft: "-10px",
 		marginRight: "-10px",
+		width: "auto",
 
-		"& > *": {
-			paddingLeft: "8px",
-			paddingRight: "8px",
-		}
+		"& > *": { paddingLeft: "10px", paddingRight: "10px", }
 	},
 	flexEvenDistribution: {
-		flexGrow: 1,
-		flexBasis: 0,
 		flexWrap: "nowrap",
+		"& > *": {
+			flexGrow: 1,
+			flexBasis: 0,
+		}
 	},
 	flexFillRemaining: { flexGrow: 1 },
 

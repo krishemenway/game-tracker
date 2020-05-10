@@ -4,7 +4,7 @@ const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 
 module.exports = {
 	entry: {
-		app: "./App.tsx",
+		app: ["./Common/ArrayPrototype.ts", "./App.tsx"],
 	},
 
 	output: {

@@ -12,7 +12,7 @@ const RecentActivities: React.FC<{ recentActivity: UserActivity[]; className?: s
 	const layout = useLayoutStyles();
 
 	return (
-		<ul className={clsx(layout.flexRow, layout.flexWrap, layout.flexWrapSpacing, props.className)}>
+		<ul className={clsx(layout.flexRow, layout.flexWrap, layout.flexItemSpacing, props.className)}>
 			{props.recentActivity.map((activity) => <RecentActivityItem key={activity.UserActivityId} activity={activity} />)}
 		</ul>
 	);
@@ -26,7 +26,7 @@ const RecentActivityItem: React.FC<{ activity: UserActivity }> = (props) => {
 	const assignedDate = React.useMemo(() => moment.parseZone(props.activity.AssignedToDate).format("MMMM Do, YYYY"), [props.activity.AssignedToDate]);
 	const startTime = React.useMemo(() => moment.parseZone(props.activity.StartTime).format("h:mm:ss a"), [props.activity.StartTime]);
 	const endTime = React.useMemo(() => moment.parseZone(props.activity.EndTime).format("h:mm:ss a"), [props.activity.EndTime]);
-	const timeSpentInSeconds = React.useMemo(() => TimeSpan.Readable(props.activity.TimeSpentInSeconds * 1000), [props.activity.TimeSpentInSeconds]);
+	const timeSpentInSeconds = React.useMemo(() => TimeSpan.Readable(props.activity.TimeSpentInSeconds), [props.activity.TimeSpentInSeconds]);
 
 	return (
 		<li className={clsx(layout.width50, layout.marginBottomHalf)}>
