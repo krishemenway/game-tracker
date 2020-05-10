@@ -79,7 +79,7 @@ const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActi
 						<AggregateGameTableForDay
 							dayOfMonth={currentPopoverDate?.day() ?? 1}
 							firstDayInMonth={props.firstDayInMonth}
-							activities={acitivitesForDate(props.firstDayInMonth, currentPopoverDate.day(), props.userActivitiesByDate)}
+							activities={acitivitesForDate(props.firstDayInMonth, currentPopoverDate.date(), props.userActivitiesByDate)}
 						/>
 					</>
 				</Popover>
