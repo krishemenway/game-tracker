@@ -12,7 +12,7 @@ interface Statistic {
 
 const GameStatistics: React.FC<{ gameId: string; gameProfile: GameProfile }> = (props) => {
 	const layout = useLayoutStyles();
-	const lastPlayed = React.useMemo(() => props.gameProfile.MostRecent !== null ? moment(props.gameProfile.MostRecent.EndTime).format("MMMM Do YYYY, h:mm:ss a") : "Never", [props.gameProfile.MostRecent]);
+	const lastPlayed = React.useMemo(() => props.gameProfile.MostRecent !== null ? moment.parseZone(props.gameProfile.MostRecent.EndTime).format("MMMM Do YYYY, h:mm:ss a") : "Never", [props.gameProfile.MostRecent]);
 
 	return (
 		<div className={clsx(layout.flexRow, layout.flexEvenDistribution, layout.flexItemSpacing)}>
