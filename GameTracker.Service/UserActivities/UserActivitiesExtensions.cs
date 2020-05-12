@@ -5,9 +5,9 @@ namespace GameTracker.UserActivities
 {
 	public static class UserActivitiesExtensions
 	{
-		public static Dictionary<string, List<IUserActivity>> GroupByDate(this IEnumerable<IUserActivity> userActivities)
+		public static Dictionary<string, UserActivityForDate> GroupByDate(this IEnumerable<IUserActivity> userActivities)
 		{
-			return userActivities.GroupBy(x => x.AssignedToDate).ToDictionary(x => x.Key.ToString("yyyy-MM-dd"), x => x.ToList());
+			return userActivities.GroupBy(x => x.AssignedToDate).ToDictionary(x => x.Key.ToString("yyyy-MM-dd"), groupedUserActivities => new UserActivityForDate(groupedUserActivities.ToList()));
 		}
 	}
 }

@@ -15,7 +15,7 @@ namespace GameTracker.UserActivities
 	public interface IUserActivityStore
 	{
 		IReadOnlyList<IUserActivity> FindAllUserActivity();
-		IReadOnlyDictionary<string, IReadOnlyList<IUserActivity>> FindUserActivityByDay(DateTimeOffset? startTime, DateTimeOffset? endTime);
+		IReadOnlyDictionary<string, UserActivityForDate> FindUserActivityByDay(DateTimeOffset? startTime, DateTimeOffset? endTime);
 		IUserActivity SaveActivity(ProcessSession processSession, IGame game);
 	}
 
@@ -34,14 +34,10 @@ namespace GameTracker.UserActivities
 			return FindAllUserActivities();
 		}
 
-		public IReadOnlyDictionary<string, IReadOnlyList<IUserActivity>> FindUserActivityByDay(DateTimeOffset? startTime, DateTimeOffset? endTime)
+		public IReadOnlyDictionary<string, UserActivityForDate> FindUserActivityByDay(DateTimeOffset? startTime, DateTimeOffset? endTime)
 		{
 			var searchRange = new Range<DateTimeOffset>(startTime ?? DateTimeOffset.MinValue, endTime ?? DateTimeOffset.MaxValue);
-
-			return FindAllUserActivities()
-				.Where(userActivity => userActivity.DateRange.Intersects(searchRange))
-				.GroupBy(userActivity => userActivity.AssignedToDate.Date)
-				.ToDictionary(gameActivities => gameActivities.Key.ToString("YYYY-mm-dd"), gameActivities => (IReadOnlyList<IUserActivity>) gameActivities.Cast<IUserActivity>().ToList());
+			return FindAllUserActivities().Where(userActivity => userActivity.DateRange.Intersects(searchRange)).GroupByDate();
 		}
 
 		public IUserActivity SaveActivity(ProcessSession processSession, IGame game)

@@ -22,7 +22,7 @@ namespace GameTracker.UserActivities
 		public ActionResult<UserActivityPerDayResponse> UserActivityPerDay([FromQuery] DateTimeOffset? startTime, [FromQuery] DateTimeOffset? endTime)
 		{
 			var userActivityPerDay = _userActivityStore.FindUserActivityByDay(startTime, endTime);
-			var distinctGameIds = userActivityPerDay.SelectMany(x => x.Value).Select(x => x.GameId).Distinct().ToList();
+			var distinctGameIds = userActivityPerDay.SelectMany(x => x.Value.AllUserActivity).Select(x => x.GameId).Distinct().ToList();
 
 			return new UserActivityPerDayResponse
 			{
@@ -37,7 +37,7 @@ namespace GameTracker.UserActivities
 
 	public class UserActivityPerDayResponse
 	{
-		public IReadOnlyDictionary<string, IReadOnlyList<IUserActivity>> UserActivityPerDay { get; set; }
+		public IReadOnlyDictionary<string, UserActivityForDate> UserActivityPerDay { get; set; }
 		public IReadOnlyDictionary<Id<Game>, IGame> GamesByGameId { get; set; }
 	}
 }

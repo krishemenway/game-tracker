@@ -29,7 +29,7 @@ namespace GameTracker.GameProfiles
 		public IGame Game { get; set; }
 		
 		public IReadOnlyList<IUserActivity> AllActivity { get; set; }
-		public Dictionary<string, List<IUserActivity>> ActivitiesByDate { get; set; }
+		public Dictionary<string, UserActivityForDate> ActivitiesByDate { get; set; }
 
 		public IUserActivity MostRecent { get; set; }
 

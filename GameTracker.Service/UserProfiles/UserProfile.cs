@@ -13,7 +13,7 @@ namespace GameTracker.Service.UserProfiles
 		public IUserActivity MostRecentActivity { get; set; }
 
 		public List<IUserActivity> RecentActivities { get; set; }
-		public Dictionary<string, List<IUserActivity>> ActivitiesByDate { get; set; }
+		public Dictionary<string, UserActivityForDate> ActivitiesByDate { get; set; }
 
 		public Dictionary<string, IGame> GamesByGameId { get; set; }
 	}
