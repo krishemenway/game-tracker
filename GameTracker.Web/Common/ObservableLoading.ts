@@ -5,6 +5,7 @@ export class ObservableLoading<TSuccessData> {
 		this.IsLoading = new Observable(true);
 		this.ErrorMessage = new Observable(null);
 		this.SuccessData = new Observable(null);
+		this.HasLoaded = new Computed(() => this.SuccessData.Value !== null);
 	}
 
 	public StartLoading(): ObservableLoading<TSuccessData> {
@@ -27,4 +28,6 @@ export class ObservableLoading<TSuccessData> {
 	public IsLoading: Observable<boolean>;
 	public ErrorMessage: Observable<string|null>;
 	public SuccessData: Observable<TSuccessData|null>;
+
+	public HasLoaded: Computed<boolean>;
 }

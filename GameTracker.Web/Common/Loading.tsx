@@ -1,7 +1,9 @@
 import * as React from "react";
+import clsx from "clsx";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { ObservableLoading } from "Common/ObservableLoading";
 import { useObservable } from "Common/useObservable";
+import { useTextStyles, useLayoutStyles } from "AppStyles";
 
 interface LoadingProps<TSuccessData> {
 	observableLoading: ObservableLoading<TSuccessData>;
@@ -12,6 +14,9 @@ interface LoadingProps<TSuccessData> {
 }
 
 function Loading<TSuccessData>(props: LoadingProps<TSuccessData>) {
+	const text = useTextStyles();
+	const layout = useLayoutStyles();
+
 	const successData = useObservable(props.observableLoading.SuccessData);
 	const isLoading = useObservable(props.observableLoading.IsLoading);
 	const errorMessage = useObservable(props.observableLoading.ErrorMessage);
@@ -20,7 +25,7 @@ function Loading<TSuccessData>(props: LoadingProps<TSuccessData>) {
 		if (props.renderLoading !== undefined) {
 			return props.renderLoading();
 		} else {
-			return <div style={{textAlign: "center"}}><CircularProgress style={{margin: "24px 0"}} /></div>;
+			return <div className={clsx(text.center, layout.paddingVerticalDouble)}><CircularProgress /></div>;
 		}
 	}
 
@@ -28,7 +33,7 @@ function Loading<TSuccessData>(props: LoadingProps<TSuccessData>) {
 		if (props.renderError !== undefined) {
 			return props.renderError(errorMessage);
 		} else {
-			return <>{errorMessage}</>;
+			return <div className={clsx(text.center, layout.paddingVerticalDouble)}>{errorMessage}</div>;
 		}
 	}
 

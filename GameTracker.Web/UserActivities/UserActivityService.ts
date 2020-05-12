@@ -1,9 +1,36 @@
+import * as moment from "moment";
 import { ObservableLoading } from "Common/ObservableLoading";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
+import { Http } from "Common/Http";
+import { Game, GameStore } from "Games/GameStore";
+
+interface UserActivityPerDayResponse
+{
+	UserActivityPerDay: Dictionary<UserActivityForDate>;
+	GamesByGameId: Dictionary<Game>;
+}
 
 export class UserActivityService {
 	constructor() {
 		this.UserActivityByDate = {};
+	}
+
+	public LoadFromServer(dateKey: string, loadingUserActivity: ObservableLoading<UserActivityForDate>): void {
+		if (loadingUserActivity.HasLoaded.Value) {
+			return;
+		}
+
+		const startTime = moment(dateKey);
+		const endTime = startTime.clone().add(1, "day");
+
+		Http.get<UserActivityPerDayResponse>(`/WebAPI/UserActivityPerDay?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`)
+			.then((response) => {
+				GameStore.Instance.LoadGames(response.GamesByGameId);
+				loadingUserActivity.SucceededLoading(response.UserActivityPerDay[dateKey]);
+			})
+			.catch(() => {
+				loadingUserActivity.FailedLoading("Something went wrong loading user activity!");
+			})
 	}
 
 	public FindOrCreateUserActivityForDate(dayKey: string): ObservableLoading<UserActivityForDate> {
