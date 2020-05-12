@@ -16,10 +16,12 @@ export const useActionStyles = makeStyles({
 		textDecoration: "none",
 
 		"&:hover": {
-			background: "rgba(50,50,50,.3) !important",
 			textDecoration: "underline",
 		},
 	},
+	clickableBackground: {
+		"&:hover": { background: "rgba(50,50,50,.3) !important", },
+	}
 });
 
 export const useLayoutStyles = makeStyles({
