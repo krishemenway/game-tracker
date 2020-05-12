@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as moment from "moment";
 import clsx from "clsx";
-import { UserActivity } from "UserProfile/UserActivity";
+import { UserActivity } from "UserActivities/UserActivity";
 import { TimeSpan } from "Common/TimeSpan";
 import GameLink from "Games/GameLink";
 import GameName from "Games/GameName";

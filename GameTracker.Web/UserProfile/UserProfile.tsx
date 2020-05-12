@@ -2,19 +2,17 @@ import * as React from "react";
 import clsx from "clsx";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { UserProfileService, UserProfile } from "UserProfile/UserProfileService";
-import RecentActivities from "UserProfile/RecentActivities";
+import UserActivityList from "UserActivities/UserActivityList";
 import Loading from "Common/Loading";
-import OverviewCalendar from "UserProfile/OverviewCalendar";
-
-const GameIcon: React.FC = () => <div>Game Icon</div>;
+import UserActivityCalendar from "UserActivities/UserActivityCalendar";
 
 export default () => {
-	const classes = useLayoutStyles();
+	const layout = useLayoutStyles();
 
 	React.useEffect(() => { UserProfileService.Instance.LoadProfile(); }, []);
 
 	return (
-		<div className={classes.centerLayout1000}>
+		<div className={layout.centerLayout1000}>
 			<Loading
 				observableLoading={UserProfileService.Instance.LoadingUserProfile}
 				renderSuccess={(profile) => <LoadedUserProfile userProfile={profile} />}
@@ -34,8 +32,8 @@ function LoadedUserProfile(props: { userProfile: UserProfile }) {
 
 			<section className={clsx(layout.marginBottom)}>
 				<h2 className={clsx(text.font20, layout.marginBottom)}>Recent Activity</h2>
-				<RecentActivities recentActivity={props.userProfile.RecentActivities} className={layout.marginBottom} />
-				<OverviewCalendar userActivitiesByDate={props.userProfile.ActivitiesByDate} className={layout.marginBottom} />
+				<UserActivityList activities={props.userProfile.RecentActivities} className={layout.marginBottom} />
+				<UserActivityCalendar userActivitiesByDate={props.userProfile.ActivitiesByDate} className={layout.marginBottom} />
 			</section>
 
 			<section className={clsx(layout.marginBottom)}>

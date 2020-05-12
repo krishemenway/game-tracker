@@ -3,8 +3,8 @@ import * as reactDom from "react-dom";
 import { BrowserRouter, Switch, Route, RouteComponentProps } from "react-router-dom";
 import UserProfile from "UserProfile/UserProfile";
 import GameProfile from "GameProfiles/GameProfileView";
-import DayView from "UserActivity/DayView";
-import MonthView from "UserActivity/MonthView";
+import DayView from "UserActivities/DayView";
+import MonthView from "UserActivities/MonthView";
 import ProcessManager from "ProcessManager/ProcessManager";
 import NotFound from "Common/NotFound";
 

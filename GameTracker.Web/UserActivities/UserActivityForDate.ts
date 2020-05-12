@@ -1,4 +1,4 @@
-import { UserActivity } from "UserProfile/UserActivity";
+import { UserActivity } from "UserActivities/UserActivity";
 
 export interface UserActivityForDate {
 	AllUserActivity: UserActivity[];

@@ -1,6 +1,6 @@
-import { UserActivity } from "UserProfile/UserActivity";
+import { UserActivity } from "UserActivities/UserActivity";
 import { Game } from "Games/GameStore";
-import { UserActivityForDate } from "UserActivity/UserActivityForDate";
+import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 
 export interface GameProfile {
 	Game: Game;
