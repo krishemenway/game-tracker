@@ -2,7 +2,7 @@ import clsx from "clsx";
 import * as React from "react";
 import Loading from "Common/Loading";
 import GameName from "Games/GameName";
-import OverviewCalendar from "UserProfile/OverviewCalendar";
+import UserActivityCalendar from "UserActivities/UserActivityCalendar";
 import { GameProfileService } from "GameProfiles/GameProfileService";
 import { GameProfile } from "GameProfiles/GameProfile";
 import GameStatistics from "GameProfiles/GameStatistics";
@@ -18,7 +18,7 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile }> 
 	const background = useBackgroundStyles();
 
 	return (
-		<div>
+		<>
 			<h1 className={clsx(layout.marginVertical, text.font24, background.borderBottom)}>
 				<GameName gameId={props.gameId} />
 			</h1>
@@ -26,8 +26,8 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile }> 
 			<GameStatistics gameId={props.gameId} gameProfile={props.gameProfile} />
 
 			<h2 className={clsx(layout.marginVertical, text.font20)}>Recent Activity</h2>
-			<OverviewCalendar userActivitiesByDate={props.gameProfile.ActivitiesByDate} />
-		</div>
+			<UserActivityCalendar userActivitiesByDate={props.gameProfile.ActivitiesByDate} />
+		</>
 	);
 };
 

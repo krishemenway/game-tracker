@@ -2,20 +2,21 @@ import * as React from "react";
 import * as moment from "moment";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
-import { UserActivity } from "UserProfile/UserActivity";
+import { UserActivity } from "UserActivities/UserActivity";
 import Popover from "@material-ui/core/Popover";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import AggregateGameTableForDay from "GameProfiles/AggregateGameTableForDay";
-import MonthLink from "UserActivity/MonthLink";
-import DayLink from "UserActivity/DayLink";
+import MonthLink from "UserActivities/MonthLink";
+import DayLink from "UserActivities/DayLink";
+import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 
-const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity[]>; className?: string; }> = (props) => {
+const UserActivityCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivityForDate>; className?: string; }> = (props) => {
 	const layout = useLayoutStyles();
 
 	return (
 		<div className={clsx(props.className, layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}>
 			{createFirstDaysInMonths(props.userActivitiesByDate).map((firstDayInMonth) => (
-				<OverviewCalendarMonth
+				<UserActivityCalendarMonth
 					key={firstDayInMonth.format("YYYY-MM")}
 					firstDayInMonth={firstDayInMonth}
 					userActivitiesByDate={props.userActivitiesByDate}
@@ -25,7 +26,7 @@ const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity
 	);
 };
 
-const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActivitiesByDate: Dictionary<UserActivity[]> }> = (props) => {
+const UserActivityCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActivitiesByDate: Dictionary<UserActivityForDate> }> = (props) => {
 	const classes = useStyles();
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
@@ -54,7 +55,7 @@ const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActi
 								style={{marginLeft: dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined}}
 								onClick={activities.length > 0 ? (evt) => { setCurrentPopoverDate(moment(props.firstDayInMonth.format("YYYY-MM-") + padNumber(dayInMonth, 2))); setPopoverAnchor(evt.currentTarget); } : () => undefined}
 							>
-								<OverviewCalendarMonthDayIcon activities={activities} />
+								<UserActivityCalendarMonthDayIcon activities={activities} />
 							</div>
 						);
 					})}
@@ -88,7 +89,7 @@ const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActi
 	)
 };
 
-const OverviewCalendarMonthDayIcon: React.FC<{ activities: UserActivity[] }> = (props) => {
+const UserActivityCalendarMonthDayIcon: React.FC<{ activities: UserActivity[] }> = (props) => {
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
 
@@ -116,9 +117,9 @@ const MultipleActivityIcon: React.FC<{ className: string; count: number }> = (pr
 	return <div className={props.className}>{props.count}</div>;
 };
 
-function acitivitesForDate(firstDayInMonth: moment.Moment, dayInMonth: number, userActivitiesByDate: Dictionary<UserActivity[]>): UserActivity[] {
+function acitivitesForDate(firstDayInMonth: moment.Moment, dayInMonth: number, userActivitiesByDate: Dictionary<UserActivityForDate>): UserActivity[] {
 	const dateKey = firstDayInMonth.format("YYYY-MM-") + padNumber(dayInMonth, 2);
-	return userActivitiesByDate[dateKey] ?? [];
+	return userActivitiesByDate[dateKey]?.AllUserActivity ?? [];
 }
 
 function createDaysInMonth(firstDayInMonth: moment.Moment): number[] {
@@ -132,7 +133,7 @@ function createDaysInMonth(firstDayInMonth: moment.Moment): number[] {
 	return daysInMonth;
 }
 
-function createFirstDaysInMonths(userActivitiesByDate: Dictionary<UserActivity[]>): moment.Moment[] {
+function createFirstDaysInMonths(userActivitiesByDate: Dictionary<UserActivityForDate>): moment.Moment[] {
 	return Object.keys(userActivitiesByDate)
 		.map((dateKey) => dateKey.slice(0, 7))
 		.distinct()
@@ -168,4 +169,4 @@ const useStyles = makeStyles((t) => ({
 	},
 }));
 
-export default OverviewCalendar;
+export default UserActivityCalendar;

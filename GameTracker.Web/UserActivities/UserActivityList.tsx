@@ -1,25 +1,25 @@
 import clsx from "clsx";
 import * as React from "react";
 import * as moment from "moment";
-import { UserActivity } from "UserProfile/UserActivity";
+import { UserActivity } from "UserActivities/UserActivity";
 import { useBackgroundStyles, useLayoutStyles, useTextStyles } from "AppStyles";
 import { TimeSpan } from "Common/TimeSpan";
 import GameIcon from "Games/GameIcon";
 import GameName from "Games/GameName";
 import GameLink from "Games/GameLink";
-import DayLink from "UserActivity/DayLink";
+import DayLink from "UserActivities/DayLink";
 
-const RecentActivities: React.FC<{ recentActivity: UserActivity[]; className?: string }> = (props) => {
+export default (props: { activities: UserActivity[]; className?: string }) => {
 	const layout = useLayoutStyles();
 
 	return (
 		<ul className={clsx(layout.flexRow, layout.flexWrap, layout.flexItemSpacing, props.className)}>
-			{props.recentActivity.map((activity) => <RecentActivityItem key={activity.UserActivityId} activity={activity} />)}
+			{props.activities.map((activity) => <UserActivity key={activity.UserActivityId} activity={activity} />)}
 		</ul>
 	);
 };
 
-const RecentActivityItem: React.FC<{ activity: UserActivity }> = (props) => {
+const UserActivity: React.FC<{ activity: UserActivity }> = (props) => {
 	const layout = useLayoutStyles();
 	const background = useBackgroundStyles();
 	const text = useTextStyles();
@@ -45,6 +45,4 @@ const RecentActivityItem: React.FC<{ activity: UserActivity }> = (props) => {
 			</div>
 		</li>
 	);
-}
-
-export default RecentActivities;
+};

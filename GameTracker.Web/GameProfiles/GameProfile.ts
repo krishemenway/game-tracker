@@ -1,11 +1,12 @@
-import { UserActivity } from "UserProfile/UserActivity";
+import { UserActivity } from "UserActivities/UserActivity";
 import { Game } from "Games/GameStore";
+import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 
 export interface GameProfile {
 	Game: Game;
 
 	AllActivity: UserActivity[];
-	ActivitiesByDate: Dictionary<UserActivity[]>;
+	ActivitiesByDate: Dictionary<UserActivityForDate>;
 
 	MostRecent: UserActivity|null;
 
