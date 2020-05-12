@@ -1,6 +1,5 @@
 ﻿using GameTracker.Games;
 using Microsoft.AspNetCore.Mvc;
-using StronglyTyped.StringIds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +26,7 @@ namespace GameTracker.UserActivities
 			return new UserActivityPerDayResponse
 			{
 				UserActivityPerDay = userActivityPerDay,
-				GamesByGameId = _gameStore.FindGames(distinctGameIds),
+				GamesByGameId = _gameStore.FindGames(distinctGameIds).ToDictionary(x => x.Key.Value, x => x.Value),
 			};
 		}
 
@@ -38,6 +37,6 @@ namespace GameTracker.UserActivities
 	public class UserActivityPerDayResponse
 	{
 		public IReadOnlyDictionary<string, UserActivityForDate> UserActivityPerDay { get; set; }
-		public IReadOnlyDictionary<Id<Game>, IGame> GamesByGameId { get; set; }
+		public IReadOnlyDictionary<string, IGame> GamesByGameId { get; set; }
 	}
 }
