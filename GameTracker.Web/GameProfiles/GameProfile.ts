@@ -7,5 +7,9 @@ export interface GameProfile {
 	AllActivity: UserActivity[];
 	ActivitiesByDate: Dictionary<UserActivity[]>;
 
-	MostRecent: UserActivity;
+	MostRecent: UserActivity|null;
+
+	TotalUserActivityCount: number;
+	MeanUserActivityTimePlayedInSeconds: number;
+	TotalTimePlayedInSeconds: number;
 }

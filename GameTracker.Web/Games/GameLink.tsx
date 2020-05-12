@@ -1,29 +1,15 @@
 import clsx from "clsx";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
+import { useActionStyles } from "AppStyles";
 
-const GameLink: React.FC<{ gameId: string, className?: string }> = (props) => {
-	const classes = useStyles();
+const GameLinkOrLabel: React.FC<{ gameId: string, className?: string }> = (props) => {
+	const isViewingGame = window.location.pathname.match(/^\/game\/[^\/]+$/i) !== null;
+	const action = useActionStyles();
 
-	return (
-		<Link
-			className={clsx(classes.link, props.className)}
-			to={`/game/${props.gameId}`}
-		>
-			{props.children}
-		</Link>
-	);
+	return isViewingGame
+		? <span className={props.className}>{props.children}</span>
+		: <Link className={clsx(action.clickable, props.className)} to={`/game/${props.gameId}`}>{props.children}</Link>;
 };
 
-const useStyles = makeStyles((t) => ({
-	link: {
-		textDecoration: "none",
-
-		"&:hover": {
-			textDecoration: "underline",
-		}
-	},
-}));
-
-export default GameLink;
+export default GameLinkOrLabel;

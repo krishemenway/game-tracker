@@ -4,18 +4,23 @@ import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import { UserActivity } from "UserProfile/UserActivity";
 import Popover from "@material-ui/core/Popover";
-import { TimeSpan } from "Common/TimeSpan";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
-import GameName from "Games/GameName";
-import GameLink from "Games/GameLink";
+import AggregateGameTableForDay from "GameProfiles/AggregateGameTableForDay";
+import MonthLink from "UserActivity/MonthLink";
+import DayLink from "UserActivity/DayLink";
 
 const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity[]>; className?: string; }> = (props) => {
-	const classes = useStyles();
 	const layout = useLayoutStyles();
 
 	return (
-		<div className={clsx(props.className, layout.flexRow, layout.flexWrap, layout.flexWrapSpacing, classes.allCalendarMonths)}>
-			{createFirstDaysInMonths().map((firstDayInMonth) => <OverviewCalendarMonth key={firstDayInMonth.format("YYYY-MM")} firstDayInMonth={firstDayInMonth} userActivitiesByDate={props.userActivitiesByDate} />)}
+		<div className={clsx(props.className, layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}>
+			{createFirstDaysInMonths(props.userActivitiesByDate).map((firstDayInMonth) => (
+				<OverviewCalendarMonth
+					key={firstDayInMonth.format("YYYY-MM")}
+					firstDayInMonth={firstDayInMonth}
+					userActivitiesByDate={props.userActivitiesByDate}
+				/>
+			))}
 		</div>
 	);
 };
@@ -28,13 +33,15 @@ const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActi
 
 	const daysInMonth = createDaysInMonth(props.firstDayInMonth);
 	const [currentPopoverAnchor, setPopoverAnchor] = React.useState<HTMLDivElement|null>(null);
-	const [currentPopoverDayOfMonth, setCurrentPopoverDayOfMonth] = React.useState<number|null>(null);
-	const popoverIsOpen = currentPopoverAnchor !== null;
+	const [currentPopoverDate, setCurrentPopoverDate] = React.useState<moment.Moment|null>(null);
+	const popoverIsOpen = currentPopoverDate !== null;
 
 	return (
-		<div className={clsx(layout.width33, classes.calendarMonth)}>
+		<div className={clsx(layout.width33, layout.marginBottomDouble)}>
 			<div className={clsx(background.default, layout.height100, layout.paddingHorizontalHalf, layout.paddingBottomHalf)}>
-				<div className={clsx(layout.width100, layout.marginBottom, layout.paddingVertical, text.center, classes.calendarMonthName)}>{props.firstDayInMonth.format("MMMM")}</div>
+				<div className={clsx(layout.width100, layout.marginBottom, layout.paddingVertical, text.center, background.borderBottom)}>
+					<MonthLink month={props.firstDayInMonth}>{props.firstDayInMonth.format("MMMM YYYY")}</MonthLink>
+				</div>
 
 				<div className={clsx(layout.flexRow, layout.flexWrap)}>
 					{daysInMonth.map((dayInMonth) => {
@@ -43,9 +50,9 @@ const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActi
 						return (
 							<div
 								key={dayInMonth}
-								className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, activities.length > 0 ? classes.gameReportButton : undefined, dayInMonth === currentPopoverDayOfMonth ? classes.selectedDay : undefined)}
+								className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, activities.length > 0 ? classes.gameReportButton : undefined, dayInMonth === currentPopoverDate?.date() ? classes.selectedDay : undefined)}
 								style={{marginLeft: dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined}}
-								onClick={activities.length > 0 ? (evt) => { setCurrentPopoverDayOfMonth(dayInMonth); setPopoverAnchor(evt.currentTarget); } : () => undefined}
+								onClick={activities.length > 0 ? (evt) => { setCurrentPopoverDate(moment(props.firstDayInMonth.format("YYYY-MM-") + padNumber(dayInMonth, 2))); setPopoverAnchor(evt.currentTarget); } : () => undefined}
 							>
 								<OverviewCalendarMonthDayIcon activities={activities} />
 							</div>
@@ -55,58 +62,29 @@ const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActi
 			</div>
 
 			{
-				!popoverIsOpen ? <></> :
+				!popoverIsOpen || currentPopoverDate === null ? <></> :
 				<Popover
 					open={popoverIsOpen}
 					anchorEl={currentPopoverAnchor}
-					onClose={() => { setPopoverAnchor(null); setCurrentPopoverDayOfMonth(null); }}
+					onClose={() => { setPopoverAnchor(null); setCurrentPopoverDate(null); }}
 					PaperProps={{ style: { background: "#181818" } }}
 					anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
 					transformOrigin={{ vertical: "top", horizontal: "center" }}
 				>
-					<GameReportForDayOfMonth
-						dayOfMonth={currentPopoverDayOfMonth ?? 1}
-						firstDayInMonth={props.firstDayInMonth}
-						activities={acitivitesForDate(props.firstDayInMonth, currentPopoverDayOfMonth ?? 1, props.userActivitiesByDate)}
-					/>
+					<>
+						<div className={clsx(layout.paddingBottom, layout.marginHorizontal, layout.marginTopDouble, text.center)} style={{ borderBottom: "1px solid #383838" }}>
+							<DayLink date={currentPopoverDate}>{currentPopoverDate.format("MMMM Do, YYYY")}</DayLink>
+						</div>
+
+						<AggregateGameTableForDay
+							dayOfMonth={currentPopoverDate?.day() ?? 1}
+							firstDayInMonth={props.firstDayInMonth}
+							activities={acitivitesForDate(props.firstDayInMonth, currentPopoverDate.date(), props.userActivitiesByDate)}
+						/>
+					</>
 				</Popover>
 			}
 		</div>
-	)
-};
-
-const GameReportForDayOfMonth: React.FC<{dayOfMonth: number; firstDayInMonth: moment.Moment; activities: UserActivity[]}> = (props) => {
-	const classes = useStyles();
-	const layout = useLayoutStyles();
-	const text = useTextStyles();
-
-	const timeInSecondsByGameId: Dictionary<number> = {};
-
-	props.activities.forEach((activity) => {
-		timeInSecondsByGameId[activity.GameId] = (timeInSecondsByGameId[activity.GameId] ?? 0) + activity.TimeSpentInSeconds;
-	});
-
-	const gameReports = Object.keys(timeInSecondsByGameId)
-		.map((gameId) => ({ GameId: gameId, TimeSpentInSeconds: timeInSecondsByGameId[gameId] }))
-		.sort((a, b) => b.TimeSpentInSeconds - a.TimeSpentInSeconds);
-
-	return (
-		<>
-			<div className={clsx(layout.paddingBottom, layout.marginHorizontal, layout.marginTopDouble, text.center)} style={{ borderBottom: "1px solid #383838" }}>
-				{moment(props.firstDayInMonth.format("YYYY-MM-") + padNumber(props.dayOfMonth, 2)).format("MMMM Do, YYYY")}
-			</div>
-
-			<table className={clsx(classes.gameReport)}>
-				<tbody>
-				{gameReports.map((gameReport) => (
-					<tr key={gameReport.GameId}>
-						<td><GameLink gameId={gameReport.GameId}><GameName gameId={gameReport.GameId} /></GameLink></td>
-						<td>{TimeSpan.Readable(gameReport.TimeSpentInSeconds * 1000)}</td>
-					</tr>
-				))}
-				</tbody>
-			</table>
-		</>
 	)
 };
 
@@ -114,7 +92,7 @@ const OverviewCalendarMonthDayIcon: React.FC<{ activities: UserActivity[] }> = (
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
 
-	const uniqueGames = distinct(props.activities.map((activity) => activity.GameId));
+	const uniqueGames = props.activities.map((activity) => activity.GameId).distinct();
 
 	switch (uniqueGames.length) {
 		case 0:
@@ -154,19 +132,12 @@ function createDaysInMonth(firstDayInMonth: moment.Moment): number[] {
 	return daysInMonth;
 }
 
-function createFirstDaysInMonths(): moment.Moment[] {
-	const currentDay = moment();
-	const firstDayInMonth = currentDay.startOf("month");
-
-	return [
-		firstDayInMonth.clone().subtract(2, "month"),
-		firstDayInMonth.clone().subtract(1, "month"),
-		firstDayInMonth,
-	]
-}
-
-function distinct<T>(array: T[]): T[] {
-	return array.filter((value, index) => array.indexOf(value) === index);
+function createFirstDaysInMonths(userActivitiesByDate: Dictionary<UserActivity[]>): moment.Moment[] {
+	return Object.keys(userActivitiesByDate)
+		.map((dateKey) => dateKey.slice(0, 7))
+		.distinct()
+		.sort().reverse()
+		.map((monthKey) => moment(monthKey + "-01"));
 }
 
 function padNumber(value: number, size: number): string {
@@ -180,19 +151,6 @@ function padNumber(value: number, size: number): string {
 }
 
 const useStyles = makeStyles((t) => ({
-	allCalendarMonths: {
-		[t.breakpoints.down(600)]: {
-			flexDirection: "column-reverse",
-		},
-	},
-	calendarMonth: {
-		[t.breakpoints.down(600)]: {
-			width: "100%",
-		},
-	},
-	calendarMonthName: {
-		borderBottom: "1px solid #383838",
-	},
 	calendarDay: {
 		width: "14.285714285714%", // 7 days of week
 		minWidth: "32px",
@@ -207,10 +165,6 @@ const useStyles = makeStyles((t) => ({
 	},
 	selectedDay: {
 		border: "1px solid #383838",
-	},
-	gameReport: {
-		borderSpacing: "20px",
-		borderCollapse: "separate",
 	},
 }));
 

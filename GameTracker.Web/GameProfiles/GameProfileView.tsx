@@ -1,11 +1,12 @@
 import clsx from "clsx";
 import * as React from "react";
 import Loading from "Common/Loading";
-import { GameProfile } from "GameProfiles/GameProfile";
 import GameName from "Games/GameName";
-import { useLayoutStyles, useTextStyles } from "AppStyles";
-import { GameProfileService } from "./GameProfileService";
 import OverviewCalendar from "UserProfile/OverviewCalendar";
+import { GameProfileService } from "GameProfiles/GameProfileService";
+import { GameProfile } from "GameProfiles/GameProfile";
+import GameStatistics from "GameProfiles/GameStatistics";
+import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 
 interface GameProfileProps {
 	gameId: string;
@@ -14,13 +15,17 @@ interface GameProfileProps {
 const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile }> = (props) => {
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
+	const background = useBackgroundStyles();
 
 	return (
 		<div>
-			<h1 className={clsx(layout.marginVertical, text.font24)}>
+			<h1 className={clsx(layout.marginVertical, text.font24, background.borderBottom)}>
 				<GameName gameId={props.gameId} />
 			</h1>
 
+			<GameStatistics gameId={props.gameId} gameProfile={props.gameProfile} />
+
+			<h2 className={clsx(layout.marginVertical, text.font20)}>Recent Activity</h2>
 			<OverviewCalendar userActivitiesByDate={props.gameProfile.ActivitiesByDate} />
 		</div>
 	);

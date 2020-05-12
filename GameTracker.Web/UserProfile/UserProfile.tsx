@@ -1,6 +1,6 @@
 import * as React from "react";
 import clsx from "clsx";
-import { useLayoutStyles, useTextStyles } from "AppStyles";
+import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { UserProfileService, UserProfile } from "UserProfile/UserProfileService";
 import RecentActivities from "UserProfile/RecentActivities";
 import Loading from "Common/Loading";
@@ -26,10 +26,11 @@ export default () => {
 function LoadedUserProfile(props: { userProfile: UserProfile }) {
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
+	const background = useBackgroundStyles();
 
 	return (
 		<>
-			<h1 className={clsx(text.font24, layout.marginVertical)}>{props.userProfile.UserName}</h1>
+			<h1 className={clsx(text.font24, layout.marginVertical, background.borderBottom)}>{props.userProfile.UserName}</h1>
 
 			<section className={clsx(layout.marginBottom)}>
 				<h2 className={clsx(text.font20, layout.marginBottom)}>Recent Activity</h2>
