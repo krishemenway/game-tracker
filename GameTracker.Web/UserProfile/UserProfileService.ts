@@ -2,6 +2,7 @@ import { UserActivity } from "UserProfile/UserActivity";
 import { Http } from "Common/Http";
 import { ObservableLoading } from "Common/ObservableLoading";
 import { Game, GameStore } from "Games/GameStore";
+import { UserActivityForDate } from "UserActivity/UserActivityForDate";
 
 export interface UserProfile {
 	UserName: string;
@@ -10,7 +11,7 @@ export interface UserProfile {
 
 	RecentActivities: UserActivity[];
 	TotalGamesPlayed: number;
-	ActivitiesByDate: Dictionary<UserActivity[]>;
+	ActivitiesByDate: Dictionary<UserActivityForDate>;
 	GamesByGameId: Dictionary<Game>;
 }
 

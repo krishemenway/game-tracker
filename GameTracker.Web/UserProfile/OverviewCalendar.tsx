@@ -8,8 +8,9 @@ import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import AggregateGameTableForDay from "GameProfiles/AggregateGameTableForDay";
 import MonthLink from "UserActivity/MonthLink";
 import DayLink from "UserActivity/DayLink";
+import { UserActivityForDate } from "UserActivity/UserActivityForDate";
 
-const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity[]>; className?: string; }> = (props) => {
+const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivityForDate>; className?: string; }> = (props) => {
 	const layout = useLayoutStyles();
 
 	return (
@@ -25,7 +26,7 @@ const OverviewCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivity
 	);
 };
 
-const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActivitiesByDate: Dictionary<UserActivity[]> }> = (props) => {
+const OverviewCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActivitiesByDate: Dictionary<UserActivityForDate> }> = (props) => {
 	const classes = useStyles();
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
@@ -116,9 +117,9 @@ const MultipleActivityIcon: React.FC<{ className: string; count: number }> = (pr
 	return <div className={props.className}>{props.count}</div>;
 };
 
-function acitivitesForDate(firstDayInMonth: moment.Moment, dayInMonth: number, userActivitiesByDate: Dictionary<UserActivity[]>): UserActivity[] {
+function acitivitesForDate(firstDayInMonth: moment.Moment, dayInMonth: number, userActivitiesByDate: Dictionary<UserActivityForDate>): UserActivity[] {
 	const dateKey = firstDayInMonth.format("YYYY-MM-") + padNumber(dayInMonth, 2);
-	return userActivitiesByDate[dateKey] ?? [];
+	return userActivitiesByDate[dateKey]?.AllUserActivity ?? [];
 }
 
 function createDaysInMonth(firstDayInMonth: moment.Moment): number[] {
@@ -132,7 +133,7 @@ function createDaysInMonth(firstDayInMonth: moment.Moment): number[] {
 	return daysInMonth;
 }
 
-function createFirstDaysInMonths(userActivitiesByDate: Dictionary<UserActivity[]>): moment.Moment[] {
+function createFirstDaysInMonths(userActivitiesByDate: Dictionary<UserActivityForDate>): moment.Moment[] {
 	return Object.keys(userActivitiesByDate)
 		.map((dateKey) => dateKey.slice(0, 7))
 		.distinct()
