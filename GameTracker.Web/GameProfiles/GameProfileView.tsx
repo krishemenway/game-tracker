@@ -12,7 +12,6 @@ import UserProfileLink from "UserProfile/UserProfileLink";
 
 interface GameProfileProps {
 	gameId: string;
-	userName: string;
 }
 
 const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; userName: string }> = (props) => {
@@ -44,7 +43,7 @@ export default (props: GameProfileProps) => {
 	return (
 		<div className={clsx(layout.centerLayout1000)}>
 			<Loading
-				observableLoadings={[loadingGameProfile, UserProfileService.Instance.LoadingUserProfile, undefined]}
+				observableLoadings={[loadingGameProfile, UserProfileService.Instance.LoadingUserProfile]}
 				renderSuccess={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userName={userProfile?.UserName} />}
 			/>
 		</div>

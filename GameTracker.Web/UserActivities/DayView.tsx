@@ -22,7 +22,7 @@ const DayView: React.FC<{ year:string; month: string; day: string; className?: s
 	return (
 		<div className={layout.centerLayout1000}>
 			<Loading
-				observableLoadings={[loadingUserActivity, UserProfileService.Instance.LoadingUserProfile, undefined]}
+				observableLoadings={[loadingUserActivity, UserProfileService.Instance.LoadingUserProfile]}
 				renderSuccess={(userActivityForDate, userProfile) => <LoadedDayView dateKey={dateKey} userActivityForDate={userActivityForDate} userName={userProfile.UserName} />}
 			/>
 		</div>

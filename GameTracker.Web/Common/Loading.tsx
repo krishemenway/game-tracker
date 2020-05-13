@@ -6,7 +6,7 @@ import { useObservable } from "Common/useObservable";
 import { useTextStyles, useLayoutStyles } from "AppStyles";
 
 interface LoadingProps<TSuccessData1, TSuccessData2 = any, TSuccessData3 = any> {
-	observableLoadings: [ObservableLoadingOf<TSuccessData1>, ObservableLoadingOf<TSuccessData2>|undefined, ObservableLoadingOf<TSuccessData3>|undefined];
+	observableLoadings: ([ObservableLoadingOf<TSuccessData1>])|([ObservableLoadingOf<TSuccessData1>, ObservableLoadingOf<TSuccessData2>])|([ObservableLoadingOf<TSuccessData1>, ObservableLoadingOf<TSuccessData2>, ObservableLoadingOf<TSuccessData3>]);
 	renderSuccess: (successData1: TSuccessData1, successData2: TSuccessData2, successData3: TSuccessData3) => JSX.Element;
 	renderLoading?: () => JSX.Element;
 	renderError?: (error: string) => JSX.Element;
@@ -42,7 +42,6 @@ function Loading<TSuccessData1, TSuccessData2, TSuccessData3>(props: LoadingProp
 		}
 	}
 
-	console.log(errorMessage !== null, "sucess data");
 	if (errorMessage !== null) {
 		if (props.renderError !== undefined) {
 			return props.renderError(errorMessage);
