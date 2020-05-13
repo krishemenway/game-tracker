@@ -1,6 +1,6 @@
 import { UserActivity } from "UserActivities/UserActivity";
 import { Http } from "Common/Http";
-import { ObservableLoading } from "Common/ObservableLoading";
+import { ObservableLoadingOf } from "Common/ObservableLoading";
 import { Game, GameStore } from "Games/GameStore";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import { UserActivityService } from "UserActivities/UserActivityService";
@@ -18,10 +18,14 @@ export interface UserProfile {
 
 export class UserProfileService {
 	constructor() {
-		this.LoadingUserProfile = new ObservableLoading<UserProfile>();
+		this.LoadingUserProfile = new ObservableLoadingOf<UserProfile>();
 	}
 
 	public LoadProfile(): void {
+		if (this.LoadingUserProfile.HasLoaded.Value) {
+			return;
+		}
+
 		this.LoadingUserProfile.StartLoading();
 
 		Http.get<UserProfile>("/WebAPI/UserProfile")
@@ -35,7 +39,7 @@ export class UserProfileService {
 			});
 	}
 
-	public LoadingUserProfile: ObservableLoading<UserProfile>;
+	public LoadingUserProfile: ObservableLoadingOf<UserProfile>;
 
 	static get Instance(): UserProfileService {
 		if (this._instance === undefined) {
