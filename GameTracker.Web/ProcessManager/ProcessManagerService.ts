@@ -1,7 +1,7 @@
 import { Observable } from "@residualeffect/reactor";
 import { ObservedProcess } from "ProcessManager/ObservedProcess";
 import { Http } from "Common/Http";
-import { ObservableLoadingOf } from "Common/ObservableLoading";
+import { Loadable } from "Common/Loadable";
 
 interface ObservedProcessesResponse {
 	ObservedProcesses: ObservedProcess[];
@@ -19,7 +19,7 @@ export class ObservableProcess {
 
 export class ProcessManagerService {
 	constructor() {
-		this.LoadingObservable = new ObservableLoadingOf<ObservableProcess[]>();
+		this.LoadingObservable = new Loadable<ObservableProcess[]>();
 		this.ToggleIgnoredErrorMessage = new Observable(null);
 	}
 
@@ -35,7 +35,7 @@ export class ProcessManagerService {
 			.catch((_) => { this.ToggleIgnoredErrorMessage.Value = `Failed to toggle ignore status for: ${observableProcess.ProcessPath}`; });
 	}
 
-	public LoadingObservable: ObservableLoadingOf<ObservableProcess[]>;
+	public LoadingObservable: Loadable<ObservableProcess[]>;
 	public ToggleIgnoredErrorMessage: Observable<string|null>
 
 	static get Instance(): ProcessManagerService {

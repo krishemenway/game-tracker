@@ -43,8 +43,8 @@ export default (props: GameProfileProps) => {
 	return (
 		<div className={clsx(layout.centerLayout1000)}>
 			<Loading
-				observableLoadings={[loadingGameProfile, UserProfileService.Instance.LoadingUserProfile]}
-				renderSuccess={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userName={userProfile?.UserName} />}
+				loadables={[loadingGameProfile, UserProfileService.Instance.LoadingUserProfile]}
+				renderSuccess={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userName={userProfile.UserName} />}
 			/>
 		</div>
 	);

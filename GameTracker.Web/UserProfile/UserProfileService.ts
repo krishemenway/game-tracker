@@ -1,6 +1,6 @@
 import { UserActivity } from "UserActivities/UserActivity";
 import { Http } from "Common/Http";
-import { ObservableLoadingOf } from "Common/ObservableLoading";
+import { Loadable } from "Common/Loadable";
 import { Game, GameStore } from "Games/GameStore";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import { UserActivityService } from "UserActivities/UserActivityService";
@@ -18,7 +18,7 @@ export interface UserProfile {
 
 export class UserProfileService {
 	constructor() {
-		this.LoadingUserProfile = new ObservableLoadingOf<UserProfile>();
+		this.LoadingUserProfile = new Loadable<UserProfile>();
 	}
 
 	public LoadProfile(): void {
@@ -39,7 +39,7 @@ export class UserProfileService {
 			});
 	}
 
-	public LoadingUserProfile: ObservableLoadingOf<UserProfile>;
+	public LoadingUserProfile: Loadable<UserProfile>;
 
 	static get Instance(): UserProfileService {
 		if (this._instance === undefined) {

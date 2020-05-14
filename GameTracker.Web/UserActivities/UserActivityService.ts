@@ -1,5 +1,5 @@
 import * as moment from "moment";
-import { ObservableLoadingOf } from "Common/ObservableLoading";
+import { Loadable } from "Common/Loadable";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import { Http } from "Common/Http";
 import { Game, GameStore } from "Games/GameStore";
@@ -15,7 +15,7 @@ export class UserActivityService {
 		this.UserActivityByDate = {};
 	}
 
-	public LoadFromServer(dateKey: string, loadingUserActivity: ObservableLoadingOf<UserActivityForDate>): void {
+	public LoadFromServer(dateKey: string, loadingUserActivity: Loadable<UserActivityForDate>): void {
 		if (loadingUserActivity.HasLoaded.Value) {
 			return;
 		}
@@ -33,9 +33,9 @@ export class UserActivityService {
 			})
 	}
 
-	public FindOrCreateUserActivityForDate(dayKey: string): ObservableLoadingOf<UserActivityForDate> {
+	public FindOrCreateUserActivityForDate(dayKey: string): Loadable<UserActivityForDate> {
 		if (this.UserActivityByDate[dayKey] === undefined) {
-			this.UserActivityByDate[dayKey] = new ObservableLoadingOf<UserActivityForDate>();
+			this.UserActivityByDate[dayKey] = new Loadable<UserActivityForDate>();
 		}
 
 		return this.UserActivityByDate[dayKey];
@@ -47,7 +47,7 @@ export class UserActivityService {
 		});
 	}
 
-	public UserActivityByDate: Dictionary<ObservableLoadingOf<UserActivityForDate>>
+	public UserActivityByDate: Dictionary<Loadable<UserActivityForDate>>
 
 	static get Instance(): UserActivityService {
 		if (this._instance === undefined) {
