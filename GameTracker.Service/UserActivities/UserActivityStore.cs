@@ -2,7 +2,6 @@
 using CsvHelper.Configuration;
 using GameTracker.Games;
 using GameTracker.ProcessSessions;
-using Range.Net;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,7 +14,6 @@ namespace GameTracker.UserActivities
 	public interface IUserActivityStore
 	{
 		IReadOnlyList<IUserActivity> FindAllUserActivity();
-		IReadOnlyDictionary<string, UserActivityForDate> FindUserActivityByDay(DateTimeOffset? startTime, DateTimeOffset? endTime);
 		IUserActivity SaveActivity(ProcessSession processSession, IGame game);
 	}
 
@@ -32,12 +30,6 @@ namespace GameTracker.UserActivities
 		public IReadOnlyList<IUserActivity> FindAllUserActivity()
 		{
 			return FindAllUserActivities();
-		}
-
-		public IReadOnlyDictionary<string, UserActivityForDate> FindUserActivityByDay(DateTimeOffset? startTime, DateTimeOffset? endTime)
-		{
-			var searchRange = new Range<DateTimeOffset>(startTime ?? DateTimeOffset.MinValue, endTime ?? DateTimeOffset.MaxValue);
-			return FindAllUserActivities().Where(userActivity => userActivity.DateRange.Intersects(searchRange)).GroupByDate();
 		}
 
 		public IUserActivity SaveActivity(ProcessSession processSession, IGame game)

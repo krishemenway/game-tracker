@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
+using Range.Net;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace GameTracker.UserActivities
@@ -21,6 +24,13 @@ namespace GameTracker.UserActivities
 					return new UserActivityStore().FindAllUserActivity();
 				});
 			}
+		}
+
+		public IReadOnlyDictionary<string, UserActivityForDate> FindUserActivityByDay(DateTimeOffset? startTime, DateTimeOffset? endTime)
+		{
+			var searchRange = new Range<DateTimeOffset>(startTime ?? DateTimeOffset.MinValue, endTime ?? DateTimeOffset.MaxValue);
+
+			return AllUserActivity.Where(userActivity => userActivity.DateRange.Intersects(searchRange)).GroupByDate();
 		}
 
 		public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
