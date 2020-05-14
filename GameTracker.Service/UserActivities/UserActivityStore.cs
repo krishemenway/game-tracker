@@ -91,7 +91,6 @@ namespace GameTracker.UserActivities
 		}
 
 		private static CsvConfiguration CsvConfiguration { get; }
-		private static Lazy<IReadOnlyList<UserActivity>> StaticAllUserActivity { get; set; }
 
 		public static string DataFilePath => Program.FilePathInAppData("UserActivity.csv");
 	}

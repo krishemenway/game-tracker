@@ -2,6 +2,8 @@
 using GameTracker.Games;
 using GameTracker.UserActivities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 
@@ -11,13 +13,12 @@ namespace GameTracker.Service.UserProfiles
 	public class UserProfileController : ControllerBase
 	{
 		public UserProfileController(
-			UserProfileStore userProfileStore = null,
-			UserActivityStore userActivityStore = null,
+			IMemoryCache memoryCache,
+			AllUserActivityCache allUserActivityCache = null,
 			GameProfileFactory gameProfileFactory = null,
 			GameStore gameStore = null)
 		{
-			_userProfileStore = userProfileStore ?? new UserProfileStore();
-			_userActivityStore = userActivityStore ?? new UserActivityStore();
+			_allUserActivityCache = allUserActivityCache ?? new AllUserActivityCache(memoryCache);
 			_gameProfileFactory = gameProfileFactory ?? new GameProfileFactory();
 			_gameStore = gameStore ?? new GameStore();
 		}
@@ -25,12 +26,9 @@ namespace GameTracker.Service.UserProfiles
 		[HttpGet(nameof(UserProfile))]
 		public ActionResult<UserProfile> UserProfile()
 		{
-			var userProfileData = _userProfileStore.Find();
-
 			var oldestDateForUserActivity = OldestDateForUserActivity();
-			var allUserActivities = _userActivityStore.FindAllUserActivity();
 
-			var filteredActivities = allUserActivities.Where(x => x.AssignedToDate > oldestDateForUserActivity).ToList();
+			var filteredActivities = _allUserActivityCache.AllUserActivity.Where(x => x.AssignedToDate > oldestDateForUserActivity).ToList();
 			var orderedActivities = filteredActivities.OrderByDescending(x => x.EndTime).ToList();
 
 			var mostRecentActivity = orderedActivities.FirstOrDefault();
@@ -41,7 +39,7 @@ namespace GameTracker.Service.UserProfiles
 
 			return new UserProfile
 			{
-				UserName = userProfileData.UserName,
+				UserName = Program.Configuration.GetValue<string>("UserName"),
 				MostRecentActivity = mostRecentActivity,
 				StartedCollectingDataTime = oldestActivity.StartTime,
 				RecentActivities = orderedActivities.Take(10).ToList(),
@@ -58,8 +56,7 @@ namespace GameTracker.Service.UserProfiles
 			return firstOfCurrentMonth.AddMonths(-2);
 		}
 
-		private readonly UserProfileStore _userProfileStore;
-		private readonly UserActivityStore _userActivityStore;
+		private readonly AllUserActivityCache _allUserActivityCache;
 		private readonly GameProfileFactory _gameProfileFactory;
 		private readonly GameStore _gameStore;
 	}

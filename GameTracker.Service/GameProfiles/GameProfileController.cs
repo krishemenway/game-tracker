@@ -1,7 +1,7 @@
 ﻿using GameTracker.Games;
-using GameTracker.Service.UserProfiles;
 using GameTracker.UserActivities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using StronglyTyped.StringIds;
 using System.Linq;
 
@@ -11,15 +11,14 @@ namespace GameTracker.GameProfiles
 	public class GameProfileController : ControllerBase
 	{
 		public GameProfileController(
+			IMemoryCache memoryCache,
 			GameStore gameStore = null,
-			UserProfileStore userProfileStore = null,
 			GameProfileFactory gameProfileFactory = null,
-			UserActivityStore userActivityStore = null)
+			AllUserActivityCache allUserActivityCache = null)
 		{
 			_gameStore = gameStore ?? new GameStore();
-			_userProfileStore = userProfileStore ?? new UserProfileStore();
 			_gameProfileFactory = gameProfileFactory ?? new GameProfileFactory();
-			_userActivityStore = userActivityStore ?? new UserActivityStore();
+			_allUserActivityCache = allUserActivityCache ?? new AllUserActivityCache(memoryCache);
 		}
 
 		[HttpGet("GameProfile/{gameId}")]
@@ -32,27 +31,23 @@ namespace GameTracker.GameProfiles
 				return NotFound();
 			}
 
-			var allGameActivity = _userActivityStore
-				.FindAllUserActivity()
+			var allGameActivity = _allUserActivityCache.AllUserActivity
 				.Where(userActivity => userActivity.GameId == gameId)
 				.ToList();
 
 			return new GameProfileResponse
 			{
-				UserName = _userProfileStore.Find().UserName,
 				GameProfile = _gameProfileFactory.Create(game, allGameActivity),
 			};
 		}
 
 		private readonly GameStore _gameStore;
-		private readonly UserProfileStore _userProfileStore;
 		private readonly GameProfileFactory _gameProfileFactory;
-		private readonly UserActivityStore _userActivityStore;
+		private readonly AllUserActivityCache _allUserActivityCache;
 	}
 
 	public class GameProfileResponse
 	{
-		public string UserName { get; set; }
 		public GameProfile GameProfile { get; set; }
 	}
 }
