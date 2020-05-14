@@ -36,7 +36,6 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 
 export default (props: GameProfileProps) => {
 	const layout = useLayoutStyles();
-	const loadingGameProfile = GameProfileService.Instance.FindOrCreateProfile(props.gameId);
 
 	React.useEffect(() => { GameProfileService.Instance.LoadProfile(props.gameId); }, []);
 	React.useEffect(() => { UserProfileService.Instance.LoadProfile(); }, []);
@@ -44,7 +43,7 @@ export default (props: GameProfileProps) => {
 	return (
 		<div className={clsx(layout.centerLayout1000)}>
 			<Loading
-				loadables={[loadingGameProfile, UserProfileService.Instance.LoadingUserProfile]}
+				loadables={[GameProfileService.Instance.FindOrCreateProfile(props.gameId), UserProfileService.Instance.LoadingUserProfile]}
 				renderSuccess={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userName={userProfile.UserName} />}
 			/>
 		</div>

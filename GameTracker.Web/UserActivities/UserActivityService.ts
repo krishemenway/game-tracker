@@ -15,22 +15,24 @@ export class UserActivityService {
 		this.UserActivityByDate = {};
 	}
 
-	public LoadFromServer(dateKey: string, loadingUserActivity: Loadable<UserActivityForDate>): void {
-		if (loadingUserActivity.HasLoaded.Value) {
+	public LoadFromServer(dateKey: string): void {
+		const loadableUserActivity = this.FindOrCreateUserActivityForDate(dateKey);
+
+		if (loadableUserActivity.HasLoaded.Value) {
 			return;
 		}
 
 		const startTime = moment(dateKey);
 		const endTime = startTime.clone().add(1, "day");
 
-		loadingUserActivity.StartLoading();
+		loadableUserActivity.StartLoading();
 		Http.get<UserActivityPerDayResponse>(`/WebAPI/UserActivityPerDay?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`)
 			.then((response) => {
 				GameStore.Instance.LoadGames(response.GamesByGameId);
-				loadingUserActivity.SucceededLoading(response.UserActivityPerDay[dateKey]);
+				loadableUserActivity.SucceededLoading(response.UserActivityPerDay[dateKey]);
 			})
 			.catch(() => {
-				loadingUserActivity.FailedLoading("Something went wrong loading user activity!");
+				loadableUserActivity.FailedLoading("Something went wrong loading user activity!");
 			})
 	}
 
