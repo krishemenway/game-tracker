@@ -23,6 +23,7 @@ export class UserActivityService {
 		const startTime = moment(dateKey);
 		const endTime = startTime.clone().add(1, "day");
 
+		loadingUserActivity.StartLoading();
 		Http.get<UserActivityPerDayResponse>(`/WebAPI/UserActivityPerDay?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`)
 			.then((response) => {
 				GameStore.Instance.LoadGames(response.GamesByGameId);
