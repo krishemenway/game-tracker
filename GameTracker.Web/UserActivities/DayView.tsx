@@ -14,15 +14,14 @@ import UserProfileLink from "UserProfile/UserProfileLink";
 const DayView: React.FC<{ year:string; month: string; day: string; className?: string }> = (props) => {
 	const layout = useLayoutStyles();
 	const dateKey = `${props.year}-${props.month}-${props.day}`;
-	const loadingUserActivity = UserActivityService.Instance.FindOrCreateUserActivityForDate(dateKey);
 
-	React.useEffect(() => { UserActivityService.Instance.LoadFromServer(dateKey, loadingUserActivity); }, [dateKey]);
+	React.useEffect(() => { UserActivityService.Instance.LoadFromServer(dateKey); }, [dateKey]);
 	React.useEffect(() => { UserProfileService.Instance.LoadProfile(); }, []);
 
 	return (
 		<div className={layout.centerLayout1000}>
 			<Loading
-				loadables={[loadingUserActivity, UserProfileService.Instance.LoadingUserProfile]}
+				loadables={[UserActivityService.Instance.FindOrCreateUserActivityForDate(dateKey), UserProfileService.Instance.LoadingUserProfile]}
 				renderSuccess={(userActivityForDate, userProfile) => <LoadedDayView dateKey={dateKey} userActivityForDate={userActivityForDate} userName={userProfile.UserName} />}
 			/>
 		</div>

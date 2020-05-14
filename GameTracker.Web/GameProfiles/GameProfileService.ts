@@ -22,15 +22,20 @@ export class GameProfileService {
 	}
 
 	public LoadProfile(gameId: string): void {
-		const loadingGameProfile = this.FindOrCreateProfile(gameId).StartLoading();
+		const loadableGameProfile = this.FindOrCreateProfile(gameId);
 
+		if (loadableGameProfile.HasLoaded.Value) {
+			return;
+		}
+
+		loadableGameProfile.StartLoading();
 		Http.get<GameProfileResponse>(`/WebAPI/GameProfile/${gameId}`)
 			.then((response) => {
 				GameStore.Instance.LoadGames({ [response.GameProfile.Game.GameId]: response.GameProfile.Game });
-				loadingGameProfile.SucceededLoading(response.GameProfile);
+				loadableGameProfile.SucceededLoading(response.GameProfile);
 			})
 			.catch(() => {
-				loadingGameProfile.FailedLoading("Something went wrong loading the game profile!");
+				loadableGameProfile.FailedLoading("Something went wrong loading the game profile!");
 			});
 	}
 
