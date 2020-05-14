@@ -1,39 +1,46 @@
-import { Observable, Computed } from "@residualeffect/reactor";
+import { Observable, Computed, ReadOnlyObservable } from "@residualeffect/reactor";
 
 export interface LoadableBase {
-	IsLoading: Observable<boolean>;
-	ErrorMessage: Observable<string|null>;
-	HasLoaded: Computed<boolean>;
+	IsLoading: ReadOnlyObservable<boolean>;
+	ErrorMessage: ReadOnlyObservable<string|null>;
+	HasLoaded: ReadOnlyObservable<boolean>;
 }
 
 export class Loadable<TSuccessData> implements LoadableBase {
 	constructor() {
-		this.IsLoading = new Observable(false);
-		this.ErrorMessage = new Observable(null);
-		this.SuccessData = new Observable(null);
-		this.HasLoaded = new Computed(() => !this.IsLoading.Value && this.SuccessData.Value !== null);
+		this._isLoading = new Observable(false);
+		this._errorMessage = new Observable(null);
+		this._successData = new Observable(null);
+
+		this.HasLoaded = new Computed(() => this.SuccessData.Value !== null);
 	}
 
 	public StartLoading(): Loadable<TSuccessData> {
-		this.IsLoading.Value = true;
+		this._successData.Value = null;
+		this._errorMessage.Value = null;
+		this._isLoading.Value = true;
 		return this;
 	}
 
 	public SucceededLoading(successData: TSuccessData): void {
-		this.SuccessData.Value = successData;
-		this.ErrorMessage.Value = null;
-		this.IsLoading.Value = false;
+		this._successData.Value = successData;
+		this._errorMessage.Value = null;
+		this._isLoading.Value = false;
 	}
 
 	public FailedLoading(errorMessage: string) {
-		this.SuccessData.Value = null;
-		this.ErrorMessage.Value = errorMessage;
-		this.IsLoading.Value = false;
+		this._successData.Value = null;
+		this._errorMessage.Value = errorMessage;
+		this._isLoading.Value = false;
 	}
 
-	public IsLoading: Observable<boolean>;
-	public ErrorMessage: Observable<string|null>;
-	public SuccessData: Observable<TSuccessData|null>;
+	public get IsLoading(): ReadOnlyObservable<boolean> { return this._isLoading; }
+	public get ErrorMessage(): ReadOnlyObservable<string|null>  { return this._errorMessage; }
+	public get SuccessData(): ReadOnlyObservable<TSuccessData|null>  { return this._successData; }
+
+	private _isLoading: Observable<boolean>;
+	private _errorMessage: Observable<string|null>;
+	private _successData: Observable<TSuccessData|null>;
 
 	public HasLoaded: Computed<boolean>;
 }
