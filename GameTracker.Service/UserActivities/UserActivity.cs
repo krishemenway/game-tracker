@@ -15,6 +15,7 @@ namespace GameTracker.UserActivities
 		DateTimeOffset EndTime { get; }
 		DateTimeOffset AssignedToDate { get; }
 		double TimeSpentInSeconds { get; }
+		Range<DateTimeOffset> DateRange { get; }
 		Guid.Id<ProcessSession> ProcessSessionId { get; }
 	}
 
