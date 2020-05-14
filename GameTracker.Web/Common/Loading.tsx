@@ -14,7 +14,7 @@ function Loading(props: { loadables: Loadable<any>[], renderSuccess: (...inputVa
 	const text = useTextStyles();
 	const layout = useLayoutStyles();
 
-	let datas = [];
+	let successDatas: any[] = [];
 	let hasLoaded = true;
 	let errorMessage: string|null = null;
 
@@ -27,11 +27,11 @@ function Loading(props: { loadables: Loadable<any>[], renderSuccess: (...inputVa
 			hasLoaded = loadableHasLoaded;
 		}
 
-		if (errorMessage !== null && loadableErrorMessage !== null) {
+		if (errorMessage === null && loadableErrorMessage !== null) {
 			errorMessage = loadableErrorMessage;
 		}
 
-		datas.push(successData);
+		successDatas.push(successData);
 	});
 
 	if (!hasLoaded) {
@@ -42,7 +42,7 @@ function Loading(props: { loadables: Loadable<any>[], renderSuccess: (...inputVa
 		return <div className={clsx(text.center, layout.paddingVerticalDouble)}>{errorMessage}</div>;
 	}
 
-	return props.renderSuccess(...props.loadables.map(x => x.SuccessData.Value));
+	return props.renderSuccess(...successDatas);
 }
 
 export default Loading;
