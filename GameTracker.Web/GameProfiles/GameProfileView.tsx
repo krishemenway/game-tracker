@@ -22,7 +22,8 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 	return (
 		<>
 			<h1 className={clsx(layout.marginVertical, text.font24, background.borderBottom)}>
-				<UserProfileLink>{props.userName}</UserProfileLink> &nbsp; <GameName gameId={props.gameId} />
+				<UserProfileLink>{props.userName}</UserProfileLink>
+				<span className={clsx(text.font16)}>&nbsp;&ndash;&nbsp;<GameName gameId={props.gameId} /></span>
 			</h1>
 
 			<GameStatistics gameId={props.gameId} gameProfile={props.gameProfile} />
