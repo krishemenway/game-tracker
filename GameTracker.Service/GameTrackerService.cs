@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System;
 using System.ComponentModel;
+using System.Linq;
+using System.Runtime.Caching;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -31,6 +33,9 @@ namespace GameTracker
 
 			UserActivityBackfillerTimer = new Timer(TimeSpan.FromHours(1).TotalMilliseconds) { AutoReset = true };
 			UserActivityBackfillerTimer.Elapsed += (sender, args) => new UserActivityBackfiller().Backfill();
+
+			UserActivityFileMonitor = new HostFileChangeMonitor(new[] { UserActivityStore.DataFilePath }.ToList());
+			UserActivityFileMonitor.NotifyOnChanged((_) => { AllUserActivityCache.CancellationTokenSource.Cancel(); });
 
 			WebHost = new WebHostBuilder()
 				.UseKestrel()
@@ -53,6 +58,7 @@ namespace GameTracker
 
 		public bool Stop()
 		{
+			UserActivityFileMonitor?.Dispose();
 			ProcessScannerTimer?.Stop();
 			UserActivityBackfillerTimer?.Stop();
 			GamesDataUpdateTimer?.Stop();
@@ -94,10 +100,10 @@ namespace GameTracker
 
 		public static string WebHostListenAddress => $"http://*:{Program.Configuration.GetValue<string>("WebPort")}";
 
+		private HostFileChangeMonitor UserActivityFileMonitor { get; }
 		private Timer GamesDataUpdateTimer { get; set; }
 		private Timer ProcessScannerTimer { get; set; }
 		private Timer UserActivityBackfillerTimer { get; set; }
-
 		private IWebHost WebHost { get; set; }
 	}
 }
