@@ -1,8 +1,8 @@
-import * as React from "react";
-import { ReadOnlyObservable } from "@residualeffect/reactor";
+import { useReducer, useLayoutEffect, useState } from "react";
+import type { Computed, ReadOnlyObservable } from "@residualeffect/reactor";
 
 export function useObservable<T>(observable: ReadOnlyObservable<T>): T {
-	const [, triggerReact] = React.useState({});
-	React.useLayoutEffect(() => observable.Subscribe((newValue) => { triggerReact(newValue); }), [observable]);
+	const [, triggerReact] = useReducer((x) => x + 1, 0);
+	useLayoutEffect(() => observable.Subscribe(triggerReact), [observable]);
 	return observable.Value;
 }
