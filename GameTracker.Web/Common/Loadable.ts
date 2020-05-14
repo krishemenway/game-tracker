@@ -1,14 +1,20 @@
-import { Observable, Computed, ReadOnlyObservable } from "@residualeffect/reactor";
+import { Observable, Computed } from "@residualeffect/reactor";
 
-export class ObservableLoading<TSuccessData> {
+export interface LoadableBase {
+	IsLoading: Observable<boolean>;
+	ErrorMessage: Observable<string|null>;
+	HasLoaded: Computed<boolean>;
+}
+
+export class Loadable<TSuccessData> implements LoadableBase {
 	constructor() {
-		this.IsLoading = new Observable(true);
+		this.IsLoading = new Observable(false);
 		this.ErrorMessage = new Observable(null);
 		this.SuccessData = new Observable(null);
-		this.HasLoaded = new Computed(() => this.SuccessData.Value !== null);
+		this.HasLoaded = new Computed(() => !this.IsLoading.Value && this.SuccessData.Value !== null);
 	}
 
-	public StartLoading(): ObservableLoading<TSuccessData> {
+	public StartLoading(): Loadable<TSuccessData> {
 		this.IsLoading.Value = true;
 		return this;
 	}

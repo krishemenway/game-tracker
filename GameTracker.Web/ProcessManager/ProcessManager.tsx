@@ -62,7 +62,7 @@ export default () => {
 			<hr className={`${layout.horzRule}`} />
 
 			<Loading
-				observableLoading={ProcessManagerService.Instance.LoadingObservable}
+				loadables={[ProcessManagerService.Instance.LoadingObservable]}
 				renderSuccess={(observedProcesses) => observedProcesses.length == 0 ? <EmptyProcessList /> : <NonEmptyProcessList ObservedProcesses={observedProcesses} />}
 			/>
 		</div>

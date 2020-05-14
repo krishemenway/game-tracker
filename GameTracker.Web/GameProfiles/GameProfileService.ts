@@ -1,6 +1,6 @@
 import { GameProfile } from "GameProfiles/GameProfile";
 import { Http } from "Common/Http";
-import { ObservableLoading } from "Common/ObservableLoading";
+import { Loadable } from "Common/Loadable";
 import { Game, GameStore } from "Games/GameStore";
 
 export interface GameProfileResponse {
@@ -13,9 +13,9 @@ export class GameProfileService {
 		this.GameProfilesByGameId = {};
 	}
 
-	public FindOrCreateProfile(gameId: string): ObservableLoading<GameProfile> {
+	public FindOrCreateProfile(gameId: string): Loadable<GameProfile> {
 		if (this.GameProfilesByGameId[gameId] === undefined) {
-			this.GameProfilesByGameId[gameId] = new ObservableLoading<GameProfile>();
+			this.GameProfilesByGameId[gameId] = new Loadable<GameProfile>();
 		}
 
 		return this.GameProfilesByGameId[gameId];
@@ -34,7 +34,7 @@ export class GameProfileService {
 			});
 	}
 
-	public GameProfilesByGameId: Dictionary<ObservableLoading<GameProfile>>;
+	public GameProfilesByGameId: Dictionary<Loadable<GameProfile>>;
 
 	static get Instance(): GameProfileService {
 		if (this._instance === undefined) {

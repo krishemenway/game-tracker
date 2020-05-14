@@ -14,7 +14,7 @@ export default () => {
 	return (
 		<div className={layout.centerLayout1000}>
 			<Loading
-				observableLoading={UserProfileService.Instance.LoadingUserProfile}
+				loadables={[UserProfileService.Instance.LoadingUserProfile]}
 				renderSuccess={(profile) => <LoadedUserProfile userProfile={profile} />}
 			/>
 		</div>

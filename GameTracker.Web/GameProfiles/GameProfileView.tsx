@@ -7,12 +7,14 @@ import { GameProfileService } from "GameProfiles/GameProfileService";
 import { GameProfile } from "GameProfiles/GameProfile";
 import GameStatistics from "GameProfiles/GameStatistics";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
+import { UserProfileService } from "UserProfile/UserProfileService";
+import UserProfileLink from "UserProfile/UserProfileLink";
 
 interface GameProfileProps {
 	gameId: string;
 }
 
-const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile }> = (props) => {
+const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; userName: string }> = (props) => {
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
 	const background = useBackgroundStyles();
@@ -20,7 +22,7 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile }> 
 	return (
 		<>
 			<h1 className={clsx(layout.marginVertical, text.font24, background.borderBottom)}>
-				<GameName gameId={props.gameId} />
+				<UserProfileLink>{props.userName}</UserProfileLink> &nbsp; <GameName gameId={props.gameId} />
 			</h1>
 
 			<GameStatistics gameId={props.gameId} gameProfile={props.gameProfile} />
@@ -36,12 +38,13 @@ export default (props: GameProfileProps) => {
 	const loadingGameProfile = GameProfileService.Instance.FindOrCreateProfile(props.gameId);
 
 	React.useEffect(() => { GameProfileService.Instance.LoadProfile(props.gameId); }, []);
+	React.useEffect(() => { UserProfileService.Instance.LoadProfile(); }, []);
 
 	return (
 		<div className={clsx(layout.centerLayout1000)}>
 			<Loading
-				observableLoading={loadingGameProfile}
-				renderSuccess={(data) => <LoadedGameProfile gameId={props.gameId} gameProfile={data} />}
+				loadables={[loadingGameProfile, UserProfileService.Instance.LoadingUserProfile]}
+				renderSuccess={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userName={userProfile.UserName} />}
 			/>
 		</div>
 	);

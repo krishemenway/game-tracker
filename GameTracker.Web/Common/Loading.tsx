@@ -1,47 +1,48 @@
 import * as React from "react";
 import clsx from "clsx";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { ObservableLoading } from "Common/ObservableLoading";
+import { Loadable, LoadableBase } from "Common/Loadable";
 import { useObservable } from "Common/useObservable";
 import { useTextStyles, useLayoutStyles } from "AppStyles";
 
-interface LoadingProps<TSuccessData> {
-	observableLoading: ObservableLoading<TSuccessData>;
-	renderSuccess: (successData: TSuccessData) => JSX.Element;
+function Loading<A>(props: { loadables: [Loadable<A>], renderSuccess: (a: A) => JSX.Element }): JSX.Element;
+function Loading<A, B>(props: { loadables: [Loadable<A>, Loadable<B>], renderSuccess: (a: A, b: B) => JSX.Element }): JSX.Element;
+function Loading<A, B, C>(props: { loadables: [Loadable<A>, Loadable<B>, Loadable<C>], renderSuccess: (a: A, b: B, c: C) => JSX.Element }): JSX.Element;
+function Loading<A, B, C, D>(props: { loadables: [Loadable<A>, Loadable<B>, Loadable<C>, Loadable<D>], renderSuccess: (a: A, b: B, c: C, d: D) => JSX.Element }): JSX.Element;
 
-	renderLoading?: () => JSX.Element;
-	renderError?: (error: string) => JSX.Element;
-}
-
-function Loading<TSuccessData>(props: LoadingProps<TSuccessData>) {
+function Loading(props: { loadables: Loadable<any>[], renderSuccess: (...inputValues: any[]) => JSX.Element }): JSX.Element {
 	const text = useTextStyles();
 	const layout = useLayoutStyles();
 
-	const successData = useObservable(props.observableLoading.SuccessData);
-	const isLoading = useObservable(props.observableLoading.IsLoading);
-	const errorMessage = useObservable(props.observableLoading.ErrorMessage);
+	let datas = [];
+	let hasLoaded = true;
+	let errorMessage: string|null = null;
 
-	if (isLoading) {
-		if (props.renderLoading !== undefined) {
-			return props.renderLoading();
-		} else {
-			return <div className={clsx(text.center, layout.paddingVerticalDouble)}><CircularProgress /></div>;
+	props.loadables.forEach((loadable) => {
+		const successData = useObservable(loadable.SuccessData);
+		const loadableHasLoaded = useObservable(loadable.HasLoaded);
+		const loadableErrorMessage = useObservable(loadable.ErrorMessage);
+
+		if (!loadableHasLoaded) {
+			hasLoaded = loadableHasLoaded;
 		}
+
+		if (errorMessage !== null && loadableErrorMessage !== null) {
+			errorMessage = loadableErrorMessage;
+		}
+
+		datas.push(successData);
+	});
+
+	if (!hasLoaded) {
+		return <div className={clsx(text.center, layout.paddingVerticalDouble)}><CircularProgress /></div>;
 	}
 
 	if (errorMessage !== null) {
-		if (props.renderError !== undefined) {
-			return props.renderError(errorMessage);
-		} else {
-			return <div className={clsx(text.center, layout.paddingVerticalDouble)}>{errorMessage}</div>;
-		}
+		return <div className={clsx(text.center, layout.paddingVerticalDouble)}>{errorMessage}</div>;
 	}
 
-	if (successData !== undefined && successData !== null) {
-		return props.renderSuccess(successData);
-	} else {
-		throw Error("Tried to render success without data");
-	}
+	return props.renderSuccess(...props.loadables.map(x => x.SuccessData.Value));
 }
 
 export default Loading;

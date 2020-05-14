@@ -8,6 +8,8 @@ import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import UserActivityList from "UserActivities/UserActivityList";
 import StatisticsSection from "Common/StatisticsSection";
 import { TimeSpan } from "Common/TimeSpan";
+import { UserProfileService } from "UserProfile/UserProfileService";
+import UserProfileLink from "UserProfile/UserProfileLink";
 
 const DayView: React.FC<{ year:string; month: string; day: string; className?: string }> = (props) => {
 	const layout = useLayoutStyles();
@@ -15,18 +17,19 @@ const DayView: React.FC<{ year:string; month: string; day: string; className?: s
 	const loadingUserActivity = UserActivityService.Instance.FindOrCreateUserActivityForDate(dateKey);
 
 	React.useEffect(() => { UserActivityService.Instance.LoadFromServer(dateKey, loadingUserActivity); }, [dateKey]);
+	React.useEffect(() => { UserProfileService.Instance.LoadProfile(); }, []);
 
 	return (
 		<div className={layout.centerLayout1000}>
 			<Loading
-				observableLoading={loadingUserActivity}
-				renderSuccess={(userActivityForDate) => <LoadedDayView dateKey={dateKey} userActivityForDate={userActivityForDate} />}
+				loadables={[loadingUserActivity, UserProfileService.Instance.LoadingUserProfile]}
+				renderSuccess={(userActivityForDate, userProfile) => <LoadedDayView dateKey={dateKey} userActivityForDate={userActivityForDate} userName={userProfile.UserName} />}
 			/>
 		</div>
 	);
 };
 
-const LoadedDayView: React.FC<{ dateKey: string; userActivityForDate: UserActivityForDate }> = (props) => {
+const LoadedDayView: React.FC<{ dateKey: string; userActivityForDate: UserActivityForDate; userName: string }> = (props) => {
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
 	const background = useBackgroundStyles();
@@ -36,7 +39,7 @@ const LoadedDayView: React.FC<{ dateKey: string; userActivityForDate: UserActivi
 	return (
 		<>
 			<h1 className={clsx(layout.marginVertical, text.font24, background.borderBottom)}>
-				{dateAsMoment.format("MMMM Do, YYYY")}
+				<UserProfileLink>{props.userName}</UserProfileLink> &nbsp; {dateAsMoment.format("MMMM Do, YYYY")}
 			</h1>
 
 			<div className={clsx(layout.flexRow, layout.flexEvenDistribution, layout.flexItemSpacing, layout.marginBottomDouble)}>
