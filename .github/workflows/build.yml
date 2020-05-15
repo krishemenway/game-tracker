@@ -16,7 +16,7 @@ jobs:
       run: dotnet publish GameTracker.Service --configuration Release --output ./service
     - uses: actions/upload-artifact@v1
       with:
-        name: Service
+        name: service
         path: ./service
 
   build-web:
@@ -33,5 +33,5 @@ jobs:
       working-directory: ./GameTracker.Web
     - uses: actions/upload-artifact@v1
       with:
-        name: web
+        name: service
         path: ./GameTracker.Web/dist
