@@ -34,12 +34,12 @@ function Loading(props: { loadables: Loadable<unknown>[], renderSuccess: (...inp
 		successDatas.push(successData);
 	});
 
-	if (!hasLoaded) {
-		return <div className={clsx(text.center, layout.paddingVerticalDouble)}><CircularProgress /></div>;
-	}
-
 	if (errorMessage !== null) {
 		return <div className={clsx(text.center, layout.paddingVerticalDouble)}>{errorMessage}</div>;
+	}
+
+	if (!hasLoaded) {
+		return <div className={clsx(text.center, layout.paddingVerticalDouble)}><CircularProgress /></div>;
 	}
 
 	return props.renderSuccess(...successDatas);
