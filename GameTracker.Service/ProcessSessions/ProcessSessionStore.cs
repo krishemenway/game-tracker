@@ -32,11 +32,13 @@ namespace GameTracker.ProcessSessions
 		public ProcessSessionStore(
 			IDictionary<string, PendingProcessSession> pendingProcessSessionsByFilePath = null,
 			Func<DateTimeOffset> currentTimeFunc = null,
-			IUserActivityService userActivityService = null)
+			IUserActivityService userActivityService = null,
+			IUserActivityStore userActivityStore = null)
 		{
 			_pendingProcessSessionsByFilePath = pendingProcessSessionsByFilePath ?? StaticPendingProcessSessions;
 			_currentTimeFunc = currentTimeFunc ?? (() => DateTimeOffset.Now);
 			_userActivityService = userActivityService ?? new UserActivityService();
+			_userActivityStore = userActivityStore ?? new UserActivityStore();
 		}
 
 		public IReadOnlyList<ProcessSession> FindAll()
@@ -60,9 +62,9 @@ namespace GameTracker.ProcessSessions
 
 		private void PerformMatchForProcesses(IReadOnlyList<ProcessSession> processSessions)
 		{
-			foreach(var process in processSessions)
+			if (_userActivityService.TryCreateActivities(processSessions.ToArray(), out var userActivities))
 			{
-				_userActivityService.TryCreateActivity(process, out _);
+				_userActivityStore.SaveActivity(userActivities);
 			}
 		}
 
@@ -125,6 +127,7 @@ namespace GameTracker.ProcessSessions
 		private readonly IDictionary<string, PendingProcessSession> _pendingProcessSessionsByFilePath;
 		private readonly Func<DateTimeOffset> _currentTimeFunc;
 		private readonly IUserActivityService _userActivityService;
+		private readonly IUserActivityStore _userActivityStore;
 
 		private static CsvConfiguration CsvConfiguration { get; }
 

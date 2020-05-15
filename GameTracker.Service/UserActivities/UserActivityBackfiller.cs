@@ -30,14 +30,14 @@ namespace GameTracker.UserActivities
 
 			var executionTime = DateTimeOffset.Now;
 			var allUserActivityByProcessSessionId = _userActivityStore.FindAllUserActivity().ToDictionary(x => x.ProcessSessionId, x => x);
-			var processes = _processSessionStore.FindAll();
 
-			foreach(var process in processes)
+			var unmatchedProcessSessions = _processSessionStore.FindAll()
+				.Where(process => !allUserActivityByProcessSessionId.ContainsKey(process.ProcessSessionId))
+				.ToArray();
+
+			if (_userActivityService.TryCreateActivities(unmatchedProcessSessions, out var userActivities))
 			{
-				if (!allUserActivityByProcessSessionId.ContainsKey(process.ProcessSessionId))
-				{
-					_userActivityService.TryCreateActivity(process, out _);
-				}
+				_userActivityStore.SaveActivity(userActivities);
 			}
 
 			LastExecutionTime = executionTime;
