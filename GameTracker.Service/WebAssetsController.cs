@@ -12,9 +12,9 @@ namespace GameTracker
 		}
 
 		[HttpGet("favicon.ico")]
-		public ContentResult Icon()
+		public FileContentResult Icon()
 		{
-			return Content(ReadFileContents("favicon.ico"), "image/x-icon", Encoding.UTF8);
+			return File(ReadFileBytes("favicon.ico"), "image/x-icon", false);
 		}
 
 		[HttpGet("app.js")]
@@ -27,6 +27,11 @@ namespace GameTracker
 		public ContentResult AppMarkup(string url)
 		{
 			return Content(ReadFileContents("app.html").Replace("{url}", url), "text/html", Encoding.UTF8);
+		}
+
+		private byte[] ReadFileBytes(string filePath)
+		{
+			return _memoryCache.GetOrCreate($"AssetsContents-{filePath}", (cache) => System.IO.File.ReadAllBytes(Program.FilePathInAppData(filePath)));
 		}
 
 		private string ReadFileContents(string filePath)
