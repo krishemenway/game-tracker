@@ -7,8 +7,8 @@ namespace GameTracker.UserActivities
 {
 	public interface IUserActivityService
 	{
-		bool TryCreateActivity(ProcessSession processSession, out IUserActivity userActivity);
-		bool TryCreateActivities(ProcessSession[] processSessions, out IUserActivity[] userActivities);
+		bool TryCreateActivity(ProcessSession processSession, out UserActivity userActivity);
+		bool TryCreateActivities(ProcessSession[] processSessions, out UserActivity[] userActivities);
 	}
 
 	public class UserActivityService : IUserActivityService
@@ -21,7 +21,7 @@ namespace GameTracker.UserActivities
 			_userActivityFactory = userActivityFactory ?? new UserActivityFactory();
 		}
 
-		public bool TryCreateActivities(ProcessSession[] processSessions, out IUserActivity[] userActivities)
+		public bool TryCreateActivities(ProcessSession[] processSessions, out UserActivity[] userActivities)
 		{
 			userActivities = processSessions
 				.Select(process => TryCreateActivity(process, out var activity) ? activity : null)
@@ -31,7 +31,7 @@ namespace GameTracker.UserActivities
 			return userActivities.Any();
 		}
 
-		public bool TryCreateActivity(ProcessSession processSession, out IUserActivity userActivity)
+		public bool TryCreateActivity(ProcessSession processSession, out UserActivity userActivity)
 		{
 			if (!_gameMatcher.TryMatch(processSession.FilePath, out var matchedGame))
 			{

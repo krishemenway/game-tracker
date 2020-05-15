@@ -7,7 +7,7 @@ namespace GameTracker.GameProfiles
 {
 	public class GameProfileFactory
 	{
-		public GameProfile Create(IGame game, IReadOnlyList<IUserActivity> userActivities)
+		public GameProfile Create(IGame game, IReadOnlyList<UserActivity> userActivities)
 		{
 			var orderedUserActivities = userActivities.OrderByDescending(x => x.EndTime).ToList();
 
@@ -28,10 +28,10 @@ namespace GameTracker.GameProfiles
 	{
 		public IGame Game { get; set; }
 		
-		public IReadOnlyList<IUserActivity> AllActivity { get; set; }
+		public IReadOnlyList<UserActivity> AllActivity { get; set; }
 		public Dictionary<string, UserActivityForDate> ActivitiesByDate { get; set; }
 
-		public IUserActivity MostRecent { get; set; }
+		public UserActivity MostRecent { get; set; }
 
 		public int TotalUserActivityCount { get; set; }
 		public double MeanUserActivityTimePlayedInSeconds { get; set; }

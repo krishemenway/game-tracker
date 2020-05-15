@@ -1,7 +1,5 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using GameTracker.Games;
-using GameTracker.ProcessSessions;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -11,8 +9,8 @@ namespace GameTracker.UserActivities
 {
 	public interface IUserActivityStore
 	{
-		IReadOnlyList<IUserActivity> FindAllUserActivity();
-		void SaveActivity(params IUserActivity[] userActivities);
+		IReadOnlyList<UserActivity> FindAllUserActivity();
+		void SaveActivity(params UserActivity[] userActivities);
 	}
 
 	public class UserActivityStore : IUserActivityStore
@@ -25,7 +23,7 @@ namespace GameTracker.UserActivities
 			CsvConfiguration.HasHeaderRecord = false;
 		}
 
-		public IReadOnlyList<IUserActivity> FindAllUserActivity()
+		public IReadOnlyList<UserActivity> FindAllUserActivity()
 		{
 			using (var stream = File.Open(DataFilePath, FileMode.OpenOrCreate))
 			using (var reader = new StreamReader(stream))
@@ -35,7 +33,7 @@ namespace GameTracker.UserActivities
 			}
 		}
 
-		public void SaveActivity(params IUserActivity[] userActivities)
+		public void SaveActivity(params UserActivity[] userActivities)
 		{
 			using (var stream = File.Open(DataFilePath, FileMode.Append))
 			using (var writer = new StreamWriter(stream))

@@ -15,7 +15,7 @@ namespace GameTracker.UserActivities
 			_memoryCache = memoryCache;
 		}
 
-		public IReadOnlyList<IUserActivity> AllUserActivity
+		public IReadOnlyList<UserActivity> AllUserActivity
 		{ 
 			get
 			{

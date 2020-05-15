@@ -7,12 +7,12 @@ namespace GameTracker.UserActivities
 {
 	public interface IUserActivityFactory
 	{
-		IUserActivity Create(ProcessSession processSession, IGame game);
+		UserActivity Create(ProcessSession processSession, IGame game);
 	}
 
 	public class UserActivityFactory : IUserActivityFactory
 	{
-		public IUserActivity Create(ProcessSession processSession, IGame game)
+		public UserActivity Create(ProcessSession processSession, IGame game)
 		{
 			return new UserActivity
 			{

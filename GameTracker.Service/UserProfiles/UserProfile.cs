@@ -10,9 +10,9 @@ namespace GameTracker.Service.UserProfiles
 		public string UserName { get; set; }
 
 		public DateTimeOffset? StartedCollectingDataTime { get; set; }
-		public IUserActivity MostRecentActivity { get; set; }
+		public UserActivity MostRecentActivity { get; set; }
 
-		public List<IUserActivity> RecentActivities { get; set; }
+		public List<UserActivity> RecentActivities { get; set; }
 		public Dictionary<string, UserActivityForDate> ActivitiesByDate { get; set; }
 
 		public Dictionary<string, IGame> GamesByGameId { get; set; }

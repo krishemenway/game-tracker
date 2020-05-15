@@ -7,19 +7,7 @@ using String = StronglyTyped.StringIds;
 
 namespace GameTracker.UserActivities
 {
-	public interface IUserActivity
-	{
-		Guid.Id<UserActivity> UserActivityId { get; }
-		String.Id<Game> GameId { get; }
-		DateTimeOffset StartTime { get; }
-		DateTimeOffset EndTime { get; }
-		DateTimeOffset AssignedToDate { get; }
-		double TimeSpentInSeconds { get; }
-		Range<DateTimeOffset> DateRange { get; }
-		Guid.Id<ProcessSession> ProcessSessionId { get; }
-	}
-
-	public class UserActivity : IUserActivity
+	public class UserActivity
 	{
 		public Guid.Id<UserActivity> UserActivityId { get; set; }
 		public Guid.Id<ProcessSession> ProcessSessionId { get; set; }

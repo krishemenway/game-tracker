@@ -5,12 +5,12 @@ namespace GameTracker.UserActivities
 {
 	public class UserActivityForDate
 	{
-		public UserActivityForDate(IReadOnlyList<IUserActivity> userActivities)
+		public UserActivityForDate(IReadOnlyList<UserActivity> userActivities)
 		{
 			AllUserActivity = userActivities;
 		}
 
-		public IReadOnlyList<IUserActivity> AllUserActivity { get; }
+		public IReadOnlyList<UserActivity> AllUserActivity { get; }
 
 		public int TotalActivityCount => AllUserActivity.Count;
 		public double TotalTimeSpentInSeconds => AllUserActivity.Sum(x => x.TimeSpentInSeconds);
