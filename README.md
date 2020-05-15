@@ -19,3 +19,15 @@ project for tracking what games you are playing and when and creating your own p
 * User Profile
 	* allow theme plugins using jss
 	* allow for custom jss for user
+* Game Icons
+	* Download them into folder to serve locally
+	* Job to update icons on interval?
+	* Give user ability to override icons used
+	* Steam
+		* Use steamcmd to batch fetch icons? Find another way to get icon property for steamid?
+		* https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/[steamid]/[steam api -> icon].jpg
+	* Origin
+		* No clue what to do here, everything is manual since they have few games? Does this mean there needs to be an game-tracker repository of icons?
+		* Maybe Origin has an API somewhere? Hah
+	* UPlay
+		* No research has been done here.
