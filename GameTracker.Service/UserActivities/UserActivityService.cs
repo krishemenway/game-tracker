@@ -45,7 +45,6 @@ namespace GameTracker.UserActivities
 			return true;
 		}
 
-		private readonly IUserActivityStore _userActivityStore;
 		private readonly IGameMatcher _gameMatcher;
 		private readonly IUserActivityFactory _userActivityFactory;
 	}
