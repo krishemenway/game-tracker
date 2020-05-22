@@ -16,6 +16,7 @@ project for tracking what games you are playing and when and creating your own p
 	* report of how many times you played the game each day
 	* graph of time spent in game each day
 	* patient gamer? how long did you wait to play this game after release
+	* heat map that shows most often played at times of day
 * User Profile
 	* allow theme plugins using jss
 	* allow for custom jss for user
