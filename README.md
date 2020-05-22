@@ -20,6 +20,7 @@ project for tracking what games you are playing and when and creating your own p
 	* allow theme plugins using jss
 	* allow for custom jss for user
 * Game Icons
+	* Put URI to icons in games.json as default icon for games
 	* Download them into folder to serve locally
 	* Job to update icons on interval?
 	* Give user ability to override icons used
