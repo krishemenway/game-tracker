@@ -7,7 +7,7 @@ using System.Net;
 
 namespace GameTracker.Games
 {
-	[Route("Games")]
+	[Route("Game")]
 	public class GameIconController : ControllerBase
 	{
 		public GameIconController(
