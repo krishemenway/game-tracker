@@ -9,6 +9,7 @@ import GameStatistics from "GameProfiles/GameStatistics";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import UserProfileLink from "UserProfile/UserProfileLink";
+import UserActivityList from "UserActivities/UserActivityList";
 
 interface GameProfileProps {
 	gameId: string;
@@ -21,7 +22,7 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 
 	return (
 		<>
-			<h1 className={clsx(layout.marginVertical, text.font24, background.borderBottom)}>
+			<h1 className={clsx(text.font24, layout.paddingBottomHalf, layout.marginVertical, background.borderBottom)}>
 				<UserProfileLink>{props.userName}</UserProfileLink>
 				<span className={clsx(text.font16)}>&nbsp;&ndash;&nbsp;<GameName gameId={props.gameId} /></span>
 			</h1>
@@ -30,6 +31,9 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 
 			<h2 className={clsx(layout.marginVertical, text.font20)}>Recent Activity</h2>
 			<UserActivityCalendar userActivitiesByDate={props.gameProfile.ActivitiesByDate} />
+
+			<h2 className={clsx(layout.marginVertical, text.font20)}>All Activity</h2>
+			<UserActivityList activities={props.gameProfile.AllActivity} />
 		</>
 	);
 };

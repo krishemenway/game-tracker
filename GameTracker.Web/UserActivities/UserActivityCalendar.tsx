@@ -4,11 +4,12 @@ import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import { UserActivity } from "UserActivities/UserActivity";
 import Popover from "@material-ui/core/Popover";
-import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
+import { useLayoutStyles, useTextStyles, useBackgroundStyles, useActionStyles } from "AppStyles";
 import AggregateGameTableForDay from "GameProfiles/AggregateGameTableForDay";
 import MonthLink from "UserActivities/MonthLink";
 import DayLink from "UserActivities/DayLink";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
+import GameIcon from "Games/GameIcon";
 
 const UserActivityCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivityForDate>; className?: string; }> = (props) => {
 	const layout = useLayoutStyles();
@@ -27,38 +28,34 @@ const UserActivityCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActi
 };
 
 const UserActivityCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActivitiesByDate: Dictionary<UserActivityForDate> }> = (props) => {
-	const classes = useStyles();
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
 	const background = useBackgroundStyles();
 
 	const daysInMonth = createDaysInMonth(props.firstDayInMonth);
-	const [currentPopoverAnchor, setPopoverAnchor] = React.useState<HTMLDivElement|null>(null);
+	const [currentPopoverAnchor, setPopoverAnchor] = React.useState<HTMLElement|null>(null);
 	const [currentPopoverDate, setCurrentPopoverDate] = React.useState<moment.Moment|null>(null);
 	const popoverIsOpen = currentPopoverDate !== null;
 
 	return (
-		<div className={clsx(layout.width33, layout.marginBottomDouble)}>
+		<div className={clsx(layout.width33)}>
 			<div className={clsx(background.default, layout.height100, layout.paddingHorizontalHalf, layout.paddingBottomHalf)}>
 				<div className={clsx(layout.width100, layout.marginBottom, layout.paddingVertical, text.center, background.borderBottom)}>
 					<MonthLink month={props.firstDayInMonth}>{props.firstDayInMonth.format("MMMM YYYY")}</MonthLink>
 				</div>
 
 				<div className={clsx(layout.flexRow, layout.flexWrap)}>
-					{daysInMonth.map((dayInMonth) => {
-						const activities = acitivitesForDate(props.firstDayInMonth, dayInMonth, props.userActivitiesByDate);
-
-						return (
-							<div
-								key={dayInMonth}
-								className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, activities.length > 0 ? classes.gameReportButton : undefined, dayInMonth === currentPopoverDate?.date() ? classes.selectedDay : undefined)}
-								style={{marginLeft: dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined}}
-								onClick={activities.length > 0 ? (evt) => { setCurrentPopoverDate(moment(props.firstDayInMonth.format("YYYY-MM-") + padNumber(dayInMonth, 2))); setPopoverAnchor(evt.currentTarget); } : () => undefined}
-							>
-								<UserActivityCalendarMonthDayIcon activities={activities} />
-							</div>
-						);
-					})}
+					{daysInMonth.map((dayInMonth) => (
+						<UserActivityCalendarMonthDay
+							key={dayInMonth}
+							dayInMonth={dayInMonth}
+							firstDayInMonth={props.firstDayInMonth}
+							userActivitiesByDate={props.userActivitiesByDate}
+							currentPopoverDate={currentPopoverDate}
+							setCurrentPopoverDate={setCurrentPopoverDate}
+							setPopoverAnchor={setPopoverAnchor}
+						/>
+					))}
 				</div>
 			</div>
 
@@ -89,7 +86,36 @@ const UserActivityCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; user
 	)
 };
 
-const UserActivityCalendarMonthDayIcon: React.FC<{ activities: UserActivity[] }> = (props) => {
+interface UserActivityCalendarMonthDayProps {
+	dayInMonth: number;
+	firstDayInMonth: moment.Moment;
+	userActivitiesByDate: Dictionary<UserActivityForDate>;
+	currentPopoverDate: moment.Moment|null;
+	setCurrentPopoverDate: (date: moment.Moment) => void;
+	setPopoverAnchor: (element: HTMLElement) => void;
+}
+
+const UserActivityCalendarMonthDay: React.FC<UserActivityCalendarMonthDayProps> = (props) => {
+	const classes = useStyles();
+	const layout = useLayoutStyles();
+	const text = useTextStyles();
+	const action = useActionStyles();
+
+	const marginLeftValue = props.dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined;
+	const activities = acitivitesForDate(props.firstDayInMonth, props.dayInMonth, props.userActivitiesByDate);
+	const selectedDayClass = props.dayInMonth === props.currentPopoverDate?.date() ? classes.selectedDay : undefined;
+
+	return (
+		<div className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, selectedDayClass)} style={{marginLeft: marginLeftValue}}>
+			<UserActivityCalendarMonthDayIcon
+				activities={activities}
+				onClick={(element) => { props.setCurrentPopoverDate(moment(props.firstDayInMonth.format("YYYY-MM-") + padNumber(props.dayInMonth, 2))); props.setPopoverAnchor(element); }}
+			/>
+		</div>
+	);
+};
+
+const UserActivityCalendarMonthDayIcon: React.FC<{ activities: UserActivity[], onClick: (element: HTMLElement) => void }> = (props) => {
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
 
@@ -99,22 +125,31 @@ const UserActivityCalendarMonthDayIcon: React.FC<{ activities: UserActivity[] }>
 		case 0:
 			return <NoActivityIcon className={clsx(layout.width100, text.center)} />
 		case 1:
-			return <SingleActivityIcon className={clsx(layout.width100, text.center)} />
+			return <SingleActivityIcon className={clsx(layout.width100, layout.height100, text.center)} gameId={uniqueGames[0]} onClick={props.onClick} />
 		default:
-			return <MultipleActivityIcon count={uniqueGames.length} className={clsx(layout.width100, text.center)} />
+			return <MultipleActivityIcon className={clsx(layout.width100, layout.height100, text.center)} count={uniqueGames.length} onClick={props.onClick} />
 	}
 }
 
-const NoActivityIcon: React.FC<{ className: string }> = (props) => {
-	return <div className={props.className}>&ndash;</div>;
+const NoActivityIcon: React.FC<{ className: string }> = (props) => <div {...props}>&ndash;</div>
+const SingleActivityIcon: React.FC<{ gameId: string; className: string; onClick: (element: HTMLElement) => void }> = (props) => {
+	const action = useActionStyles();
+
+	return (
+		<button className={clsx(action.clickable, action.clickableBackground, props.className)} onClick={(evt) => props.onClick(evt.currentTarget)}>
+			<GameIcon gameId={props.gameId} style={{ width: "24px", height: "24px" }} />
+		</button>
+	);
 };
 
-const SingleActivityIcon: React.FC<{ className: string }> = (props) => {
-	return <div className={props.className}>1</div>;
-};
+const MultipleActivityIcon: React.FC<{ className: string; count: number; onClick: (element: HTMLElement) => void }> = (props) => {
+	const action = useActionStyles();
 
-const MultipleActivityIcon: React.FC<{ className: string; count: number }> = (props) => {
-	return <div className={props.className}>{props.count}</div>;
+	return (
+		<button className={clsx(action.clickable, action.clickableBackground, props.className)} onClick={(evt) => props.onClick(evt.currentTarget)}>
+			{props.count}
+		</button>
+	);
 };
 
 function acitivitesForDate(firstDayInMonth: moment.Moment, dayInMonth: number, userActivitiesByDate: Dictionary<UserActivityForDate>): UserActivity[] {
@@ -157,15 +192,8 @@ const useStyles = makeStyles((t) => ({
 		minWidth: "32px",
 		minHeight: "32px",
 	},
-	gameReportButton: {
-		cursor: "pointer",
-		background: "#181818",
-		"&:hover": {
-			background: "#202020",
-		},
-	},
 	selectedDay: {
-		border: "1px solid #383838",
+		border: "1px solid #F0F0F0",
 	},
 }));
 

@@ -28,7 +28,7 @@ function LoadedUserProfile(props: { userProfile: UserProfile }) {
 
 	return (
 		<>
-			<h1 className={clsx(text.font24, layout.marginVertical, background.borderBottom)}>{props.userProfile.UserName}</h1>
+			<h1 className={clsx(text.font24, layout.paddingBottomHalf, layout.marginVertical, background.borderBottom)}>{props.userProfile.UserName}</h1>
 
 			<section className={clsx(layout.marginBottom)}>
 				<h2 className={clsx(text.font20, layout.marginBottom)}>Recent Activity</h2>

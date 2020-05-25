@@ -1,11 +1,43 @@
 import { makeStyles } from '@material-ui/core/styles';
 
+export const useGlobalStyles = makeStyles({
+	"@global": {
+		[`html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del,
+		dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label,
+		legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed,  figure, figcaption, footer, header, hgroup,
+		menu, nav, output, ruby, section, summary, time, mark, audio, video, button`]: {
+			color: "#F0F0F0",
+			margin: "0",
+			padding: "0",
+			border: "0",
+			fontSize: "100%",
+			font: "inherit",
+			verticalAlign: "baseline",
+			boxSizing: "border-box",
+			fontFamily: "'Segoe UI','Frutiger','Frutiger Linotype','Dejavu Sans','Helvetica Neue',Arial,sans-serif",
+			background: "transparent",
+		},
+		"html": {
+			lineHeight: 1,
+			background: "#101010",
+			height: "100%"
+		},
+		"ol, ul": {
+			listStyle: "none",
+		},
+		"table": {
+			borderCollapse: "collapse",
+			borderSpacing: 0,
+		},
+	},
+});
+
 export const useBackgroundStyles = makeStyles({
-	default: { background: "rgba(0,0,0,.4)", },
-	borderBottom: { borderBottom: "1px solid #383838" },
+	default: { backgroundColor: "#161616", border: "1px solid #2F2F2F" },
+	borderBottom: { borderBottom: "1px solid #2F2F2F" },
 	bgAlternateDarken: {
 		"& li:nth-child(even), & tr:nth-child(even)": {
-			backgroundColor: "rgba(50,50,50,0.15)",
+			backgroundColor: "#2F2F2F",
 		},
 	},
 });
@@ -20,8 +52,11 @@ export const useActionStyles = makeStyles({
 		},
 	},
 	clickableBackground: {
-		"&:hover": { background: "rgba(50,50,50,.3) !important", },
-	}
+		color: "#F0F0F0",
+		borderColor: "#2F2F2F",
+		backgroundColor: "#161616",
+		"&:hover": { borderColor: "#C0C0C0", textDecoration: "none", },
+	},
 });
 
 export const useLayoutStyles = makeStyles({
@@ -117,6 +152,8 @@ export const useLayoutStyles = makeStyles({
 	marginBottom : { marginBottom: "10px", },
 	marginBottomHalf: { marginBottom: "5px", },
 	marginBottomDouble: { marginBottom: "20px", },
+
+	marginBottomDoubleNegative: { marginBottom: "-20px" },
 });
 
 export const useTextStyles = makeStyles({

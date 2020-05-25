@@ -7,8 +7,11 @@ import DayView from "UserActivities/DayView";
 import MonthView from "UserActivities/MonthView";
 import ProcessManager from "ProcessManager/ProcessManager";
 import NotFound from "Common/NotFound";
+import { useGlobalStyles } from "AppStyles";
 
 const App: React.FC = () => {
+	useGlobalStyles();
+
 	return (
 		<BrowserRouter >
 			<Switch>

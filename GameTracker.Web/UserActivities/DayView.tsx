@@ -37,7 +37,7 @@ const LoadedDayView: React.FC<{ dateKey: string; userActivityForDate: UserActivi
 
 	return (
 		<>
-			<h1 className={clsx(layout.marginVertical, text.font24, background.borderBottom)}>
+			<h1 className={clsx(text.font24, layout.paddingBottomHalf, layout.marginVertical, background.borderBottom)}>
 				<UserProfileLink>{props.userName}</UserProfileLink>
 				<span className={clsx(text.font16)}>&nbsp;&ndash;&nbsp;{dateAsMoment.format("MMMM Do, YYYY")}</span>
 			</h1>
