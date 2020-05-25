@@ -14,6 +14,7 @@ namespace GameTracker.Games
 	{
 		IReadOnlyDictionary<Id<Game>, IGame> FindAll();
 		IReadOnlyDictionary<Id<Game>, IGame> FindGames(IReadOnlyList<Id<Game>> gameIds);
+		bool TryGetGame(Id<Game> gameId, out IGame game);
 	}
 
 	public class GameStore : IGameStore
@@ -21,6 +22,11 @@ namespace GameTracker.Games
 		public IReadOnlyDictionary<Id<Game>, IGame> FindAll()
 		{
 			return AllGames.ToDictionary(x => x.GameId, x => x as IGame);
+		}
+
+		public bool TryGetGame(Id<Game> gameId, out IGame game)
+		{
+			return FindGames(new[] { gameId }).TryGetValue(gameId, out game);
 		}
 
 		public IReadOnlyDictionary<Id<Game>, IGame> FindGames(IReadOnlyList<Id<Game>> gameIds)
