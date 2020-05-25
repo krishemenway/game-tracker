@@ -33,7 +33,7 @@ const UserActivity: React.FC<{ activity: UserActivity }> = (props) => {
 		<li className={clsx(layout.width50, layout.marginBottomHalf)}>
 			<div className={clsx(background.default, layout.paddingAll, layout.flexRow)}>
 				<div className={clsx(layout.marginRight)}>
-					<GameIcon gameId={props.activity.GameId} width={64} height={64} />
+					<GameIcon gameId={props.activity.GameId} style={{ width: "40px", height: "40px" }} />
 				</div>
 
 				<div className={clsx(layout.relative, layout.flexFillRemaining)}>

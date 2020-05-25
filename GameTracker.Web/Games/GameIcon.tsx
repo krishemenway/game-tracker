@@ -1,8 +1,8 @@
 import * as React from "react";
 
-const GameIcon: React.FC<{ gameId: string, width: number, height: number }> = (props) => {
+const GameIcon: React.FC<{ gameId: string, className?: string; style?: React.CSSProperties }> = (props) => {
 	return (
-		<div style={{width: props.width, height: props.height, background: "#383838"}} />
+		<img src={`/Games/${props.gameId}/Icon32`} className={props.className} style={props.style} />
 	);
 }
 
