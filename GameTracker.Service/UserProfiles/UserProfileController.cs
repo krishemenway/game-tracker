@@ -28,14 +28,15 @@ namespace GameTracker.Service.UserProfiles
 		{
 			var oldestDateForUserActivity = OldestDateForUserActivity();
 
-			var filteredActivities = _allUserActivityCache.AllUserActivity.Where(x => x.AssignedToDate > oldestDateForUserActivity).ToList();
+			var allUserActivity = _allUserActivityCache.AllUserActivity;
+			var filteredActivities = allUserActivity.Where(x => x.AssignedToDate > oldestDateForUserActivity).ToList();
 			var orderedActivities = filteredActivities.OrderByDescending(x => x.EndTime).ToList();
 
 			var mostRecentActivity = orderedActivities.FirstOrDefault();
 			var oldestActivity = orderedActivities.LastOrDefault();
 
-			var uniqueGameIds = orderedActivities.Select(x => x.GameId).Distinct().ToList();
-			var gamesByGameId = _gameStore.FindGames(uniqueGameIds);
+			var relevantGameIds = allUserActivity.Select(x => x.GameId).Distinct().ToList();
+			var gamesByGameId = _gameStore.FindGames(relevantGameIds);
 
 			return new UserProfile
 			{
