@@ -43,7 +43,7 @@ namespace GameTracker
 			{
 				if (destinationType == typeof(string))
 				{
-					return valueAsGlob.ToString();
+					return valueAsGlob.Pattern;
 				}
 			}
 			else
