@@ -8,6 +8,7 @@ import MonthView from "UserActivities/MonthView";
 import ProcessManager from "ProcessManager/ProcessManager";
 import NotFound from "Common/NotFound";
 import { useGlobalStyles } from "AppStyles";
+import AllGamesView from "Games/AllGamesView";
 
 const App: React.FC = () => {
 	useGlobalStyles();
@@ -26,6 +27,12 @@ const App: React.FC = () => {
 					exact
 					path="/activity/:year/:month"
 					component={(props: RouteComponentProps<{ year: string; month: string }>) => <MonthView year={props.match.params.year} month={props.match.params.month} />}
+				/>
+
+				<Route
+					exact
+					path="/games"
+					component={() => <AllGamesView />}
 				/>
 
 				<Route

@@ -8,8 +8,8 @@ import { GameProfile } from "GameProfiles/GameProfile";
 import GameStatistics from "GameProfiles/GameStatistics";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { UserProfileService } from "UserProfile/UserProfileService";
-import UserProfileLink from "UserProfile/UserProfileLink";
 import UserActivityList from "UserActivities/UserActivityList";
+import PageHeader from "Common/PageHeader";
 
 interface GameProfileProps {
 	gameId: string;
@@ -18,14 +18,10 @@ interface GameProfileProps {
 const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; userName: string }> = (props) => {
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
-	const background = useBackgroundStyles();
 
 	return (
 		<>
-			<h1 className={clsx(text.font24, layout.paddingBottomHalf, layout.marginVertical, background.borderBottom)}>
-				<UserProfileLink>{props.userName}</UserProfileLink>
-				<span className={clsx(text.font16)}>&nbsp;&ndash;&nbsp;<GameName gameId={props.gameId} /></span>
-			</h1>
+			<PageHeader UserName={props.userName} PageTitle={props.gameProfile.Game.Name} />
 
 			<GameStatistics gameId={props.gameId} gameProfile={props.gameProfile} />
 
