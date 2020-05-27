@@ -12,6 +12,7 @@ using Serilog;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Runtime.Caching;
 using System.Threading.Tasks;
 using System.Timers;
@@ -26,7 +27,6 @@ namespace GameTracker
 
 			GamesDataUpdateTimer = new Timer(TimeSpan.FromDays(1).TotalMilliseconds) { AutoReset = true };
 			GamesDataUpdateTimer.Elapsed += (sender, args) => new GameStore().ReloadGamesFromCentralRepository();
-			Task.Run(() => new GameStore().ReloadGamesFromCentralRepository());
 
 			ProcessScannerTimer = new Timer(Program.Configuration.GetValue<int>("ProcessScanIntervalInSeconds") * 1000) { AutoReset = true };
 			ProcessScannerTimer.Elapsed += (sender, args) => new ProcessScanner().ScanProcesses();
@@ -53,6 +53,10 @@ namespace GameTracker
 			UserActivityBackfillerTimer.Start();
 			GamesDataUpdateTimer.Start();
 			WebHost.Start();
+
+			Task.Delay(1000).ContinueWith((_) => { new GameStore().ReloadGamesFromCentralRepository(); });
+			Task.Delay(1000).ContinueWith((_) => { WebRequest.Create($"http://localhost:{Program.Configuration.GetValue<string>("WebPort")}/WebAPI/UserProfile").GetResponse(); });
+
 			return true;
 		}
 
