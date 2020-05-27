@@ -11,7 +11,7 @@ const DayLinkOrLabel: React.FC<{ date: moment.Moment, className?: string }> = (p
 	const isViewingDay = location.pathname.match(/^\/activity\/([^\/]+)\/([^\/]+)\/([^\/]+)$/i) !== null;
 	return isViewingDay
 		? <span className={props.className}>{props.children}</span>
-		: <Link className={clsx(action.clickable, props.className)} to={`/activity/${props.date.format("YYYY/MM/DD")}`}>{props.children}</Link>;
+		: <Link className={clsx(action.clickable, action.clickableUnderline, props.className)} to={`/activity/${props.date.format("YYYY/MM/DD")}`}>{props.children}</Link>;
 };
 
 export default DayLinkOrLabel;

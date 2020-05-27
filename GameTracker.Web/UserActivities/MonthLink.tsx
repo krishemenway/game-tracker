@@ -11,7 +11,7 @@ const MonthLinkOrLabel: React.FC<{ month: moment.Moment, className?: string }> =
 	const isViewingMonth = location.pathname.match(/^\/activity\/([^\/]+)\/([^\/]+)$/i) !== null;
 	return isViewingMonth
 		? <span className={props.className}>{props.children}</span>
-		: <Link className={clsx(action.clickable, props.className)} to={`/activity/${props.month.format("YYYY/MM")}`}>{props.children}</Link>;
+		: <Link className={clsx(action.clickable, action.clickableUnderline, props.className)} to={`/activity/${props.month.format("YYYY/MM")}`}>{props.children}</Link>;
 };
 
 export default MonthLinkOrLabel;
