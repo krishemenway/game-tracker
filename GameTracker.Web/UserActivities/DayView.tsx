@@ -1,7 +1,7 @@
 import * as moment from "moment";
 import * as React from "react";
 import clsx from "clsx";
-import { useLayoutStyles, useBackgroundStyles, useTextStyles } from "AppStyles";
+import { useLayoutStyles } from "AppStyles";
 import { UserActivityService } from "./UserActivityService";
 import Loading from "Common/Loading";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
@@ -9,7 +9,7 @@ import UserActivityList from "UserActivities/UserActivityList";
 import StatisticsSection from "Common/StatisticsSection";
 import { TimeSpan } from "Common/TimeSpan";
 import { UserProfileService } from "UserProfile/UserProfileService";
-import UserProfileLink from "UserProfile/UserProfileLink";
+import PageHeader from "Common/PageHeader";
 
 const DayView: React.FC<{ year:string; month: string; day: string; className?: string }> = (props) => {
 	const layout = useLayoutStyles();
@@ -30,17 +30,12 @@ const DayView: React.FC<{ year:string; month: string; day: string; className?: s
 
 const LoadedDayView: React.FC<{ dateKey: string; userActivityForDate: UserActivityForDate; userName: string }> = (props) => {
 	const layout = useLayoutStyles();
-	const text = useTextStyles();
-	const background = useBackgroundStyles();
 
 	const dateAsMoment = React.useMemo(() => moment(props.dateKey), [props.dateKey]);
 
 	return (
 		<>
-			<h1 className={clsx(text.font24, layout.paddingBottomHalf, layout.marginVertical, background.borderBottom)}>
-				<UserProfileLink>{props.userName}</UserProfileLink>
-				<span className={clsx(text.font16)}>&nbsp;&ndash;&nbsp;{dateAsMoment.format("MMMM Do, YYYY")}</span>
-			</h1>
+			<PageHeader UserName={props.userName} PageTitle={dateAsMoment.format("MMMM Do, YYYY")} />
 
 			<div className={clsx(layout.flexRow, layout.flexEvenDistribution, layout.flexItemSpacing, layout.marginBottomDouble)}>
 				<StatisticsSection

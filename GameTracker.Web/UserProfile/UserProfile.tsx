@@ -5,6 +5,8 @@ import { UserProfileService, UserProfile } from "UserProfile/UserProfileService"
 import UserActivityList from "UserActivities/UserActivityList";
 import Loading from "Common/Loading";
 import UserActivityCalendar from "UserActivities/UserActivityCalendar";
+import AllGamesList from "Games/AllGamesList";
+import PageHeader from "Common/PageHeader";
 
 export default () => {
 	const layout = useLayoutStyles();
@@ -24,11 +26,10 @@ export default () => {
 function LoadedUserProfile(props: { userProfile: UserProfile }) {
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
-	const background = useBackgroundStyles();
 
 	return (
 		<>
-			<h1 className={clsx(text.font24, layout.paddingBottomHalf, layout.marginVertical, background.borderBottom)}>{props.userProfile.UserName}</h1>
+			<PageHeader UserName={props.userProfile.UserName} />
 
 			<section className={clsx(layout.marginBottom)}>
 				<h2 className={clsx(text.font20, layout.marginBottom)}>Recent Activity</h2>
@@ -37,8 +38,8 @@ function LoadedUserProfile(props: { userProfile: UserProfile }) {
 			</section>
 
 			<section className={clsx(layout.marginBottom)}>
-				<h2 className={clsx(text.font20, layout.marginBottom)}>Statistics</h2>
-				<div>things to come soon!</div>
+				<h2 className={clsx(text.font20, layout.marginBottom)}>All Games</h2>
+				<AllGamesList showAll={false} />
 			</section>
 		</>
 	);

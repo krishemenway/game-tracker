@@ -16,6 +16,7 @@ export const useGlobalStyles = makeStyles({
 			boxSizing: "border-box",
 			fontFamily: "'Segoe UI','Frutiger','Frutiger Linotype','Dejavu Sans','Helvetica Neue',Arial,sans-serif",
 			background: "transparent",
+			textDecoration: "none",
 		},
 		"html": {
 			lineHeight: 1,
@@ -45,6 +46,8 @@ export const useBackgroundStyles = makeStyles({
 export const useActionStyles = makeStyles({
 	clickable: {
 		cursor: "pointer",
+	},
+	clickableUnderline: {
 		textDecoration: "none",
 
 		"&:hover": {
@@ -53,10 +56,17 @@ export const useActionStyles = makeStyles({
 	},
 	clickableBackground: {
 		color: "#F0F0F0",
-		borderColor: "#2F2F2F",
 		backgroundColor: "#161616",
-		"&:hover": { borderColor: "#C0C0C0", textDecoration: "none", },
+		"&:hover": {
+			backgroundColor: "#242424",
+		},
 	},
+	clickableBackgroundBorder: {
+		border: "1px solid #2F2F2F",
+		"&:hover": {
+			borderColor: "#C0C0C0",
+		},
+	}
 });
 
 export const useLayoutStyles = makeStyles({
