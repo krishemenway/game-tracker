@@ -10,6 +10,7 @@ import StatisticsSection from "Common/StatisticsSection";
 import { TimeSpan } from "Common/TimeSpan";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import PageHeader from "Common/PageHeader";
+import PageFooter from "Common/PageFooter";
 
 const DayView: React.FC<{ year:string; month: string; day: string; className?: string }> = (props) => {
 	const layout = useLayoutStyles();
@@ -52,6 +53,8 @@ const LoadedDayView: React.FC<{ dateKey: string; userActivityForDate: UserActivi
 			</div>
 
 			<UserActivityList activities={props.userActivityForDate.AllUserActivity} />
+
+			<PageFooter />
 		</>
 	);
 };

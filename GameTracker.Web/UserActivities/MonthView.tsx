@@ -6,6 +6,7 @@ import Loading from "Common/Loading";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import StatisticsSection from "Common/StatisticsSection";
 import PageHeader from "Common/PageHeader";
+import PageFooter from "Common/PageFooter";
 
 const MonthView: React.FC<{ year:string; month: string; className?: string }> = (props) => {
 	const layout = useLayoutStyles();
@@ -43,6 +44,8 @@ const LoadedMonthView: React.FC<{ monthKey: string; userName: string }> = (props
 					]}
 				/>
 			</div>
+
+			<PageFooter />
 		</>
 	);
 };
