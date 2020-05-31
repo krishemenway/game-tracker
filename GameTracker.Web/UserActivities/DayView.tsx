@@ -16,7 +16,7 @@ const DayView: React.FC<{ year:string; month: string; day: string; className?: s
 	const layout = useLayoutStyles();
 	const dateKey = `${props.year}-${props.month}-${props.day}`;
 
-	React.useEffect(() => { UserActivityService.Instance.LoadFromServer(dateKey); }, [dateKey]);
+	React.useEffect(() => { UserActivityService.Instance.LoadForDate(dateKey); }, [dateKey]);
 	React.useEffect(() => { UserProfileService.Instance.LoadProfile(); }, []);
 
 	return (
