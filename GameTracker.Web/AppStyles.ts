@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export const defaultBackground = "#161616";
 export const defaultFontColor = "#F0F0F0";
+export const defaultBorderColor = "#2F2F2F";
 export const useGlobalStyles = makeStyles({
 	"@global": {
 		[`html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del,
@@ -64,7 +65,7 @@ export const useActionStyles = makeStyles({
 		},
 	},
 	clickableBackgroundBorder: {
-		border: "1px solid #2F2F2F",
+		border: `1px solid ${defaultBorderColor}`,
 		"&:hover": {
 			borderColor: "#C0C0C0",
 		},
