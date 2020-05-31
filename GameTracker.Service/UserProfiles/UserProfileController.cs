@@ -39,10 +39,10 @@ namespace GameTracker.Service.UserProfiles
 			var gamesByGameId = _gameStore.FindGames(relevantGameIds);
 
 			return new UserProfile
-			{
+			{ 
 				UserName = Program.Configuration.GetValue<string>("UserName"),
 				MostRecentActivity = mostRecentActivity,
-				StartedCollectingDataTime = oldestActivity.StartTime,
+				StartedCollectingDataTime = oldestActivity?.StartTime,
 				RecentActivities = orderedActivities.Take(10).ToList(),
 				ActivitiesByDate = orderedActivities.GroupByDate(),
 				GamesByGameId = gamesByGameId.ToDictionary(x => x.Key.Value, x => x.Value),

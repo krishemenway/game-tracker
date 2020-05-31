@@ -1,5 +1,6 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
+using Serilog;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -25,25 +26,35 @@ namespace GameTracker.UserActivities
 
 		public IReadOnlyList<UserActivity> FindAllUserActivity()
 		{
-			using (var stream = File.Open(DataFilePath, FileMode.OpenOrCreate))
-			using (var reader = new StreamReader(stream))
-			using (var csv = new CsvReader(reader, CsvConfiguration))
+			Log.Debug("Loading UserActivity from File!");
+
+			lock (FileLock)
 			{
+				using var stream = File.Open(DataFilePath, FileMode.OpenOrCreate);
+				using var reader = new StreamReader(stream);
+				using var csv = new CsvReader(reader, CsvConfiguration);
+
 				return csv.GetRecords<UserActivity>().ToList();
 			}
 		}
 
 		public void SaveActivity(params UserActivity[] userActivities)
 		{
-			using (var stream = File.Open(DataFilePath, FileMode.Append))
-			using (var writer = new StreamWriter(stream))
-			using (var csv = new CsvWriter(writer, CsvConfiguration))
+			Log.Debug("Saving UserActivity to File!");
+
+			lock (FileLock)
 			{
+				using var stream = File.Open(DataFilePath, FileMode.Append);
+				using var writer = new StreamWriter(stream);
+				using var csv = new CsvWriter(writer, CsvConfiguration);
+
 				csv.WriteRecords(userActivities);
 			}
 		}
 
 		public static string DataFilePath => Program.FilePathInAppData("UserActivity.csv");
 		private static CsvConfiguration CsvConfiguration { get; }
+
+		private static object FileLock { get; } = new object();
 	}
 }

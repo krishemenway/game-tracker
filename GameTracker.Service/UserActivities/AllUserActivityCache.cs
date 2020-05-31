@@ -26,11 +26,15 @@ namespace GameTracker.UserActivities
 			}
 		}
 
-		public IReadOnlyDictionary<string, UserActivityForDate> FindUserActivityByDay(DateTimeOffset? startTime, DateTimeOffset? endTime)
+		public IReadOnlyList<UserActivity> FindUserActivity(DateTimeOffset? startTime, DateTimeOffset? endTime)
 		{
 			var searchRange = new Range<DateTimeOffset>(startTime ?? DateTimeOffset.MinValue, endTime ?? DateTimeOffset.MaxValue);
+			return AllUserActivity.Where(userActivity => searchRange.Contains(userActivity.AssignedToDate)).ToList();
+		}
 
-			return AllUserActivity.Where(userActivity => userActivity.DateRange.Intersects(searchRange)).GroupByDate();
+		public IReadOnlyDictionary<string, UserActivityForDate> FindUserActivityByDay(DateTimeOffset? startTime, DateTimeOffset? endTime)
+		{
+			return FindUserActivity(startTime, endTime).GroupByDate();
 		}
 
 		public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
