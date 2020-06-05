@@ -10,6 +10,7 @@ import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import UserActivityList from "UserActivities/UserActivityList";
 import PageHeader from "Common/PageHeader";
+import PageFooter from "Common/PageFooter";
 
 interface GameProfileProps {
 	gameId: string;
@@ -30,6 +31,8 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 
 			<h2 className={clsx(layout.marginVertical, text.font20)}>All Activity</h2>
 			<UserActivityList activities={props.gameProfile.AllActivity} />
+
+			<PageFooter />
 		</>
 	);
 };

@@ -1,12 +1,15 @@
 import { makeStyles } from '@material-ui/core/styles';
 
+export const defaultBackground = "#161616";
+export const defaultFontColor = "#F0F0F0";
+export const defaultBorderColor = "#2F2F2F";
 export const useGlobalStyles = makeStyles({
 	"@global": {
 		[`html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del,
 		dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label,
 		legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed,  figure, figcaption, footer, header, hgroup,
 		menu, nav, output, ruby, section, summary, time, mark, audio, video, button`]: {
-			color: "#F0F0F0",
+			color: defaultFontColor,
 			margin: "0",
 			padding: "0",
 			border: "0",
@@ -34,7 +37,7 @@ export const useGlobalStyles = makeStyles({
 });
 
 export const useBackgroundStyles = makeStyles({
-	default: { backgroundColor: "#161616", border: "1px solid #2F2F2F" },
+	default: { backgroundColor: defaultBackground, border: "1px solid #2F2F2F" },
 	borderBottom: { borderBottom: "1px solid #2F2F2F" },
 	bgAlternateDarken: {
 		"& li:nth-child(even), & tr:nth-child(even)": {
@@ -56,13 +59,13 @@ export const useActionStyles = makeStyles({
 	},
 	clickableBackground: {
 		color: "#F0F0F0",
-		backgroundColor: "#161616",
+		backgroundColor: defaultBackground,
 		"&:hover": {
 			backgroundColor: "#242424",
 		},
 	},
 	clickableBackgroundBorder: {
-		border: "1px solid #2F2F2F",
+		border: `1px solid ${defaultBorderColor}`,
 		"&:hover": {
 			borderColor: "#C0C0C0",
 		},

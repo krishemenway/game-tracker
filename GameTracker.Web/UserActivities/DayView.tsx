@@ -10,12 +10,13 @@ import StatisticsSection from "Common/StatisticsSection";
 import { TimeSpan } from "Common/TimeSpan";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import PageHeader from "Common/PageHeader";
+import PageFooter from "Common/PageFooter";
 
 const DayView: React.FC<{ year:string; month: string; day: string; className?: string }> = (props) => {
 	const layout = useLayoutStyles();
 	const dateKey = `${props.year}-${props.month}-${props.day}`;
 
-	React.useEffect(() => { UserActivityService.Instance.LoadFromServer(dateKey); }, [dateKey]);
+	React.useEffect(() => { UserActivityService.Instance.LoadForDate(dateKey); }, [dateKey]);
 	React.useEffect(() => { UserProfileService.Instance.LoadProfile(); }, []);
 
 	return (
@@ -52,6 +53,8 @@ const LoadedDayView: React.FC<{ dateKey: string; userActivityForDate: UserActivi
 			</div>
 
 			<UserActivityList activities={props.userActivityForDate.AllUserActivity} />
+
+			<PageFooter />
 		</>
 	);
 };
