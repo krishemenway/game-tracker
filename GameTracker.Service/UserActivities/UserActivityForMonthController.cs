@@ -40,7 +40,7 @@ namespace GameTracker.UserActivities
 			{
 				AllUserActivity = userActivityForMonth,
 
-				TimeSpentInSecondsByHour = _timeSpentByHourCalculator.Calculate(userActivityForMonth).ToDictionary(x => x.Key, x => x.Value.TotalSeconds),
+				TimeSpentInSecondsByHour = _timeSpentByHourCalculator.Calculate(userActivityForMonth).ToDictionary(x => x.Key.ToString(), x => x.Value),
 				TimeSpentInSecondsByGameId = userActivityForMonth.GroupBy(x => x.GameId).ToDictionary(x => x.Key.Value, x => x.Sum(y => y.TimeSpentInSeconds)),
 				TimeSpentInSecondsByDate = userActivityForMonth.GroupBy(x => x.AssignedToDate).ToDictionary(x => x.Key.ToString("yyyy-MM-dd"), x => x.Sum(y => y.TimeSpentInSeconds)),
 				GamesByGameId = _gameStore.FindGames(distinctGameIds).ToDictionary(x => x.Key.Value, x => x.Value),
@@ -61,7 +61,7 @@ namespace GameTracker.UserActivities
 		public Dictionary<string, double> TimeSpentInSecondsByGameId { get; set; }
 		public Dictionary<string, double> TimeSpentInSecondsByDate { get; set; }
 		public Dictionary<string, IGame> GamesByGameId { get; set; }
-		public Dictionary<int, double> TimeSpentInSecondsByHour { get; set; }
+		public Dictionary<string, double> TimeSpentInSecondsByHour { get; set; }
 		public int TotalGamesPlayed { get; set; }
 		public double TotalTimePlayedInSeconds { get; set; }
 }

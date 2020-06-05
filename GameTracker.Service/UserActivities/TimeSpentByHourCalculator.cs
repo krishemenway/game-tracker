@@ -1,32 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GameTracker.UserActivities
 {
 	public interface ITimeSpentByHourCalculator
 	{
-		Dictionary<int, TimeSpan> Calculate(IReadOnlyList<UserActivity> userActivities);
+		Dictionary<int, double> Calculate(IReadOnlyList<UserActivity> userActivities);
 	}
 
 	public class TimeSpentByHourCalculator : ITimeSpentByHourCalculator
 	{
-		public Dictionary<int, TimeSpan> Calculate(IReadOnlyList<UserActivity> userActivities)
+		public Dictionary<int, double> Calculate(IReadOnlyList<UserActivity> userActivities)
 		{
-			var timeSpentByHour = new Dictionary<int, TimeSpan>();
+			var timeSpentByHour = Enumerable.Range(0, 24).ToDictionary(x => x, x => TimeSpan.Zero);
 
 			foreach (var activity in userActivities)
 			{
-				for (var currentTime = StartOfHour(activity.DateRange.Minimum); currentTime < activity.DateRange.Maximum; currentTime = currentTime.AddHours(1))
+				for (var startOfHour = StartOfHour(activity.DateRange.Minimum); startOfHour < activity.DateRange.Maximum; startOfHour = startOfHour.AddHours(1))
 				{
-					var startOfHour = StartOfHour(currentTime);
-					var endOfHour = new DateTimeOffset(currentTime.Year, currentTime.Month, currentTime.Day, currentTime.Hour + 1, 0, 0, currentTime.Offset);
-
+					var endOfHour = startOfHour.AddHours(1);
 					var timeSpentInHour = (endOfHour > activity.DateRange.Maximum ? activity.DateRange.Maximum : endOfHour) - (startOfHour < activity.DateRange.Minimum ? activity.DateRange.Minimum : startOfHour);
-					timeSpentByHour[currentTime.Hour] = timeSpentByHour.GetValueOrDefault(currentTime.Hour, TimeSpan.Zero) + timeSpentInHour;
+					timeSpentByHour[startOfHour.Hour] = timeSpentByHour[startOfHour.Hour] + timeSpentInHour;
 				}
 			}
 
-			return timeSpentByHour;
+			return timeSpentByHour.ToDictionary(x => x.Key, x => x.Value.TotalSeconds);
 		}
 
 		private DateTimeOffset StartOfHour(DateTimeOffset dateTimeOffset)
