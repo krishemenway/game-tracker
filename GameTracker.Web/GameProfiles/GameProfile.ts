@@ -13,4 +13,5 @@ export interface GameProfile {
 	TotalUserActivityCount: number;
 	MeanUserActivityTimePlayedInSeconds: number;
 	TotalTimePlayedInSeconds: number;
+	TimeSpentInSecondsByHour: Dictionary<number>;
 }

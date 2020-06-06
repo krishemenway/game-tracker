@@ -10,7 +10,8 @@ import PageFooter from "Common/PageFooter";
 import { UserActivityService } from "UserActivities/UserActivityService";
 import { UserActivityForMonthResponse } from "UserActivities/UserActivityForMonthResponse";
 import { TimeSpan } from "Common/TimeSpan";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Label } from "recharts";
+import TimeSpentByHourChart from "Common/TimeSpentByHourChart";
 
 const MonthView: React.FC<{ year: string; month: string; className?: string }> = (props) => {
 	const layout = useLayoutStyles();
@@ -62,6 +63,8 @@ const LoadedMonthView: React.FC<{ monthKey: string; userName: string; userActivi
 					]}
 				/>
 			</div>
+
+			<TimeSpentByHourChart className={layout.marginBottomDouble} timeSpentInSecondsByHour={props.userActivityForMonth.TimeSpentInSecondsByHour} />
 
 			<div className={clsx(layout.flexRow, layout.flexEvenDistribution, layout.flexItemSpacing)}>
 				<div>

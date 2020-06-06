@@ -11,6 +11,7 @@ import { TimeSpan } from "Common/TimeSpan";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import PageHeader from "Common/PageHeader";
 import PageFooter from "Common/PageFooter";
+import TimeSpentByHourChart from "Common/TimeSpentByHourChart";
 
 const DayView: React.FC<{ year:string; month: string; day: string; className?: string }> = (props) => {
 	const layout = useLayoutStyles();
@@ -51,6 +52,8 @@ const LoadedDayView: React.FC<{ dateKey: string; userActivityForDate: UserActivi
 					]}
 				/>
 			</div>
+
+			<TimeSpentByHourChart className={layout.marginBottomDouble} timeSpentInSecondsByHour={props.userActivityForDate.TotalTimeSpentInSecondsByHour} />
 
 			<UserActivityList activities={props.userActivityForDate.AllUserActivity} />
 

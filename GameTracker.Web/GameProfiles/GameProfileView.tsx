@@ -11,6 +11,7 @@ import { UserProfileService } from "UserProfile/UserProfileService";
 import UserActivityList from "UserActivities/UserActivityList";
 import PageHeader from "Common/PageHeader";
 import PageFooter from "Common/PageFooter";
+import TimeSpentByHourChart from "Common/TimeSpentByHourChart";
 
 interface GameProfileProps {
 	gameId: string;
@@ -28,6 +29,9 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 
 			<h2 className={clsx(layout.marginVertical, text.font20)}>Recent Activity</h2>
 			<UserActivityCalendar userActivitiesByDate={props.gameProfile.ActivitiesByDate} />
+
+			<h2 className={clsx(layout.marginVertical, text.font20)}>Time of day</h2>
+			<TimeSpentByHourChart timeSpentInSecondsByHour={props.gameProfile.TimeSpentInSecondsByHour} />
 
 			<h2 className={clsx(layout.marginVertical, text.font20)}>All Activity</h2>
 			<UserActivityList activities={props.gameProfile.AllActivity} />

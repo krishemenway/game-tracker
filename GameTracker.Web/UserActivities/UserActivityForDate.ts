@@ -5,4 +5,5 @@ export interface UserActivityForDate {
 
 	TotalActivityCount: number;
 	TotalTimeSpentInSeconds: number;
+	TotalTimeSpentInSecondsByHour: Dictionary<number>;
 }
