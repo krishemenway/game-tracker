@@ -37,7 +37,7 @@ const LoadedMonthView: React.FC<{ monthKey: string; userName: string; userActivi
 	const dateAsMoment = React.useMemo(() => moment(props.monthKey + "-01"), [props.monthKey]);
 
 	const timeSpentInSecondsByDate = Object
-		.keys(props.userActivityForMonth.TimeSpentInSecondsByDate)
+		.keys(props.userActivityForMonth.TimeSpentInSecondsByDate).sort()
 		.map((date) => ({ name: date.slice(5).replace("-", " / "), timeSpent: Math.round(props.userActivityForMonth.TimeSpentInSecondsByDate[date]) }));
 
 	const timeSpentInSecondsByGame = Object
