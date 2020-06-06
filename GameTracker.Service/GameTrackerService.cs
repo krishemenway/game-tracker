@@ -37,6 +37,9 @@ namespace GameTracker
 			UserActivityFileMonitor = new HostFileChangeMonitor(new[] { UserActivityStore.DataFilePath }.ToList());
 			UserActivityFileMonitor.NotifyOnChanged((_) => { AllUserActivityCache.CancellationTokenSource.Cancel(); });
 
+			WebAssetsFileMonitor = new HostFileChangeMonitor(WebAssets.AllAssetPaths.ToArray());
+			WebAssetsFileMonitor.NotifyOnChanged((_) => { WebAssets.CancellationTokenSource.Cancel(); });
+
 			WebHost = new WebHostBuilder()
 				.UseKestrel()
 				.UseStartup<WebHostConfiguration>()
@@ -105,6 +108,7 @@ namespace GameTracker
 		public static string WebHostListenAddress => $"http://*:{Program.Configuration.GetValue<string>("WebPort")}";
 
 		private HostFileChangeMonitor UserActivityFileMonitor { get; }
+		private HostFileChangeMonitor WebAssetsFileMonitor { get; }
 		private Timer GamesDataUpdateTimer { get; set; }
 		private Timer ProcessScannerTimer { get; set; }
 		private Timer UserActivityBackfillerTimer { get; set; }
