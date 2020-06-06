@@ -40,14 +40,29 @@ namespace GameTracker.UserActivities
 			{
 				AllUserActivity = userActivityForMonth,
 
-				TimeSpentInSecondsByHour = _timeSpentByHourCalculator.Calculate(userActivityForMonth).ToDictionary(x => x.Key.ToString(), x => x.Value),
-				TimeSpentInSecondsByGameId = userActivityForMonth.GroupBy(x => x.GameId).ToDictionary(x => x.Key.Value, x => x.Sum(y => y.TimeSpentInSeconds)),
-				TimeSpentInSecondsByDate = userActivityForMonth.GroupBy(x => x.AssignedToDate).ToDictionary(x => x.Key.ToString("yyyy-MM-dd"), x => x.Sum(y => y.TimeSpentInSeconds)),
+				TimeSpentInSecondsByHour = _timeSpentByHourCalculator
+					.Calculate(userActivityForMonth)
+					.ToDictionary(x => x.Key.ToString(), x => x.Value),
+
+				TimeSpentInSecondsByGameId = userActivityForMonth
+					.GroupBy(x => x.GameId)
+					.ToDictionary(x => x.Key.Value, x => x.Sum(y => y.TimeSpentInSeconds)),
+
+				TimeSpentInSecondsByDate = userActivityForMonth
+					.GroupBy(userActivity => userActivity.AssignedToDate)
+					.ToDictionary(groupedUserActivities => groupedUserActivities.Key.ToString("yyyy-MM-dd"), groupedUserActivities => groupedUserActivities.Sum(activity => activity.TimeSpentInSeconds))
+					.SetDefaultValuesForKeys(StartOfEachDayInMonth(lastOfMonth).Select(date => date.ToString("yyyy-MM-dd")), (_) => 0),
+
 				GamesByGameId = _gameStore.FindGames(distinctGameIds).ToDictionary(x => x.Key.Value, x => x.Value),
 
 				TotalGamesPlayed = distinctGameIds.Count,
 				TotalTimePlayedInSeconds = userActivityForMonth.Sum(x => x.TimeSpentInSeconds),
 			};
+		}
+
+		private IEnumerable<DateTimeOffset> StartOfEachDayInMonth(DateTimeOffset lastDayOfMonth)
+		{
+			return Enumerable.Range(1, lastDayOfMonth.Day).Select(x => new DateTimeOffset(lastDayOfMonth.Year, lastDayOfMonth.Month, x, 0, 0, 0, lastDayOfMonth.Offset));
 		}
 
 		private readonly AllUserActivityCache _allUserActivityCache;
