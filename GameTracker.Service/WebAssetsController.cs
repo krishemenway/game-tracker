@@ -17,19 +17,19 @@ namespace GameTracker
 		[HttpGet("favicon.ico")]
 		public FileContentResult Icon()
 		{
-			return File(ReadFileBytes("favicon.ico"), "image/x-icon", false);
+			return File(ReadFileBytes(WebAssets.FaviconPath), "image/x-icon", false);
 		}
 
 		[HttpGet("app.js")]
 		public ContentResult AppJavascript()
 		{
-			return Content(ReadFileContents("app.js"), "application/javascript", Encoding.UTF8);
+			return Content(ReadFileContents(WebAssets.AppJavascriptPath), "application/javascript", Encoding.UTF8);
 		}
 
 		[HttpGet("{*url}", Order = int.MaxValue)]
 		public ContentResult AppMarkup(string url)
 		{
-			return Content(ReadFileContents("app.html").Replace("{url}", url), "text/html", Encoding.UTF8);
+			return Content(ReadFileContents(WebAssets.AppMarkupPath).Replace("{url}", url), "text/html", Encoding.UTF8);
 		}
 
 		private byte[] ReadFileBytes(string filePath)
