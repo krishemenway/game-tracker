@@ -20,7 +20,7 @@ namespace GameTracker.UserActivities
 		}
 
 		[HttpGet(nameof(UserActivityPerDay))]
-		public ActionResult<UserActivityPerDayResponse> UserActivityPerDay([FromQuery] DateTimeOffset? startTime, [FromQuery] DateTimeOffset? endTime)
+		public ActionResult<UserActivityPerDayResponse> UserActivityPerDay([FromQuery] DateTimeOffset startTime, [FromQuery] DateTimeOffset endTime)
 		{
 			var userActivityPerDay = _allUserActivityCache.FindUserActivityByDay(startTime, endTime);
 			var distinctGameIds = userActivityPerDay.SelectMany(x => x.Value.AllUserActivity).Select(x => x.GameId).Distinct().ToList();

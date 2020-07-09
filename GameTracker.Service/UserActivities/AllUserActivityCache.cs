@@ -32,9 +32,12 @@ namespace GameTracker.UserActivities
 			return AllUserActivity.Where(userActivity => searchRange.Contains(userActivity.AssignedToDate)).ToList();
 		}
 
-		public IReadOnlyDictionary<string, UserActivityForDate> FindUserActivityByDay(DateTimeOffset? startTime, DateTimeOffset? endTime)
+		public IReadOnlyDictionary<string, UserActivityForDate> FindUserActivityByDay(DateTimeOffset startTime, DateTimeOffset endTime)
 		{
-			return FindUserActivity(startTime, endTime).GroupByDate();
+			var emptyActivity = new UserActivityForDate(new UserActivity[0]);
+			var allDays = Enumerable.Range(0, endTime.Subtract(startTime).Days).Select(dayCount => startTime.AddDays(dayCount).ToString("yyyy-MM-dd"));
+
+			return FindUserActivity(startTime, endTime).GroupByDate().SetDefaultValuesForKeys(allDays, (day) => emptyActivity);
 		}
 
 		public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
