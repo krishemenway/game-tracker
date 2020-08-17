@@ -13,6 +13,8 @@ export default (props: PageHeaderProps) => {
 	const layout = useLayoutStyles();
 	const background = useBackgroundStyles();
 
+	React.useEffect(() => { document.title = `${props.UserName}${!!props.PageTitle ? ` - ${props.PageTitle}` : ""}`; }, [props.UserName, props.PageTitle]);
+
 	return (
 		<h1 className={clsx(text.font24, layout.paddingBottomHalf, layout.marginVertical, background.borderBottom)}>
 			<UserProfileLink>{props.UserName}</UserProfileLink>

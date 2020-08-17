@@ -19,7 +19,7 @@ export class TimeSpan {
 		return `${(timeInSeconds / (60 * 60 * 24)).toFixed(2)} days`;
 	}
 
-	public static MaximumSecondsValue: number = 60 * 2;
-	public static MaximumMinutesValue: number = 60 * 60 * 2;
-	public static MaximumHoursValue: number = 60 * 60 * 60 * 36;
+	public static MaximumSecondsValue: number = 99;
+	public static MaximumMinutesValue: number = 99 * 60;
+	public static MaximumHoursValue: number = 99 * 60 * 60;
 }

@@ -107,7 +107,7 @@ const TimeSpentEachGameChart: React.FC<{ userActivityForMonth: UserActivityForMo
 					borderColor: defaultBorderColor,
 				}}
 			/>
-			<Bar dataKey="timeSpent" fill="#C0C0C0" />
+			<Bar dataKey="timeSpent" fill="#C0C0C0" isAnimationActive={false} />
 		</BarChart>
 	);
 }
@@ -153,7 +153,7 @@ const TimeSpentEachDayChart: React.FC<{ userActivityForMonth: UserActivityForMon
 					color: "#E0E0E0",
 				}}
 			/>
-			<Bar dataKey="timeSpent" fill="#C0C0C0" />
+			<Bar dataKey="timeSpent" fill="#C0C0C0" isAnimationActive={false} />
 		</BarChart>
 	);
 };
