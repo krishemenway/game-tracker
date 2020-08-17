@@ -16,11 +16,13 @@ namespace GameTracker.Service.UserProfiles
 			IMemoryCache memoryCache,
 			AllUserActivityCache allUserActivityCache = null,
 			GameProfileFactory gameProfileFactory = null,
-			GameStore gameStore = null)
+			GameStore gameStore = null,
+			GameAwardStore gameAwardStore = null)
 		{
 			_allUserActivityCache = allUserActivityCache ?? new AllUserActivityCache(memoryCache);
 			_gameProfileFactory = gameProfileFactory ?? new GameProfileFactory();
 			_gameStore = gameStore ?? new GameStore();
+			_gameAwardStore = gameAwardStore ?? new GameAwardStore();
 		}
 
 		[HttpGet(nameof(UserProfile))]
@@ -46,6 +48,7 @@ namespace GameTracker.Service.UserProfiles
 				RecentActivities = orderedActivities.Take(10).ToList(),
 				ActivitiesByDate = orderedActivities.GroupByDate(),
 				GamesByGameId = gamesByGameId.ToDictionary(x => x.Key.Value, x => x.Value),
+				AllGameAwards = _gameAwardStore.CalculateAllGameAwards(_allUserActivityCache),
 			};
 		}
 
@@ -60,5 +63,6 @@ namespace GameTracker.Service.UserProfiles
 		private readonly AllUserActivityCache _allUserActivityCache;
 		private readonly GameProfileFactory _gameProfileFactory;
 		private readonly GameStore _gameStore;
+		private readonly GameAwardStore _gameAwardStore;
 	}
 }

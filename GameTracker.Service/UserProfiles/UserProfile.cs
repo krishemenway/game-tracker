@@ -16,5 +16,6 @@ namespace GameTracker.Service.UserProfiles
 		public Dictionary<string, UserActivityForDate> ActivitiesByDate { get; set; }
 
 		public Dictionary<string, IGame> GamesByGameId { get; set; }
+		public IReadOnlyList<GameAward> AllGameAwards { get; set; }
 	}
 }
