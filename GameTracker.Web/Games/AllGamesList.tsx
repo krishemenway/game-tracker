@@ -52,7 +52,6 @@ const ShowAllButton: React.FC<{ className?: string; visible: boolean; gameCount:
 
 const GameListItem: React.FC<{ game: Game }> = (props) => {
 	const layout = useLayoutStyles();
-	const background = useBackgroundStyles();
 	const text = useTextStyles();
 
 	return (
