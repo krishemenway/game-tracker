@@ -6,7 +6,12 @@ using System.Linq;
 
 namespace GameTracker.Games
 {
-	public class GameAwardStore
+	public interface IGameAwardStore
+	{
+		IReadOnlyList<GameAward> CalculateAllGameAwards(AllUserActivityCache allUserActivity);
+	}
+
+	public class GameAwardStore : IGameAwardStore
 	{
 		public IReadOnlyList<GameAward> CalculateAllGameAwards(AllUserActivityCache allUserActivity)
 		{
