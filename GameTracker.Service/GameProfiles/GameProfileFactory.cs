@@ -7,14 +7,20 @@ namespace GameTracker.GameProfiles
 {
 	public class GameProfileFactory
 	{
-		public GameProfileFactory(ITimeSpentByHourCalculator timeSpentByHourCalculator = null)
+		public GameProfileFactory(
+			ITimeSpentByHourCalculator timeSpentByHourCalculator = null,
+			IGameAwardStore gameAwardStore = null)
 		{
 			_timeSpentByHourCalculator = timeSpentByHourCalculator ?? new TimeSpentByHourCalculator();
+			_gameAwardStore = gameAwardStore ?? new GameAwardStore();
 		}
 
-		public GameProfile Create(IGame game, IReadOnlyList<UserActivity> userActivities)
+		public GameProfile Create(IGame game, AllUserActivityCache allUserActivity)
 		{
-			var orderedUserActivities = userActivities.OrderByDescending(x => x.EndTime).ToList();
+			var orderedUserActivities = allUserActivity.AllUserActivity
+				.Where(userActivity => userActivity.GameId == game.GameId)
+				.OrderByDescending(x => x.EndTime)
+				.ToList();
 
 			return new GameProfile
 			{
@@ -26,10 +32,12 @@ namespace GameTracker.GameProfiles
 				MeanUserActivityTimePlayedInSeconds = orderedUserActivities.Average(x => x.TimeSpentInSeconds),
 				TotalTimePlayedInSeconds = orderedUserActivities.Sum(x => x.TimeSpentInSeconds),
 				TimeSpentInSecondsByHour = _timeSpentByHourCalculator.Calculate(orderedUserActivities).ToDictionary(x => x.Key.ToString(), x => x.Value),
+				GameAwards = _gameAwardStore.CalculateAllGameAwards(allUserActivity).Where(x => x.GameId == game.GameId).ToList(),
 			};
 		}
 
 		private readonly ITimeSpentByHourCalculator _timeSpentByHourCalculator;
+		private readonly IGameAwardStore _gameAwardStore;
 	}
 
 	public class GameProfile
@@ -39,6 +47,8 @@ namespace GameTracker.GameProfiles
 		public IReadOnlyList<UserActivity> AllActivity { get; set; }
 		public Dictionary<string, UserActivityForDate> ActivitiesByDate { get; set; }
 		public Dictionary<string, double> TimeSpentInSecondsByHour { get; set; }
+
+		public IReadOnlyList<GameAward> GameAwards { get; set; }
 
 		public UserActivity MostRecent { get; set; }
 

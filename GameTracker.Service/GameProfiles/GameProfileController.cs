@@ -3,7 +3,6 @@ using GameTracker.UserActivities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using StronglyTyped.StringIds;
-using System.Linq;
 
 namespace GameTracker.GameProfiles
 {
@@ -31,13 +30,9 @@ namespace GameTracker.GameProfiles
 				return NotFound();
 			}
 
-			var allGameActivity = _allUserActivityCache.AllUserActivity
-				.Where(userActivity => userActivity.GameId == gameId)
-				.ToList();
-
 			return new GameProfileResponse
 			{
-				GameProfile = _gameProfileFactory.Create(game, allGameActivity),
+				GameProfile = _gameProfileFactory.Create(game, _allUserActivityCache),
 			};
 		}
 
