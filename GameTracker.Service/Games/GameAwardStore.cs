@@ -10,52 +10,116 @@ namespace GameTracker.Games
 	{
 		public IReadOnlyList<GameAward> CalculateAllGameAwards(AllUserActivityCache allUserActivity)
 		{
-			return AllGameAwards(allUserActivity).ToList();
-		}
-
-		private IEnumerable<GameAward> AllGameAwards(AllUserActivityCache allUserActivity)
-		{
-			yield return CalculateMostConsistentGameAward(allUserActivity);
-
-			foreach (var award in AllMonthlyGameAwards(allUserActivity))
+			if (!allUserActivity.AllUserActivity.Any())
 			{
-				yield return award;
+				return new GameAward[0];
 			}
+
+			return new GameAward[0]
+				.Union(AllOverallGameAwards(allUserActivity))
+				.Union(AllYearlyGameAwards(allUserActivity))
+				.Union(AllMonthlyGameAwards(allUserActivity))
+				.ToList();
 		}
 
-		private GameAward CalculateMostConsistentGameAward(AllUserActivityCache allUserActivity)
+		private IEnumerable<GameAward> AllOverallGameAwards(AllUserActivityCache allUserActivity)
 		{
 			var allActivityByGameId = allUserActivity.AllUserActivity.GroupBy((activity) => activity.GameId).ToDictionary(x => x.Key, x => x.ToList());
 			var daysPlayedByGameId = allActivityByGameId.ToDictionary(x => x.Key, activities => activities.Value.Select(x => x.AssignedToDate).Distinct().Count());
 			var mostConsistentlyPlayedGame = daysPlayedByGameId.OrderBy(x => x.Value).Last();
 
-			return new GameAward
+			yield return new GameAward
 			{
 				GameAwardId = new Id<GameAward>("MostConsistentOverall"),
 				GameId = mostConsistentlyPlayedGame.Key,
+				GameAwardType = "MostPlayedGameOfYear",
+				GameAwardTypeDetails = new { TotalDaysPlayed = mostConsistentlyPlayedGame.Value },
+			};
+
+			var longestUserActivity = allUserActivity.AllUserActivity.OrderBy(x => x.TimeSpentInSeconds).Last();
+
+			yield return new GameAward
+			{
+				GameAwardId = new Id<GameAward>("LongestActivityOverall"),
+				GameId = longestUserActivity.GameId,
+				GameAwardType = "LongestActivityOverall",
+				GameAwardTypeDetails = new { longestUserActivity.TimeSpentInSeconds, longestUserActivity.AssignedToDate },
 			};
 		}
 
-		private IEnumerable<GameAward> AllMonthlyGameAwards(AllUserActivityCache allUserActivity)
+		private IEnumerable<GameAward> AllYearlyGameAwards(AllUserActivityCache allUserActivity)
 		{
-			var allUserActivityByMonth = allUserActivity.AllUserActivity.GroupBy(activity => ConvertDateToStartOfMonth(activity.AssignedToDate)).ToDictionary(x => x.Key, x => x.ToList());
+			var allUserActivityByYear = allUserActivity.AllUserActivity
+				.GroupBy(activity => activity.AssignedToDate.Year)
+				.ToDictionary(x => x.Key, x => x.ToList());
 
-			foreach(var (month, activities) in allUserActivityByMonth)
+			foreach (var (year, activities) in allUserActivityByYear)
 			{
-				var timeSpentInGameForMonthInSeconds = activities.GroupBy(x => x.GameId, x => x.TimeSpentInSeconds).ToDictionary(x => x.Key, x => x.Sum());
-				var mostPlayedGameForMonth = timeSpentInGameForMonthInSeconds.OrderByDescending(x => x.Value).First();
+				var mostPlayedGameForMonth = activities
+					.GroupBy(x => x.GameId, x => x.TimeSpentInSeconds,  (gameId, activities) => new { GameId = gameId, TimeSpentInSeconds = activities.Sum() })
+					.OrderBy(x => x.TimeSpentInSeconds)
+					.Last();
 
 				yield return new GameAward
 				{
-					GameAwardId = new Id<GameAward>($"MostPlayedGameOf{month.Month}/{month.Year}"),
-					GameId = mostPlayedGameForMonth.Key,
+					GameAwardId = new Id<GameAward>($"MostPlayedGameOf{year}"),
+					GameId = mostPlayedGameForMonth.GameId,
+					GameAwardType = "MostPlayedGameOfYear",
+					GameAwardTypeDetails = new { year, mostPlayedGameForMonth.TimeSpentInSeconds },
+				};
+
+				var longestActivity = activities.OrderBy(x => x.TimeSpentInSeconds).Last();
+				yield return new GameAward
+				{
+					GameAwardId = new Id<GameAward>($"LongestActivityOf{year}"),
+					GameId = longestActivity.GameId,
+					GameAwardType = "LongestActivityOfYear",
+					GameAwardTypeDetails = new { year, longestActivity.TimeSpentInSeconds, longestActivity.AssignedToDate },
 				};
 			}
 		}
 
-		private DateTimeOffset ConvertDateToStartOfMonth(DateTimeOffset dateInMonth)
+		private IEnumerable<GameAward> AllMonthlyGameAwards(AllUserActivityCache allUserActivity)
 		{
-			return new DateTimeOffset(new DateTime(dateInMonth.Year, dateInMonth.Month, 1));
+			var allUserActivityByMonth = allUserActivity.AllUserActivity
+				.GroupBy(activity => MonthOfYear.Create(activity.AssignedToDate))
+				.ToDictionary(x => x.Key, x => x.ToList());
+
+			foreach(var (month, activities) in allUserActivityByMonth)
+			{
+				var mostPlayedGameForMonth = activities
+					.GroupBy(x => x.GameId, x => x.TimeSpentInSeconds, (gameId, activities) => new { GameId = gameId, TimeSpentInSeconds = activities.Sum() })
+					.OrderBy(x => x.TimeSpentInSeconds)
+					.Last();
+
+				yield return new GameAward
+				{
+					GameAwardId = new Id<GameAward>($"MostPlayedGameOf{month.Month}/{month.Year}"),
+					GameId = mostPlayedGameForMonth.GameId,
+					GameAwardType = "MostPlayedGameOfMonth",
+					GameAwardTypeDetails = new { month.Month, month.Year, mostPlayedGameForMonth.TimeSpentInSeconds },
+				};
+
+				var longestActivity = activities.OrderBy(x => x.TimeSpentInSeconds).Last();
+				yield return new GameAward
+				{
+					GameAwardId = new Id<GameAward>($"LongestActivityOf{month.Month}/{month.Year}"),
+					GameId = longestActivity.GameId,
+					GameAwardType = "LongestActivityOfMonth",
+					GameAwardTypeDetails = new { month.Month, month.Year, longestActivity.TimeSpentInSeconds, longestActivity.AssignedToDate },
+				};
+			}
+		}
+
+		private struct MonthOfYear
+		{
+			public int Year { get; set; }
+			public int Month { get; set; }
+
+			public static MonthOfYear Create(DateTimeOffset dateTimeOffset)
+			{
+				return new MonthOfYear { Year = dateTimeOffset.Year, Month = dateTimeOffset.Month };
+			}
 		}
 	}
 
@@ -63,5 +127,7 @@ namespace GameTracker.Games
 	{
 		public Id<Game> GameId { get; set; }
 		public Id<GameAward> GameAwardId { get; set; }
+		public string GameAwardType { get; set; }
+		public object GameAwardTypeDetails { get; set; }
 	}
 }
