@@ -94,7 +94,7 @@ namespace GameTracker.Games
 
 				yield return new GameAward
 				{
-					GameAwardId = new Id<GameAward>($"MostPlayedGameOf{month.Month}/{month.Year}"),
+					GameAwardId = new Id<GameAward>($"MostPlayedGameOf{month.Month}-{month.Year}"),
 					GameId = mostPlayedGameForMonth.GameId,
 					GameAwardType = "MostPlayedGameOfMonth",
 					GameAwardTypeDetails = new { month.Month, month.Year, mostPlayedGameForMonth.TimeSpentInSeconds },
@@ -103,7 +103,7 @@ namespace GameTracker.Games
 				var longestActivity = activities.OrderBy(x => x.TimeSpentInSeconds).Last();
 				yield return new GameAward
 				{
-					GameAwardId = new Id<GameAward>($"LongestActivityOf{month.Month}/{month.Year}"),
+					GameAwardId = new Id<GameAward>($"LongestActivityOf{month.Month}-{month.Year}"),
 					GameId = longestActivity.GameId,
 					GameAwardType = "LongestActivityOfMonth",
 					GameAwardTypeDetails = new { month.Month, month.Year, longestActivity.TimeSpentInSeconds, longestActivity.AssignedToDate },
