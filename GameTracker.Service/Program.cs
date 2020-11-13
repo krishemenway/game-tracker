@@ -15,13 +15,13 @@ namespace GameTracker
 		{
 			return (int)HostFactory.Run(config =>
 			{
-				LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Information);
+				LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Debug);
 
 				Log.Logger = new LoggerConfiguration()
-					.ReadFrom.Configuration(Program.Configuration)
+					.ReadFrom.Configuration(Configuration)
 					.MinimumLevel.ControlledBy(LoggingLevelSwitch)
 					.WriteTo.ColoredConsole()
-					.WriteTo.RollingFile(Path.Combine(ExecutableFolderPath, "app-{Date}.log"), retainedFileCountLimit: 5)
+					.WriteTo.File(Path.Combine(ExecutableFolderPath, "GameTracker.Service.log"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 5)
 					.CreateLogger();
 
 				config.Service<GameTrackerService>(s =>
