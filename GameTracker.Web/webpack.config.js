@@ -1,5 +1,4 @@
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 
 module.exports = {
@@ -26,10 +25,6 @@ module.exports = {
 
 	plugins: [
 		new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
-		new CopyPlugin([
-			// { from: "./favicon.ico", to: ".", flatten: false },
-			{ from: "./app.html", to: "." },
-		]),
 	],
 
 	externals: { },
