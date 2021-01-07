@@ -17,10 +17,12 @@ namespace GameTracker.RunningProcesses
 	{
 		public RunningProcessReader(
 			Lazy<IReadOnlyDictionary<string, string>> processNameExclusions = null,
-			Lazy<IReadOnlyList<string>> startsWithExclusions = null)
+			Lazy<IReadOnlyList<string>> startsWithExclusions = null,
+			IProcessFileNameReader processFileNameReader = null)
 		{
 			_processNameExclusions = processNameExclusions ?? LazyProcessNameExclusions;
 			_startsWithExclusions = startsWithExclusions ?? LazyStartsWithExclusions;
+			_processFileNameReader = processFileNameReader ?? new ProcessFileNameReader();
 		}
 
 		public IReadOnlyList<RunningProcess> FindRunningProcesses()
@@ -38,8 +40,8 @@ namespace GameTracker.RunningProcesses
 				{
 					continue;
 				}
-
-				if (!TryGetValueForProcess(process, process => process.MainModule.FileName, out var filePath) || MatchesExecutableFilePath(filePath) || MatchesStartsWithExclusions(filePath))
+				
+				if (!TryGetValueForProcess(process, process => _processFileNameReader.GetProcessNameOrNull(process), out var filePath) || MatchesExecutableFilePath(filePath) || MatchesStartsWithExclusions(filePath))
 				{
 					continue;
 				}
@@ -60,7 +62,7 @@ namespace GameTracker.RunningProcesses
 			try
 			{
 				gotValue = getValueFunc(data);
-				return true;
+				return gotValue != null;
 			}
 			catch (InvalidOperationException) // Cannot process request because the process (####) has exited.
 			{
@@ -96,6 +98,7 @@ namespace GameTracker.RunningProcesses
 
 		private readonly Lazy<IReadOnlyDictionary<string, string>> _processNameExclusions;
 		private readonly Lazy<IReadOnlyList<string>> _startsWithExclusions;
+		private readonly IProcessFileNameReader _processFileNameReader;
 
 		private static readonly Lazy<IReadOnlyDictionary<string, string>> LazyProcessNameExclusions
 			= new Lazy<IReadOnlyDictionary<string, string>>(() => Program.Configuration.GetSection("ProcessNameExclusions").Get<string[]>().Distinct().ToDictionary(x => x, x => x), false);
