@@ -21,7 +21,7 @@ namespace GameTracker.ObservedProcesses
 				RecentProcesses = new ProcessSessionStore()
 					.FindAll()
 					.OrderByDescending(x => x.EndTime)
-					.ToList(),
+					.Take(20).ToList(),
 
 				ObservedProcesses = new ObservedProcessStore().FindAll()
 					.OrderByDescending(x => x.FirstObservedTime)
