@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SteamDataExtractor": {
+      "commandName": "Project",
+      "commandLineArgs": "--json \"D:\\games-json\\games.json\" --steamcmd \"D:\\SteamCMD\\steamcmd.exe\""
+    }
+  }
+}
