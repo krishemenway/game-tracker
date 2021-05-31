@@ -20,7 +20,7 @@ export class UserActivityService {
 	public LoadForMonth(year: number, month: number): void {
 		const loadableUserActivity = this.FindOrCreateUserActivityForMonth(`${year}-${month}`);
 
-		if (loadableUserActivity.HasLoaded.Value) {
+		if (!loadableUserActivity.CanMakeRequest()) {
 			return;
 		}
 
@@ -38,7 +38,7 @@ export class UserActivityService {
 	public LoadForDate(dateKey: string): void {
 		const loadableUserActivity = this.FindOrCreateUserActivityForDate(dateKey);
 
-		if (loadableUserActivity.HasLoaded.Value) {
+		if (!loadableUserActivity.CanMakeRequest()) {
 			return;
 		}
 

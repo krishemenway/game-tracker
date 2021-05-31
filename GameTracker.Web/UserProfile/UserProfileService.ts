@@ -22,7 +22,7 @@ export class UserProfileService {
 	}
 
 	public LoadProfile(): void {
-		if (this.LoadingUserProfile.HasLoaded.Value) {
+		if (!this.LoadingUserProfile.CanMakeRequest()) {
 			return;
 		}
 

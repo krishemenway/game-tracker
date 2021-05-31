@@ -1,48 +1,54 @@
 import * as React from "react";
-import clsx from "clsx";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { Loadable, LoadableBase } from "Common/Loadable";
+import { Loadable, LoadableData, LoadState } from "Common/Loadable";
 import { useObservable } from "Common/useObservable";
-import { useTextStyles, useLayoutStyles } from "AppStyles";
 
-function Loading<A>(props: { loadables: [Loadable<A>], renderSuccess: (a: A) => JSX.Element }): JSX.Element;
-function Loading<A, B>(props: { loadables: [Loadable<A>, Loadable<B>], renderSuccess: (a: A, b: B) => JSX.Element }): JSX.Element;
-function Loading<A, B, C>(props: { loadables: [Loadable<A>, Loadable<B>, Loadable<C>], renderSuccess: (a: A, b: B, c: C) => JSX.Element }): JSX.Element;
-function Loading<A, B, C, D>(props: { loadables: [Loadable<A>, Loadable<B>, Loadable<C>, Loadable<D>], renderSuccess: (a: A, b: B, c: C, d: D) => JSX.Element }): JSX.Element;
+const DefaultLoadingComponent = (<div style={{ textAlign: "center" }}>Loading &hellip;</div>);
+const DefaultErrorMessageComponent = (errorMessages: string[]) => (<div style={{ textAlign: "center" }}>{errorMessages[0]}</div>);
 
-function Loading(props: { loadables: Loadable<unknown>[], renderSuccess: (...inputValues: unknown[]) => JSX.Element }): JSX.Element {
-	const text = useTextStyles();
-	const layout = useLayoutStyles();
+interface BaseLoadingComponentProps {
+	loadingComponent?: JSX.Element,
+	errorComponent?: (errorMessages: string[]) => JSX.Element,
+}
 
-	let successDatas: unknown[] = [];
-	let hasLoaded = true;
-	let errorMessage: string|null = null;
+function Loading<A>(props: { loadables: [Loadable<A>], renderSuccess: (a: A) => JSX.Element }&BaseLoadingComponentProps): JSX.Element;
+function Loading<A, B>(props: { loadables: [Loadable<A>, Loadable<B>], renderSuccess: (a: A, b: B) => JSX.Element }&BaseLoadingComponentProps): JSX.Element;
+function Loading<A, B, C>(props: { loadables: [Loadable<A>, Loadable<B>, Loadable<C>], renderSuccess: (a: A, b: B, c: C) => JSX.Element }&BaseLoadingComponentProps): JSX.Element;
+function Loading<A, B, C, D>(props: { loadables: [Loadable<A>, Loadable<B>, Loadable<C>, Loadable<D>], renderSuccess: (a: A, b: B, c: C, d: D) => JSX.Element }&BaseLoadingComponentProps): JSX.Element;
 
-	props.loadables.forEach((loadable) => {
-		const successData = useObservable(loadable.SuccessData);
-		const loadableHasLoaded = useObservable(loadable.HasLoaded);
-		const loadableErrorMessage = useObservable(loadable.ErrorMessage);
+function Loading(props: { loadables: Loadable<unknown>[], renderSuccess: (...inputValues: unknown[]) => JSX.Element, }&BaseLoadingComponentProps): JSX.Element {
+	const loadableDatas = props.loadables.map((loadable) => useObservable(loadable.Data));
+	const loadState = DetermineLoadState(loadableDatas);
 
-		if (!loadableHasLoaded) {
-			hasLoaded = loadableHasLoaded;
-		}
+	switch(loadState) {
+		case LoadState.Failed:
+			const errorMessages = loadableDatas.map((data) => data.ErrorMessage).filter(message => message !== null);
+			return (props.errorComponent ?? DefaultErrorMessageComponent)(errorMessages);
+		case LoadState.Loaded:
+			return props.renderSuccess(...loadableDatas.map((data) => data.SuccessData));
+		case LoadState.NotStarted:
+		case LoadState.Loading:
+		default:
+			return props.loadingComponent ?? DefaultLoadingComponent;
+	}
+}
 
-		if (errorMessage === null && loadableErrorMessage !== null) {
-			errorMessage = loadableErrorMessage;
-		}
+function DetermineLoadState(datas: LoadableData<unknown>[]): LoadState {
+	const initialStateCounts: Dictionary<number> = Object.keys(LoadState).reduce((loadStateCounts, loadState) => { loadStateCounts[loadState] = 0; return loadStateCounts; }, {} as Dictionary<number>);
+	const loadingStateCountsByState = datas.reduce((loadStateCounts, loadableData) => { loadStateCounts[loadableData.State]++; return loadStateCounts; }, initialStateCounts);
 
-		successDatas.push(successData);
-	});
-
-	if (errorMessage !== null) {
-		return <div className={clsx(text.center, layout.paddingVerticalDouble)}>{errorMessage}</div>;
+	if (loadingStateCountsByState[LoadState.Loading] > 0 || loadingStateCountsByState[LoadState.NotStarted] > 0 || loadingStateCountsByState[LoadState.Unloaded] > 0) {
+		return LoadState.Loading;
 	}
 
-	if (!hasLoaded) {
-		return <div className={clsx(text.center, layout.paddingVerticalDouble)}><CircularProgress /></div>;
+	if (loadingStateCountsByState[LoadState.Failed] > 0) {
+		return LoadState.Failed;
 	}
 
-	return props.renderSuccess(...successDatas);
+	if (loadingStateCountsByState[LoadState.Loaded] === datas.length) {
+		return LoadState.Loaded;
+	}
+
+	throw new Error(`Unknown load state for loadables ${JSON.stringify(loadingStateCountsByState)}`);
 }
 
 export default Loading;

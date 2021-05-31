@@ -24,7 +24,7 @@ export class GameProfileService {
 	public LoadProfile(gameId: string): void {
 		const loadableGameProfile = this.FindOrCreateProfile(gameId);
 
-		if (loadableGameProfile.HasLoaded.Value) {
+		if (!loadableGameProfile.CanMakeRequest()) {
 			return;
 		}
 
