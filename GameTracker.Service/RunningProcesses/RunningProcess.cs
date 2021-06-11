@@ -18,5 +18,10 @@ namespace GameTracker.RunningProcesses
 		{
 			return FilePath.GetHashCode();
 		}
+
+		public override string ToString()
+		{
+			return $"{FilePath} @ {StartTime}";
+		}
 	}
 }
