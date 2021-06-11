@@ -26,8 +26,9 @@ export interface ILoadable<TSuccessData> {
 }
 
 export class Loadable<TSuccessData> implements ILoadable<TSuccessData> {
-	constructor() {
+	constructor(defaultErrorMessage?: string) {
 		this._loadableData = new Observable(Loadable.NotStartedData);
+		this._defaultErrorMessage = defaultErrorMessage ?? "Something went wrong making this request. Please try again later.";
 	}
 
 	public StartLoading(): Loadable<TSuccessData> {
@@ -40,7 +41,7 @@ export class Loadable<TSuccessData> implements ILoadable<TSuccessData> {
 	}
 
 	public FailedLoading(errorMessage: string): void {
-		this._loadableData.Value = { SuccessData: null, State: LoadState.Failed, ErrorMessage: errorMessage };
+		this._loadableData.Value = { SuccessData: null, State: LoadState.Failed, ErrorMessage: errorMessage.length === 0 ? this._defaultErrorMessage : errorMessage };
 	}
 
 	public Reset(): void {
@@ -56,6 +57,8 @@ export class Loadable<TSuccessData> implements ILoadable<TSuccessData> {
 	private static NotStartedData = { SuccessData: null, State: LoadState.NotStarted, ErrorMessage: "" };
 	private static LoadingData = { SuccessData: null, State: LoadState.Loading, ErrorMessage: "" };
 	private static UnloadedData = { SuccessData: null, State: LoadState.Unloaded, ErrorMessage: "" };
+
+	private _defaultErrorMessage: string;
 
 	private _loadableData: Observable<LoadableData<TSuccessData>>;
 }

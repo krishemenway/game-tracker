@@ -19,14 +19,12 @@ export class ObservableProcess {
 
 export class ProcessManagerService {
 	constructor() {
-		this.LoadingObservable = new Loadable<ObservableProcess[]>();
+		this.LoadingObservable = new Loadable<ObservableProcess[]>("Something went wrong loading observed processes from the server. Can only view this tool on the device running the service.");
 		this.ToggleIgnoredErrorMessage = new Observable(null);
 	}
 
 	public ReloadProcesses(): void {
-		Http.get<ObservedProcessesResponse>("/WebAPI/FindAllObservedProcesses")
-			.then((response) => { this.LoadingObservable.SucceededLoading(response.ObservedProcesses.sort((a, b) => a.ProcessPath < b.ProcessPath ? -1 : 1).map((p) => new ObservableProcess(p))); })
-			.catch((_) => { this.LoadingObservable.FailedLoading("Something went wrong loading observed processes from the server. Can only view this tool on the device running the service."); });
+		Http.get<ObservedProcessesResponse, ObservableProcess[]>("/WebAPI/FindAllObservedProcesses", this.LoadingObservable, this.ConvertObservedProcessesResponse);
 	}
 
 	public OnToggleIgnored(observableProcess: ObservableProcess, ignore: boolean): void {
@@ -37,6 +35,10 @@ export class ProcessManagerService {
 
 	public LoadingObservable: Loadable<ObservableProcess[]>;
 	public ToggleIgnoredErrorMessage: Observable<string|null>
+
+	private ConvertObservedProcessesResponse(response: ObservedProcessesResponse): ObservableProcess[] {
+		return response.ObservedProcesses.sort((a, b) => a.ProcessPath < b.ProcessPath ? -1 : 1).map((p) => new ObservableProcess(p));
+	}
 
 	static get Instance(): ProcessManagerService {
 		if (this._instance === undefined) {

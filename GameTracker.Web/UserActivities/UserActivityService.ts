@@ -5,8 +5,7 @@ import { Http } from "Common/Http";
 import { Game, GameStore } from "Games/GameStore";
 import { UserActivityForMonthResponse } from "UserActivities/UserActivityForMonthResponse";
 
-interface UserActivityPerDayResponse
-{
+interface UserActivityPerDayResponse {
 	UserActivityPerDay: Dictionary<UserActivityForDate>;
 	GamesByGameId: Dictionary<Game>;
 }
@@ -18,42 +17,17 @@ export class UserActivityService {
 	}
 
 	public LoadForMonth(year: number, month: number): void {
-		const loadableUserActivity = this.FindOrCreateUserActivityForMonth(`${year}-${month}`);
-
-		if (!loadableUserActivity.CanMakeRequest()) {
-			return;
-		}
-
-		loadableUserActivity.StartLoading();
-		Http.get<UserActivityForMonthResponse>(`/WebAPI/UserActivityForMonth?year=${year}&month=${month}`)
-			.then((response) => {
-				GameStore.Instance.LoadGames(response.GamesByGameId);
-				loadableUserActivity.SucceededLoading(response);
-			})
-			.catch(() => {
-				loadableUserActivity.FailedLoading("Something went wrong loading user activity!");
-			})
+		Http.get<UserActivityForMonthResponse>(`/WebAPI/UserActivityForMonth?year=${year}&month=${month}`, this.FindOrCreateUserActivityForMonth(`${year}-${month}`))
+			.then((response) => { GameStore.Instance.LoadGames(response.GamesByGameId); });
 	}
 
 	public LoadForDate(dateKey: string): void {
-		const loadableUserActivity = this.FindOrCreateUserActivityForDate(dateKey);
-
-		if (!loadableUserActivity.CanMakeRequest()) {
-			return;
-		}
-
 		const startTime = moment(dateKey);
 		const endTime = startTime.clone().add(1, "day");
+		const url = `/WebAPI/UserActivityPerDay?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
-		loadableUserActivity.StartLoading();
-		Http.get<UserActivityPerDayResponse>(`/WebAPI/UserActivityPerDay?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`)
-			.then((response) => {
-				GameStore.Instance.LoadGames(response.GamesByGameId);
-				loadableUserActivity.SucceededLoading(response.UserActivityPerDay[dateKey]);
-			})
-			.catch(() => {
-				loadableUserActivity.FailedLoading("Something went wrong loading user activity!");
-			})
+		Http.get<UserActivityPerDayResponse, UserActivityForDate>(url, this.FindOrCreateUserActivityForDate(dateKey), (response) => response.UserActivityPerDay[dateKey])
+			.then((response) => { GameStore.Instance.LoadGames(response.GamesByGameId); })
 	}
 
 	public FindOrCreateUserActivityForDate(dayKey: string): Loadable<UserActivityForDate> {
@@ -66,7 +40,7 @@ export class UserActivityService {
 
 	public FindOrCreateUserActivityForMonth(monthKey: string): Loadable<UserActivityForMonthResponse> {
 		if (this.UserActivityForMonth[monthKey] === undefined) {
-			this.UserActivityForMonth[monthKey] = new Loadable<UserActivityForMonthResponse>();
+			this.UserActivityForMonth[monthKey] = new Loadable<UserActivityForMonthResponse>("Something went wrong loading user activity!");
 		}
 
 		return this.UserActivityForMonth[monthKey];

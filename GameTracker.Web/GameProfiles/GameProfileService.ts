@@ -1,7 +1,7 @@
 import { GameProfile } from "GameProfiles/GameProfile";
 import { Http } from "Common/Http";
 import { Loadable } from "Common/Loadable";
-import { Game, GameStore } from "Games/GameStore";
+import { GameStore } from "Games/GameStore";
 
 export interface GameProfileResponse {
 	UserName: string;
@@ -22,21 +22,8 @@ export class GameProfileService {
 	}
 
 	public LoadProfile(gameId: string): void {
-		const loadableGameProfile = this.FindOrCreateProfile(gameId);
-
-		if (!loadableGameProfile.CanMakeRequest()) {
-			return;
-		}
-
-		loadableGameProfile.StartLoading();
-		Http.get<GameProfileResponse>(`/WebAPI/GameProfile/${gameId}`)
-			.then((response) => {
-				GameStore.Instance.LoadGames({ [response.GameProfile.Game.GameId]: response.GameProfile.Game });
-				loadableGameProfile.SucceededLoading(response.GameProfile);
-			})
-			.catch(() => {
-				loadableGameProfile.FailedLoading("Something went wrong loading the game profile!");
-			});
+		Http.get<GameProfileResponse, GameProfile>(`/WebAPI/GameProfile/${gameId}`, this.FindOrCreateProfile(gameId), (response) => response.GameProfile)
+			.then((response) => { GameStore.Instance.LoadGames({ [response.GameProfile.Game.GameId]: response.GameProfile.Game }); });
 	}
 
 	public GameProfilesByGameId: Dictionary<Loadable<GameProfile>>;

@@ -1,9 +1,9 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { createUseStyles } from "react-jss";
 
 export const defaultBackground = "#161616";
 export const defaultFontColor = "#F0F0F0";
 export const defaultBorderColor = "#2F2F2F";
-export const useGlobalStyles = makeStyles({
+export const useGlobalStyles = createUseStyles({
 	"@global": {
 		[`html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del,
 		dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label,
@@ -25,7 +25,10 @@ export const useGlobalStyles = makeStyles({
 		"html": {
 			lineHeight: 1,
 			background: "#101010",
-			height: "100%"
+			height: "100%",
+		},
+		"body": {
+			overflowY: "scroll",
 		},
 		"ol, ul": {
 			listStyle: "none",
@@ -37,7 +40,7 @@ export const useGlobalStyles = makeStyles({
 	},
 });
 
-export const useBackgroundStyles = makeStyles({
+export const useBackgroundStyles = createUseStyles({
 	default: { backgroundColor: defaultBackground, border: "1px solid #2F2F2F" },
 	borderBottom: { borderBottom: "1px solid #2F2F2F" },
 	bgAlternateDarken: {
@@ -47,7 +50,7 @@ export const useBackgroundStyles = makeStyles({
 	},
 });
 
-export const useActionStyles = makeStyles({
+export const useActionStyles = createUseStyles({
 	clickable: {
 		cursor: "pointer",
 	},
@@ -73,7 +76,7 @@ export const useActionStyles = makeStyles({
 	}
 });
 
-export const useLayoutStyles = makeStyles({
+export const useLayoutStyles = createUseStyles({
 	relative: { position: "relative" },
 	absolute: { position: "absolute" },
 	bottomRight: { bottom: "0", right: "0" },
@@ -170,7 +173,7 @@ export const useLayoutStyles = makeStyles({
 	marginBottomDoubleNegative: { marginBottom: "-20px" },
 });
 
-export const useTextStyles = makeStyles({
+export const useTextStyles = createUseStyles({
 	light: { fontWeight: 100 },
 	bold: { fontWeight: "bold" },
 

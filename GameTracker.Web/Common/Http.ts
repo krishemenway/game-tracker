@@ -1,10 +1,18 @@
+import { Loadable } from "Common/Loadable";
+
 export class Http {
 	/**
 	 * @param url Url path for get request
 	 * @template TResponse Describes the type for the json response
 	 */
-	public static get<TResponse>(url: string): Promise<TResponse> {
+	public static get<TResponse, TLoadableData = TResponse>(url: string, loadable: Loadable<TLoadableData>, transformFunc?: (response: TResponse) => TLoadableData): Promise<TResponse> {
 		return new Promise<TResponse>((onFulfilled, onRejected) => {
+			if (!loadable.CanMakeRequest()) {
+				return;
+			}
+
+			loadable.StartLoading();
+
 			fetch(url)
 				.then((response) => {
 					if (!response.ok) {
@@ -14,8 +22,10 @@ export class Http {
 					return response.json();
 				})
 				.then((jsonResponse) => {
+					loadable.SucceededLoading(transformFunc === undefined ? jsonResponse : transformFunc(jsonResponse));
 					onFulfilled(jsonResponse as TResponse);
 				}, (reason) => {
+					loadable.FailedLoading(reason);
 					onRejected(reason);
 				});
 		});

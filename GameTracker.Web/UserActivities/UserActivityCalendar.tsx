@@ -1,9 +1,9 @@
 import * as React from "react";
 import * as moment from "moment";
 import clsx from "clsx";
-import { makeStyles } from "@material-ui/core/styles";
+import { createUseStyles } from "react-jss";
 import { UserActivity } from "UserActivities/UserActivity";
-import Popover from "@material-ui/core/Popover";
+import AnchoredModal from "Common/AnchoredModal";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles, useActionStyles } from "AppStyles";
 import AggregateGameTableForDay from "GameProfiles/AggregateGameTableForDay";
 import MonthLink from "UserActivities/MonthLink";
@@ -28,9 +28,7 @@ const UserActivityCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActi
 };
 
 const UserActivityCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActivitiesByDate: Dictionary<UserActivityForDate> }> = (props) => {
-	const layout = useLayoutStyles();
-	const text = useTextStyles();
-	const background = useBackgroundStyles();
+	const [layout, text, background, styles] = [useLayoutStyles(), useTextStyles(), useBackgroundStyles(), useStyles()];
 
 	const daysInMonth = createDaysInMonth(props.firstDayInMonth);
 	const [currentPopoverAnchor, setPopoverAnchor] = React.useState<HTMLElement|null>(null);
@@ -60,27 +58,26 @@ const UserActivityCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; user
 			</div>
 
 			{
-				!popoverIsOpen || currentPopoverDate === null ? <></> :
-				<Popover
+				<AnchoredModal
 					open={popoverIsOpen}
-					anchorEl={currentPopoverAnchor}
-					onClose={() => { setPopoverAnchor(null); setCurrentPopoverDate(null); }}
-					PaperProps={{ style: { background: "#181818" } }}
-					anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-					transformOrigin={{ vertical: "top", horizontal: "center" }}
+					anchorElement={currentPopoverAnchor}
+					anchorAlignment={{ horizontal: "center", vertical: "bottom" }}
+					onClosed={() => { setPopoverAnchor(null); setCurrentPopoverDate(null); }}
 				>
-					<>
-						<div className={clsx(layout.paddingBottom, layout.marginHorizontal, layout.marginTopDouble, text.center)} style={{ borderBottom: "1px solid #383838" }}>
-							<DayLink date={currentPopoverDate}>{currentPopoverDate.format("MMMM Do, YYYY")}</DayLink>
-						</div>
+					{currentPopoverDate !== null && (
+						<div className={clsx(background.default, styles.selectedDayModal)}>
+							<div className={clsx(layout.paddingBottom, layout.marginHorizontal, layout.paddingTopDouble, text.center)} style={{ borderBottom: "1px solid #383838" }}>
+								<DayLink date={currentPopoverDate}>{currentPopoverDate.format("MMMM Do, YYYY")}</DayLink>
+							</div>
 
-						<AggregateGameTableForDay
-							dayOfMonth={currentPopoverDate?.day() ?? 1}
-							firstDayInMonth={props.firstDayInMonth}
-							activities={acitivitesForDate(props.firstDayInMonth, currentPopoverDate.date(), props.userActivitiesByDate)}
-						/>
-					</>
-				</Popover>
+							<AggregateGameTableForDay
+								dayOfMonth={currentPopoverDate?.day() ?? 1}
+								firstDayInMonth={props.firstDayInMonth}
+								activities={acitivitesForDate(props.firstDayInMonth, currentPopoverDate.date(), props.userActivitiesByDate)}
+							/>
+						</div>
+					)}
+				</AnchoredModal>
 			}
 		</div>
 	)
@@ -99,7 +96,6 @@ const UserActivityCalendarMonthDay: React.FC<UserActivityCalendarMonthDayProps> 
 	const classes = useStyles();
 	const layout = useLayoutStyles();
 	const text = useTextStyles();
-	const action = useActionStyles();
 
 	const marginLeftValue = props.dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined;
 	const activities = acitivitesForDate(props.firstDayInMonth, props.dayInMonth, props.userActivitiesByDate);
@@ -186,7 +182,7 @@ function padNumber(value: number, size: number): string {
 	return s;
 }
 
-const useStyles = makeStyles((t) => ({
+const useStyles = createUseStyles({
 	calendarDay: {
 		width: "14.285714285714%", // 7 days of week
 		minWidth: "32px",
@@ -195,6 +191,9 @@ const useStyles = makeStyles((t) => ({
 	selectedDay: {
 		border: "1px solid #F0F0F0",
 	},
-}));
+	selectedDayModal: {
+		boxShadow: "0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12)",
+	},
+});
 
 export default UserActivityCalendar;

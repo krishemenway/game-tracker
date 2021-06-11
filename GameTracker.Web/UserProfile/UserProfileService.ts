@@ -22,20 +22,10 @@ export class UserProfileService {
 	}
 
 	public LoadProfile(): void {
-		if (!this.LoadingUserProfile.CanMakeRequest()) {
-			return;
-		}
-
-		this.LoadingUserProfile.StartLoading();
-
-		Http.get<UserProfile>("/WebAPI/UserProfile")
+		Http.get<UserProfile>("/WebAPI/UserProfile", this.LoadingUserProfile)
 			.then((response) => {
 				GameStore.Instance.LoadGames(response.GamesByGameId);
 				UserActivityService.Instance.AddLoadedActivities(response.ActivitiesByDate);
-				this.LoadingUserProfile.SucceededLoading(response);
-			})
-			.catch(() => {
-				this.LoadingUserProfile.FailedLoading("Something went wrong loading the user profile!");
 			});
 	}
 

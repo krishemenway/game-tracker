@@ -33,7 +33,7 @@ const TimeSpentByHourChart: React.FC<{ className?: string; timeSpentInSecondsByH
 			/>
 			<YAxis type="number" width={120} hide />
 			<Tooltip
-				formatter={(value) => [TimeSpan.Readable(parseInt(value.toString(), 10)), ""]}
+				formatter={(value: any) => [TimeSpan.Readable(parseInt(value.toString(), 10)), ""]}
 				separator=" "
 				cursor={{
 					fill: "rgba(0,0,0,.33)",
