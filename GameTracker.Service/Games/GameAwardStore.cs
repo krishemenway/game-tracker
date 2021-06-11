@@ -17,10 +17,10 @@ namespace GameTracker.Games
 		{
 			if (!allUserActivity.AllUserActivity.Any())
 			{
-				return new GameAward[0];
+				return Array.Empty<GameAward>();
 			}
 
-			return new GameAward[0]
+			return Array.Empty<GameAward>()
 				.Union(AllOverallGameAwards(allUserActivity))
 				.Union(AllYearlyGameAwards(allUserActivity))
 				.Union(AllMonthlyGameAwards(allUserActivity))
@@ -37,7 +37,7 @@ namespace GameTracker.Games
 			{
 				GameAwardId = new Id<GameAward>("MostConsistentOverall"),
 				GameId = mostConsistentlyPlayedGame.Key,
-				GameAwardType = "MostPlayedGameOfYear",
+				GameAwardType = "MostConsistentOverall",
 				GameAwardTypeDetails = new { TotalDaysPlayed = mostConsistentlyPlayedGame.Value },
 			};
 
@@ -70,7 +70,7 @@ namespace GameTracker.Games
 					GameAwardId = new Id<GameAward>($"MostPlayedGameOf{year}"),
 					GameId = mostPlayedGameForMonth.GameId,
 					GameAwardType = "MostPlayedGameOfYear",
-					GameAwardTypeDetails = new { year, mostPlayedGameForMonth.TimeSpentInSeconds },
+					GameAwardTypeDetails = new { Year = year, mostPlayedGameForMonth.TimeSpentInSeconds },
 				};
 
 				var longestActivity = activities.OrderBy(x => x.TimeSpentInSeconds).Last();
@@ -79,7 +79,7 @@ namespace GameTracker.Games
 					GameAwardId = new Id<GameAward>($"LongestActivityOf{year}"),
 					GameId = longestActivity.GameId,
 					GameAwardType = "LongestActivityOfYear",
-					GameAwardTypeDetails = new { year, longestActivity.TimeSpentInSeconds, longestActivity.AssignedToDate },
+					GameAwardTypeDetails = new { Year = year, longestActivity.TimeSpentInSeconds, longestActivity.AssignedToDate },
 				};
 			}
 		}
