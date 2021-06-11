@@ -18,10 +18,11 @@ namespace GameTracker.UserActivities
 	{
 		static UserActivityStore()
 		{
-			CsvConfiguration = new CsvConfiguration(CultureInfo.CurrentCulture);
-			CsvConfiguration.RegisterClassMap<UserActivity.ClassMap>();
-			CsvConfiguration.ShouldQuote = (a, b) => true;
-			CsvConfiguration.HasHeaderRecord = false;
+			CsvConfiguration = new CsvConfiguration(CultureInfo.CurrentCulture)
+			{
+				HasHeaderRecord = false,
+				ShouldQuote = (a, b, c) => true,
+			};
 		}
 
 		public IReadOnlyList<UserActivity> FindAllUserActivity()
@@ -33,6 +34,8 @@ namespace GameTracker.UserActivities
 				using var stream = File.Open(DataFilePath, FileMode.OpenOrCreate);
 				using var reader = new StreamReader(stream);
 				using var csv = new CsvReader(reader, CsvConfiguration);
+
+				csv.Context.RegisterClassMap<UserActivity.ClassMap>();
 
 				return csv.GetRecords<UserActivity>().ToList();
 			}
@@ -47,6 +50,8 @@ namespace GameTracker.UserActivities
 				using var stream = File.Open(DataFilePath, FileMode.Append);
 				using var writer = new StreamWriter(stream);
 				using var csv = new CsvWriter(writer, CsvConfiguration);
+
+				csv.Context.RegisterClassMap<UserActivity.ClassMap>();
 
 				csv.WriteRecords(userActivities);
 			}

@@ -20,7 +20,7 @@ namespace GameTracker
 				Log.Logger = new LoggerConfiguration()
 					.ReadFrom.Configuration(Configuration)
 					.MinimumLevel.ControlledBy(LoggingLevelSwitch)
-					.WriteTo.ColoredConsole()
+					.WriteTo.Console()
 					.WriteTo.File(Path.Combine(ExecutableFolderPath, "GameTracker.Service.log"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 5)
 					.CreateLogger();
 

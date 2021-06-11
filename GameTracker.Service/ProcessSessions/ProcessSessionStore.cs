@@ -23,10 +23,11 @@ namespace GameTracker.ProcessSessions
 	{
 		static ProcessSessionStore()
 		{
-			CsvConfiguration = new CsvConfiguration(CultureInfo.CurrentCulture);
-			CsvConfiguration.RegisterClassMap<ProcessSession.ClassMap>();
-			CsvConfiguration.ShouldQuote = (a, b) => true;
-			CsvConfiguration.HasHeaderRecord = false;
+			CsvConfiguration = new CsvConfiguration(CultureInfo.CurrentCulture)
+			{
+				HasHeaderRecord = false,
+				ShouldQuote = (a, b, c) => true,
+			};
 		}
 
 		public ProcessSessionStore(
@@ -46,6 +47,8 @@ namespace GameTracker.ProcessSessions
 			using (var reader = new StreamReader(File.Open(DataFilePath, FileMode.OpenOrCreate)))
 			using (var csv = new CsvReader(reader, CsvConfiguration))
 			{
+				csv.Context.RegisterClassMap<ProcessSession.ClassMap>();
+
 				return csv.GetRecords<ProcessSession>().ToList();
 			}
 		}
@@ -105,6 +108,8 @@ namespace GameTracker.ProcessSessions
 			using (var writer = new StreamWriter(File.Open(DataFilePath, FileMode.Append)))
 			using (var csv = new CsvWriter(writer, CsvConfiguration))
 			{
+				csv.Context.RegisterClassMap<ProcessSession.ClassMap>();
+
 				processSessions = pendingProcessSessions.Select(pendingProcessSession => CreateProcessSession(pendingProcessSession, currentTime)).ToList();
 				csv.WriteRecords(processSessions);
 				Log.Debug("Wrote {CountOfWrittenProcesses} process completions to file.", processSessions.Count);

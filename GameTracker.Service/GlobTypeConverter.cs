@@ -2,6 +2,8 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace GameTracker
 {
@@ -52,6 +54,20 @@ namespace GameTracker
 			}
 
 			return base.ConvertTo(context, culture, value, destinationType);
+		}
+	}
+
+	[JsonConverter(typeof(GlobJsonConverter))]
+	public class GlobJsonConverter : JsonConverter<Glob>
+	{
+		public override Glob Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		{
+			return (Glob)new GlobTypeConverter().ConvertFrom(null, null, reader.GetString());
+		}
+
+		public override void Write(Utf8JsonWriter writer, Glob value, JsonSerializerOptions options)
+		{
+			writer.WriteStringValue(value.ToString());
 		}
 	}
 }
