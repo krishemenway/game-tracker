@@ -2,10 +2,14 @@ import clsx from "clsx";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { createUseStyles } from "react-jss";
+import { ObservableArray } from "@residualeffect/reactor";
 
 const body = document.getElementsByTagName("body")[0];
 const modalRoot = document.createElement('div');
 body.appendChild(modalRoot);
+
+const outsideModalClickHandlerEvents: ObservableArray<any> = new ObservableArray([]);
+const escapeModalKeyHandlerEvents: ObservableArray<any> = new ObservableArray([]);
 
 type HorizontalAlignment = "left"|"right"|"center";
 type VerticalAlignment = "top"|"bottom";
@@ -21,6 +25,21 @@ interface ModalProps {
 	anchorElement: HTMLElement|null;
 	anchorAlignment: ModalAnchorAlignment;
 	onClosed: () => void;
+}
+
+export function ResetAllModals(): void {
+	body.className = "";
+	modalRoot.innerHTML = "";
+	
+	outsideModalClickHandlerEvents.Value.forEach((handler) => {
+		modalRoot.removeEventListener("click", handler);
+		outsideModalClickHandlerEvents.remove(handler);
+	});
+
+	escapeModalKeyHandlerEvents.Value.forEach((handler) => {
+		body.removeEventListener("keyup", handler);
+		escapeModalKeyHandlerEvents.remove(handler);
+	});
 }
 
 function CalculateTopOffset(anchorElement: HTMLElement, alignment: VerticalAlignment): number {
@@ -52,6 +71,8 @@ const AnchoredModal: React.FC<ModalProps> = (props) => {
 			modalRoot.appendChild(element);
 			modalRoot.addEventListener("click", outsideModalClickHandler);
 			body.addEventListener("keyup", escapeModalKeyHandler);
+			outsideModalClickHandlerEvents.push(outsideModalClickHandler);
+			escapeModalKeyHandlerEvents.push(escapeModalKeyHandler);
 		} else {
 			if (modalRoot.contains(element))
 			{
@@ -60,6 +81,8 @@ const AnchoredModal: React.FC<ModalProps> = (props) => {
 
 			modalRoot.removeEventListener("click", outsideModalClickHandler);
 			body.removeEventListener("keyup", escapeModalKeyHandler);
+			outsideModalClickHandlerEvents.remove(outsideModalClickHandler);
+			escapeModalKeyHandlerEvents.remove(escapeModalKeyHandler);
 		}
 
 		modalRoot.className = classes.anchoredModalOverlay;
