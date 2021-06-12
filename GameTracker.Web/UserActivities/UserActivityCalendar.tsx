@@ -36,7 +36,7 @@ const UserActivityCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; user
 	const popoverIsOpen = currentPopoverDate !== null;
 
 	return (
-		<div className={clsx(layout.width33)}>
+		<div className={clsx(layout.width33, layout.marginVerticalHalf)}>
 			<div className={clsx(background.default, layout.height100, layout.paddingHorizontalHalf, layout.paddingBottomHalf)}>
 				<div className={clsx(layout.width100, layout.marginBottom, layout.paddingVertical, text.center, background.borderBottom)}>
 					<MonthLink month={props.firstDayInMonth}>{props.firstDayInMonth.format("MMMM YYYY")}</MonthLink>
