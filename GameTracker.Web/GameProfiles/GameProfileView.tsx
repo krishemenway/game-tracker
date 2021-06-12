@@ -1,42 +1,62 @@
 import clsx from "clsx";
 import * as React from "react";
 import Loading from "Common/Loading";
-import GameName from "Games/GameName";
 import UserActivityCalendar from "UserActivities/UserActivityCalendar";
 import { GameProfileService } from "GameProfiles/GameProfileService";
 import { GameProfile } from "GameProfiles/GameProfile";
 import GameStatistics from "GameProfiles/GameStatistics";
-import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
-import { UserProfileService } from "UserProfile/UserProfileService";
+import { useLayoutStyles, useTextStyles } from "AppStyles";
+import { UserProfile, UserProfileService } from "UserProfile/UserProfileService";
 import UserActivityList from "UserActivities/UserActivityList";
 import PageHeader from "Common/PageHeader";
 import PageFooter from "Common/PageFooter";
 import TimeSpentByHourChart from "Common/TimeSpentByHourChart";
+import { GameAward } from "./GameAward";
+import GameAwardCollection from "GameProfiles/GameAwardCollection";
 
 interface GameProfileProps {
 	gameId: string;
 }
 
-const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; userName: string }> = (props) => {
-	const layout = useLayoutStyles();
-	const text = useTextStyles();
-
+const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; userProfile: UserProfile }> = (props) => {
 	return (
 		<>
-			<PageHeader UserName={props.userName} PageTitle={props.gameProfile.Game.Name} />
+			<PageHeader UserName={props.userProfile.UserName} PageTitle={props.gameProfile.Game.Name} />
 
 			<GameStatistics gameId={props.gameId} gameProfile={props.gameProfile} />
 
-			<h2 className={clsx(layout.marginVertical, text.font20)}>Recent Activity</h2>
-			<UserActivityCalendar userActivitiesByDate={props.gameProfile.ActivitiesByDate} />
+			<Section title="Recent Activity">
+				<UserActivityCalendar userActivitiesByDate={props.gameProfile.ActivitiesByDate} />
+			</Section>
 
-			<h2 className={clsx(layout.marginVertical, text.font20)}>Time of day</h2>
-			<TimeSpentByHourChart timeSpentInSecondsByHour={props.gameProfile.TimeSpentInSecondsByHour} />
+			<Section title="Game Awards" hide={props.gameProfile.GameAwards.length === 0}>
+				<GameAwardCollection gameId={props.gameId} awards={props.gameProfile.GameAwards} />
+			</Section>
 
-			<h2 className={clsx(layout.marginVertical, text.font20)}>All Activity</h2>
-			<UserActivityList activities={props.gameProfile.AllActivity} />
+			<Section title="Time of day">
+				<TimeSpentByHourChart timeSpentInSecondsByHour={props.gameProfile.TimeSpentInSecondsByHour} />
+			</Section>
+
+			<Section title="All Activity">
+				<UserActivityList activities={props.gameProfile.AllActivity} />
+			</Section>
 
 			<PageFooter />
+		</>
+	);
+};
+
+const Section: React.FC<{ title: string, hide?: boolean }> = (props) => {
+	const [layout, text] = [useLayoutStyles(), useTextStyles()];
+
+	if (props.hide ?? false) {
+		return <></>;
+	}
+
+	return (
+		<>
+			<h2 className={clsx(layout.marginVertical, text.font20)}>{props.title}</h2>
+			{props.children}
 		</>
 	);
 };
@@ -51,7 +71,7 @@ export default (props: GameProfileProps) => {
 		<div className={clsx(layout.centerLayout1000)}>
 			<Loading
 				loadables={[GameProfileService.Instance.FindOrCreateProfile(props.gameId), UserProfileService.Instance.LoadingUserProfile]}
-				renderSuccess={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userName={userProfile.UserName} />}
+				renderSuccess={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userProfile={userProfile} />}
 			/>
 		</div>
 	);
