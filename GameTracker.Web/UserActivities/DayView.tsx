@@ -2,7 +2,7 @@ import * as moment from "moment";
 import * as React from "react";
 import clsx from "clsx";
 import { useLayoutStyles } from "AppStyles";
-import { UserActivityService } from "./UserActivityService";
+import { UserActivityService } from "UserActivities/UserActivityService";
 import Loading from "Common/Loading";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import UserActivityList from "UserActivities/UserActivityList";
