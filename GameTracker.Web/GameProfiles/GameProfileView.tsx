@@ -1,17 +1,16 @@
-import clsx from "clsx";
 import * as React from "react";
-import Loading from "Common/Loading";
-import UserActivityCalendar from "UserActivities/UserActivityCalendar";
-import { GameProfileService } from "GameProfiles/GameProfileService";
-import { GameProfile } from "GameProfiles/GameProfile";
-import GameStatistics from "GameProfiles/GameStatistics";
-import { useLayoutStyles, useTextStyles } from "AppStyles";
-import { UserProfile, UserProfileService } from "UserProfile/UserProfileService";
-import UserActivityList from "UserActivities/UserActivityList";
+import clsx from "clsx";
 import PageHeader from "Common/PageHeader";
 import PageFooter from "Common/PageFooter";
+import Loading from "Common/Loading";
+import { useLayoutStyles, useTextStyles } from "AppStyles";
+import { GameProfileService } from "GameProfiles/GameProfileService";
+import { GameProfile } from "GameProfiles/GameProfile";
+import { UserProfile, UserProfileService } from "UserProfile/UserProfileService";
+import UserActivityCalendar from "UserActivities/UserActivityCalendar";
+import GameStatistics from "GameProfiles/GameStatistics";
+import UserActivityList from "UserActivities/UserActivityList";
 import TimeSpentByHourChart from "Common/TimeSpentByHourChart";
-import { GameAward } from "./GameAward";
 import GameAwardCollection from "GameProfiles/GameAwardCollection";
 
 interface GameProfileProps {
