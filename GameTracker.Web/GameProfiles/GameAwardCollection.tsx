@@ -40,70 +40,39 @@ const GameAwardTypeBadge: React.FC<{ gameAward: GameAward }> = (props) => {
 	}
 };
 
-const LongestActivityOfYearAwardBadge: React.FC<{ gameAward: LongestActivityOfYearAward }> = (props) => {
-	const [text, layout] = [useTextStyles(), useLayoutStyles()];
-	return (
-		<>
-			<div className={clsx(text.center, layout.marginBottomHalf)}>Longest Session of</div>
-			<div className={clsx(text.center, layout.marginBottom)}>{props.gameAward.GameAwardTypeDetails.Year}</div>
-			<div className={clsx(text.center, layout.marginBottomHalf)}>{TimeSpan.Readable(props.gameAward.GameAwardTypeDetails.TimeSpentInSeconds)}</div>
-		</>
-	);
-};
+const LongestActivityOfYearAwardBadge: React.FC<{ gameAward: LongestActivityOfYearAward }> = (props) => (
+	<ThreeLineBadge top="Longest Session of" middle={props.gameAward.GameAwardTypeDetails.Year.toString()} bottom={TimeSpan.Readable(props.gameAward.GameAwardTypeDetails.TimeSpentInSeconds)} />
+);
 
-const MostPlayedGameOfYearAwardBadge: React.FC<{ gameAward: MostPlayedGameOfYearAward }> = (props) => {
-	const [text, layout] = [useTextStyles(), useLayoutStyles()];
-	return (
-		<>
-			<div className={clsx(text.center, layout.marginBottomHalf)}>Most played game of</div>
-			<div className={clsx(text.center, layout.marginBottom)}>{props.gameAward.GameAwardTypeDetails.Year}</div>
-			<div className={clsx(text.center, layout.marginBottomHalf)}>{TimeSpan.Readable(props.gameAward.GameAwardTypeDetails.TimeSpentInSeconds)}</div>
-		</>
-	);
-};
+const MostPlayedGameOfYearAwardBadge: React.FC<{ gameAward: MostPlayedGameOfYearAward }> = (props) => (
+	<ThreeLineBadge top="Most played game of" middle={props.gameAward.GameAwardTypeDetails.Year.toString()} bottom={TimeSpan.Readable(props.gameAward.GameAwardTypeDetails.TimeSpentInSeconds)} />
+);
 
-const MostPlayedGameOfMonthAwardBadge: React.FC<{ gameAward: MostPlayedGameOfMonthAward }> = (props) => {
-	const [text, layout] = [useTextStyles(), useLayoutStyles()];
-	return (
-		<>
-			<div className={clsx(text.center, layout.marginBottomHalf)}>Most played game of</div>
-			<div className={clsx(text.center, layout.marginBottom)}>{moment(`1/${props.gameAward.GameAwardTypeDetails.Month}/${props.gameAward.GameAwardTypeDetails.Year}`, "M/D/YYYY").format("MMM YYYY")}</div>
-			<div className={clsx(text.center, layout.marginBottomHalf)}>{TimeSpan.Readable(props.gameAward.GameAwardTypeDetails.TimeSpentInSeconds)}</div>
-		</>
-	);
-};
+const MostPlayedGameOfMonthAwardBadge: React.FC<{ gameAward: MostPlayedGameOfMonthAward }> = (props) => (
+	<ThreeLineBadge top="Most played game of" middle={moment(`${props.gameAward.GameAwardTypeDetails.Month}/1/${props.gameAward.GameAwardTypeDetails.Year}`, "M/D/YYYY").format("MMM YYYY")} bottom={TimeSpan.Readable(props.gameAward.GameAwardTypeDetails.TimeSpentInSeconds)} />
+);
 
-const LongestActivityOfMonthAwardBadge: React.FC<{ gameAward: LongestActivityOfMonthAward }> = (props) => {
-	const [text, layout] = [useTextStyles(), useLayoutStyles()];
-	return (
-		<>
-			<div className={clsx(text.center, layout.marginBottomHalf)}>Longest single session of</div>
-			<div className={clsx(text.center, layout.marginBottom)}>{moment(`1/${props.gameAward.GameAwardTypeDetails.Month}/${props.gameAward.GameAwardTypeDetails.Year}`, "M/D/YYYY").format("MMM YYYY")}</div>
-			<div className={clsx(text.center, layout.marginBottomHalf)}>{TimeSpan.Readable(props.gameAward.GameAwardTypeDetails.TimeSpentInSeconds)}</div>
-		</>
-	);
-};
+const LongestActivityOfMonthAwardBadge: React.FC<{ gameAward: LongestActivityOfMonthAward }> = (props) => (
+	<ThreeLineBadge top="Longest single session of" middle={moment(`${props.gameAward.GameAwardTypeDetails.Month}/1/${props.gameAward.GameAwardTypeDetails.Year}`, "M/D/YYYY").format("MMM YYYY")} bottom={TimeSpan.Readable(props.gameAward.GameAwardTypeDetails.TimeSpentInSeconds)} />
+);
 
-const MostConsistentOverallAwardBadge: React.FC<{ gameAward: MostConsistentOverallAward }> = (props) => {
-	const [text, layout] = [useTextStyles(), useLayoutStyles()];
-	return (
-		<>
-			<div className={clsx(text.center, layout.marginBottomHalf)}>Most Consistently Played Game</div>
-			<div className={clsx(text.center, layout.marginBottom)}>Overall</div>
-			<div className={clsx(text.center, layout.marginBottomHalf)}>{props.gameAward.GameAwardTypeDetails.TotalDaysPlayed} Total Days Played</div>
-		</>
-	);
-};
+const MostConsistentOverallAwardBadge: React.FC<{ gameAward: MostConsistentOverallAward }> = (props) => (
+	<ThreeLineBadge top="Most Consistently Played Game" middle="Overall" bottom={`${props.gameAward.GameAwardTypeDetails.TotalDaysPlayed} Total Days Played`} />
+);
 
-const LongestActivityOverallAwardBadge: React.FC<{ gameAward: LongestActivityOverallAward }> = (props) => {
+const LongestActivityOverallAwardBadge: React.FC<{ gameAward: LongestActivityOverallAward }> = (props) => (
+	<ThreeLineBadge top="Longest Session" middle="Overall" bottom={TimeSpan.Readable(props.gameAward.GameAwardTypeDetails.TimeSpentInSeconds)} />
+);
+
+const ThreeLineBadge: React.FC<{ top: string, middle: string, bottom: string }> = (props) => {
 	const [text, layout] = [useTextStyles(), useLayoutStyles()];
 	return (
 		<>
-			<div className={clsx(text.center, layout.marginBottomHalf)}>Longest Session</div>
-			<div className={clsx(text.center, layout.marginBottom)}>Overall</div>
-			<div className={clsx(text.center, layout.marginBottomHalf)}>{TimeSpan.Readable(props.gameAward.GameAwardTypeDetails.TimeSpentInSeconds)}</div>
+			<div className={clsx(text.center, layout.marginBottomHalf)}>{props.top}</div>
+			<div className={clsx(text.center, layout.marginBottom)}>{props.middle}</div>
+			<div className={clsx(text.center, layout.marginBottomHalf)}>{props.bottom}</div>
 		</>
 	);
-};
+}
 
 export default GameAwardCollection;
