@@ -15,7 +15,7 @@ export class GameProfileService {
 
 	public FindOrCreateProfile(gameId: string): Loadable<GameProfile> {
 		if (this.GameProfilesByGameId[gameId] === undefined) {
-			this.GameProfilesByGameId[gameId] = new Loadable<GameProfile>();
+			this.GameProfilesByGameId[gameId] = new Loadable<GameProfile>("Failed to load game profile.");
 		}
 
 		return this.GameProfilesByGameId[gameId];

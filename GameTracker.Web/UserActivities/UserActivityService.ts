@@ -32,7 +32,7 @@ export class UserActivityService {
 
 	public FindOrCreateUserActivityForDate(dayKey: string): Loadable<UserActivityForDate> {
 		if (this.UserActivityByDate[dayKey] === undefined) {
-			this.UserActivityByDate[dayKey] = new Loadable<UserActivityForDate>();
+			this.UserActivityByDate[dayKey] = new Loadable<UserActivityForDate>(`Failed to load activity for date ${dayKey}!`);
 		}
 
 		return this.UserActivityByDate[dayKey];
@@ -40,7 +40,7 @@ export class UserActivityService {
 
 	public FindOrCreateUserActivityForMonth(monthKey: string): Loadable<UserActivityForMonthResponse> {
 		if (this.UserActivityForMonth[monthKey] === undefined) {
-			this.UserActivityForMonth[monthKey] = new Loadable<UserActivityForMonthResponse>("Something went wrong loading user activity!");
+			this.UserActivityForMonth[monthKey] = new Loadable<UserActivityForMonthResponse>(`Failed to load activity for Month ${monthKey}!`);
 		}
 
 		return this.UserActivityForMonth[monthKey];

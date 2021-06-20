@@ -1,13 +1,11 @@
 import * as React from "react";
 import { Loadable, LoadableData, LoadState } from "Common/Loadable";
 import { useObservable } from "Common/useObservable";
-
-const DefaultLoadingComponent = (<div style={{ textAlign: "center" }}>Loading &hellip;</div>);
-const DefaultErrorMessageComponent = (errorMessages: string[]) => (<div style={{ textAlign: "center" }}>{errorMessages[0]}</div>);
+import LoadingSpinner from "Common/LoadingSpinner";
+import LoadingErrorMessages from "Common/LoadingErrorMessages";
 
 interface BaseLoadingComponentProps {
 	loadingComponent?: JSX.Element,
-	errorComponent?: (errorMessages: string[]) => JSX.Element,
 }
 
 function Loading<A>(props: { loadables: [Loadable<A>], renderSuccess: (a: A) => JSX.Element }&BaseLoadingComponentProps): JSX.Element;
@@ -21,14 +19,13 @@ function Loading(props: { loadables: Loadable<unknown>[], renderSuccess: (...inp
 
 	switch(loadState) {
 		case LoadState.Failed:
-			const errorMessages = loadableDatas.map((data) => data.ErrorMessage).filter(message => message !== null);
-			return (props.errorComponent ?? DefaultErrorMessageComponent)(errorMessages);
+			return <LoadingErrorMessages errorMessages={loadableDatas.map((data) => data.ErrorMessage).filter(message => message !== null)} />;
 		case LoadState.Loaded:
 			return props.renderSuccess(...loadableDatas.map((data) => data.SuccessData));
 		case LoadState.NotStarted:
 		case LoadState.Loading:
 		default:
-			return props.loadingComponent ?? DefaultLoadingComponent;
+			return props.loadingComponent ?? <LoadingSpinner />;
 	}
 }
 

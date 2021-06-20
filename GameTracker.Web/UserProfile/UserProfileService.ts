@@ -20,7 +20,7 @@ export interface UserProfile {
 
 export class UserProfileService {
 	constructor() {
-		this.LoadingUserProfile = new Loadable<UserProfile>();
+		this.LoadingUserProfile = new Loadable<UserProfile>("Failed to load the user profile.");
 	}
 
 	public LoadProfile(): void {

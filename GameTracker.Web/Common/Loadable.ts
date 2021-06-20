@@ -1,4 +1,4 @@
-import { Observable, Computed, ReadOnlyObservable } from "@residualeffect/reactor";
+import { Observable, ReadOnlyObservable } from "@residualeffect/reactor";
 
 export interface LoadableData<TSuccessData> {
 	SuccessData: TSuccessData|null;
@@ -41,7 +41,8 @@ export class Loadable<TSuccessData> implements ILoadable<TSuccessData> {
 	}
 
 	public FailedLoading(errorMessage: string): void {
-		this._loadableData.Value = { SuccessData: null, State: LoadState.Failed, ErrorMessage: errorMessage.length === 0 ? this._defaultErrorMessage : errorMessage };
+		console.warn(this._defaultErrorMessage, errorMessage);
+		this._loadableData.Value = { SuccessData: null, State: LoadState.Failed, ErrorMessage: this._defaultErrorMessage };
 	}
 
 	public Reset(): void {

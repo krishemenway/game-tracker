@@ -83,11 +83,13 @@ export const useLayoutStyles = createUseStyles({
 	invisible: { opacity: 0, cursor: "default", },
 	centerLayout1000: { maxWidth: "1000px", margin: "0 auto" },
 	vertMiddle: { verticalAlign: "middle", },
+	vertBottom: { verticalAlign: "bottom", },
 	horzRule: {
 		height: "1px",
 		borderBottom: "1px solid rgba(255,255,255,.2)",
 		borderTop: "1px solid rgba(255,255,255,.4)",
 	},
+	inlineBlock: { display: "inline-block" },
 	flexColumn: { display: "flex", flexDirection: "column", },
 	flexRow: { display: "flex", flexDirection: "row", width: "100%" },
 	flexCenter: { alignItems: "center" },
@@ -150,9 +152,11 @@ export const useLayoutStyles = createUseStyles({
 
 	marginVertical: { marginTop: "10px", marginBottom: "10px", },
 	marginVerticalHalf: { marginTop: "5px", marginBottom: "5px", },
+	marginVerticalDouble: { marginTop: "20px", marginBottom: "20px" },
 
 	marginHorizontal: { marginLeft: "10px", marginRight: "10px", },
 	marginHorizontalHalf: { marginLeft: "5px", marginRight: "5px", },
+	marginHorizontalDouble: { marginLeft: "20px", marginRight: "20px" },
 
 	marginRight: { marginRight: "10px", },
 	marginRightHalf: { marginRight: "5px", },

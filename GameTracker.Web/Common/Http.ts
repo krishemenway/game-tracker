@@ -25,7 +25,7 @@ export class Http {
 					loadable.SucceededLoading(transformFunc === undefined ? jsonResponse : transformFunc(jsonResponse));
 					onFulfilled(jsonResponse as TResponse);
 				}, (reason) => {
-					loadable.FailedLoading(reason);
+					loadable.FailedLoading(reason.message);
 					onRejected(reason);
 				});
 		});
