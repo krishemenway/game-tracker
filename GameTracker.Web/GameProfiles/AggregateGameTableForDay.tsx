@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as moment from "moment";
 import clsx from "clsx";
 import { UserActivity } from "UserActivities/UserActivity";
 import { TimeSpan } from "Common/TimeSpan";
@@ -7,8 +6,6 @@ import GameLink from "Games/GameLink";
 import GameName from "Games/GameName";
 
 interface AggregateGameTableForDayProps {
-	dayOfMonth: number;
-	firstDayInMonth: moment.Moment;
 	activities: UserActivity[];
 	className?: string;
 }

@@ -10,111 +10,124 @@ import MonthLink from "UserActivities/MonthLink";
 import DayLink from "UserActivities/DayLink";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import GameIcon from "Games/GameIcon";
+import ListWithShowMore from "Common/ListWithShowMore";
+
+interface ControlDayPopoverProps {
+	setCurrentPopoverDate: (date: moment.Moment) => void;
+	setPopoverAnchor: (element: HTMLElement) => void;
+}
 
 const UserActivityCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivityForDate>; className?: string; }> = (props) => {
-	const layout = useLayoutStyles();
+	const [layout, background, text, styles] = [useLayoutStyles(), useBackgroundStyles(), useTextStyles(), useStyles()];
+	const firstDaysInMonth = React.useMemo(() => createFirstDaysInMonths(props.userActivitiesByDate), [props.userActivitiesByDate]);
 
-	return (
-		<div className={clsx(props.className, layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}>
-			{createFirstDaysInMonths(props.userActivitiesByDate).map((firstDayInMonth) => (
-				<UserActivityCalendarMonth
-					key={firstDayInMonth.format("YYYY-MM")}
-					firstDayInMonth={firstDayInMonth}
-					userActivitiesByDate={props.userActivitiesByDate}
-				/>
-			))}
-		</div>
-	);
-};
-
-const UserActivityCalendarMonth: React.FC<{ firstDayInMonth: moment.Moment; userActivitiesByDate: Dictionary<UserActivityForDate> }> = (props) => {
-	const [layout, text, background, styles] = [useLayoutStyles(), useTextStyles(), useBackgroundStyles(), useStyles()];
-
-	const daysInMonth = createDaysInMonth(props.firstDayInMonth);
 	const [currentPopoverAnchor, setPopoverAnchor] = React.useState<HTMLElement|null>(null);
 	const [currentPopoverDate, setCurrentPopoverDate] = React.useState<moment.Moment|null>(null);
 	const popoverIsOpen = currentPopoverDate !== null;
 
 	return (
-		<div className={clsx(layout.width33, layout.marginVerticalHalf)}>
-			<div className={clsx(background.default, layout.height100, layout.paddingHorizontalHalf, layout.paddingBottomHalf)}>
-				<div className={clsx(layout.width100, layout.marginBottom, layout.paddingVertical, text.center, background.borderBottom)}>
-					<MonthLink month={props.firstDayInMonth}>{props.firstDayInMonth.format("MMMM YYYY")}</MonthLink>
-				</div>
+		<>
+			<ListWithShowMore
+				items={firstDaysInMonth}
+				createKey={(m) => m.format("YYYY-MM")}
+				listClassName={clsx(props.className, layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}
+				listItemClassName={clsx(layout.width33, layout.marginVerticalHalf)}
+				showMoreLimit={6}
+				renderItem={(firstDayInMonth) => (
+					<UserActivityCalendarMonth
+						firstDayInMonth={firstDayInMonth}
+						userActivitiesByDate={props.userActivitiesByDate}
+						currentPopoverDate={currentPopoverDate}
+						setCurrentPopoverDate={setCurrentPopoverDate}
+						setPopoverAnchor={setPopoverAnchor}
+					/>
+				)}
+			/>
+			
+			<AnchoredModal
+				open={popoverIsOpen}
+				anchorElement={currentPopoverAnchor}
+				anchorAlignment={{ horizontal: "center", vertical: "bottom" }}
+				onClosed={() => { setPopoverAnchor(null); setCurrentPopoverDate(null); }}
+			>
+				{currentPopoverDate !== null && (
+					<div className={clsx(background.default, styles.selectedDayModal)}>
+						<div className={clsx(layout.paddingBottom, layout.marginHorizontal, layout.paddingTopDouble, text.center)} style={{ borderBottom: "1px solid #383838" }}>
+							<DayLink date={currentPopoverDate}>{currentPopoverDate.format("MMMM Do, YYYY")}</DayLink>
+						</div>
 
-				<div className={clsx(layout.flexRow, layout.flexWrap)}>
-					{daysInMonth.map((dayInMonth) => (
-						<UserActivityCalendarMonthDay
-							key={dayInMonth}
-							dayInMonth={dayInMonth}
-							firstDayInMonth={props.firstDayInMonth}
-							userActivitiesByDate={props.userActivitiesByDate}
-							currentPopoverDate={currentPopoverDate}
-							setCurrentPopoverDate={setCurrentPopoverDate}
-							setPopoverAnchor={setPopoverAnchor}
+						<AggregateGameTableForDay
+							activities={acitivitesForDate(currentPopoverDate, currentPopoverDate.date(), props.userActivitiesByDate)}
 						/>
-					))}
-				</div>
+					</div>
+				)}
+			</AnchoredModal>
+		</>
+	);
+};
+
+interface UserActivityCalendarMonthProps extends ControlDayPopoverProps {
+	firstDayInMonth: moment.Moment;
+	userActivitiesByDate: Dictionary<UserActivityForDate>;
+	currentPopoverDate: moment.Moment|null;
+}
+
+const UserActivityCalendarMonth: React.FC<UserActivityCalendarMonthProps> = (props) => {
+	const [layout, text, background] = [useLayoutStyles(), useTextStyles(), useBackgroundStyles()];
+
+	const daysInMonth = createDaysInMonth(props.firstDayInMonth);
+
+	return (
+		<div className={clsx(background.default, layout.height100, layout.paddingHorizontalHalf, layout.paddingBottomHalf)}>
+			<div className={clsx(layout.width100, layout.marginBottom, layout.paddingVertical, text.center, background.borderBottom)}>
+				<MonthLink month={props.firstDayInMonth}>{props.firstDayInMonth.format("MMMM YYYY")}</MonthLink>
 			</div>
 
-			{
-				<AnchoredModal
-					open={popoverIsOpen}
-					anchorElement={currentPopoverAnchor}
-					anchorAlignment={{ horizontal: "center", vertical: "bottom" }}
-					onClosed={() => { setPopoverAnchor(null); setCurrentPopoverDate(null); }}
-				>
-					{currentPopoverDate !== null && (
-						<div className={clsx(background.default, styles.selectedDayModal)}>
-							<div className={clsx(layout.paddingBottom, layout.marginHorizontal, layout.paddingTopDouble, text.center)} style={{ borderBottom: "1px solid #383838" }}>
-								<DayLink date={currentPopoverDate}>{currentPopoverDate.format("MMMM Do, YYYY")}</DayLink>
-							</div>
-
-							<AggregateGameTableForDay
-								dayOfMonth={currentPopoverDate?.day() ?? 1}
-								firstDayInMonth={props.firstDayInMonth}
-								activities={acitivitesForDate(props.firstDayInMonth, currentPopoverDate.date(), props.userActivitiesByDate)}
-							/>
-						</div>
-					)}
-				</AnchoredModal>
-			}
+			<div className={clsx(layout.flexRow, layout.flexWrap)}>
+				{daysInMonth.map((dayInMonth) => (
+					<UserActivityCalendarMonthDay
+						key={dayInMonth}
+						dayInMonth={dayInMonth}
+						firstDayInMonth={props.firstDayInMonth}
+						userActivitiesByDate={props.userActivitiesByDate}
+						currentPopoverDate={props.currentPopoverDate}
+						setCurrentPopoverDate={props.setCurrentPopoverDate}
+						setPopoverAnchor={props.setPopoverAnchor}
+					/>
+				))}
+			</div>
 		</div>
 	)
 };
 
-interface UserActivityCalendarMonthDayProps {
+interface UserActivityCalendarMonthDayProps extends ControlDayPopoverProps {
 	dayInMonth: number;
 	firstDayInMonth: moment.Moment;
 	userActivitiesByDate: Dictionary<UserActivityForDate>;
 	currentPopoverDate: moment.Moment|null;
-	setCurrentPopoverDate: (date: moment.Moment) => void;
-	setPopoverAnchor: (element: HTMLElement) => void;
 }
 
 const UserActivityCalendarMonthDay: React.FC<UserActivityCalendarMonthDayProps> = (props) => {
-	const classes = useStyles();
-	const layout = useLayoutStyles();
-	const text = useTextStyles();
+	const [classes, layout, text] = [useStyles(), useLayoutStyles(), useTextStyles()];
 
-	const marginLeftValue = props.dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined;
+	const currentDayString = React.useMemo(() => `${props.firstDayInMonth.format("YYYY-MM")}-${padNumber(props.dayInMonth, 2)}`, [props.firstDayInMonth, props.dayInMonth]);
+	const startOfMonthPadding = React.useMemo(() => props.dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined, [props.firstDayInMonth, props.dayInMonth]);
+
 	const activities = acitivitesForDate(props.firstDayInMonth, props.dayInMonth, props.userActivitiesByDate);
-	const selectedDayClass = props.dayInMonth === props.currentPopoverDate?.date() ? classes.selectedDay : undefined;
+	const isSelectedDay = currentDayString === props.currentPopoverDate?.format("YYYY-MM-DD");
 
 	return (
-		<div className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, selectedDayClass)} style={{marginLeft: marginLeftValue}}>
+		<div className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, isSelectedDay && classes.selectedDay)} style={{marginLeft: startOfMonthPadding}}>
 			<UserActivityCalendarMonthDayIcon
 				activities={activities}
-				onClick={(element) => { props.setCurrentPopoverDate(moment(props.firstDayInMonth.format("YYYY-MM-") + padNumber(props.dayInMonth, 2))); props.setPopoverAnchor(element); }}
+				onClick={(element) => { props.setCurrentPopoverDate(moment(currentDayString)); props.setPopoverAnchor(element); }}
 			/>
 		</div>
 	);
 };
 
 const UserActivityCalendarMonthDayIcon: React.FC<{ activities: UserActivity[], onClick: (element: HTMLElement) => void }> = (props) => {
-	const layout = useLayoutStyles();
-	const text = useTextStyles();
-
+	const [layout, text] = [useLayoutStyles(), useTextStyles()];
 	const uniqueGames = props.activities.map((activity) => activity.GameId).distinct();
 
 	switch (uniqueGames.length) {

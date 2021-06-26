@@ -4,7 +4,7 @@ import { Loadable } from "Common/Loadable";
 import { Game, GameStore } from "Games/GameStore";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import { UserActivityService } from "UserActivities/UserActivityService";
-import { GameAward } from "GameProfiles/GameAward";
+import { GameAward } from "Awards/GameAward";
 
 export interface UserProfile {
 	UserName: string;

@@ -1,7 +1,7 @@
 import { UserActivity } from "UserActivities/UserActivity";
 import { Game } from "Games/GameStore";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
-import { GameAward } from "GameProfiles/GameAward";
+import { GameAward } from "Awards/GameAward";
 
 export interface GameProfile {
 	Game: Game;

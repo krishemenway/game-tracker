@@ -1,9 +1,14 @@
 import { Observable } from "@residualeffect/reactor";
+import { useObservable } from "Common/useObservable";
 
 export interface Game {
 	GameId: string;
 	Name: string;
 	ReleaseDate: string;
+}
+
+export function useGame(gameId: string) {
+	return useObservable(GameStore.Instance.GamesByGameId)[gameId];
 }
 
 export class GameStore {

@@ -9,7 +9,8 @@ import ProcessManager from "ProcessManager/ProcessManager";
 import NotFound from "Common/NotFound";
 import { useGlobalStyles } from "AppStyles";
 import AllGamesView from "Games/AllGamesView";
-import AnchoredModal, { ResetAllModals } from "Common/AnchoredModal";
+import { ResetAllModals } from "Common/AnchoredModal";
+import AllAwardsView from "Awards/AllAwardsView";
 
 const App: React.FC = () => {
 	useGlobalStyles();
@@ -17,6 +18,12 @@ const App: React.FC = () => {
 	return (
 		<BrowserRouter>
 			<Switch>
+
+			<Route
+					exact
+					path="/awards"
+					component={() => <View><AllAwardsView /></View>}
+				/>
 
 				<Route
 					exact

@@ -3,21 +3,41 @@ import clsx from "clsx";
 import PageHeader from "Common/PageHeader";
 import PageFooter from "Common/PageFooter";
 import Loading from "Common/Loading";
-import { useLayoutStyles, useTextStyles } from "AppStyles";
+import { useBackgroundStyles, useLayoutStyles, useTextStyles } from "AppStyles";
 import { GameProfileService } from "GameProfiles/GameProfileService";
 import { GameProfile } from "GameProfiles/GameProfile";
 import { UserProfile, UserProfileService } from "UserProfile/UserProfileService";
 import UserActivityCalendar from "UserActivities/UserActivityCalendar";
 import GameStatistics from "GameProfiles/GameStatistics";
-import UserActivityList from "UserActivities/UserActivityList";
+import UserActivityBadge from "UserActivities/UserActivityBadge";
 import TimeSpentByHourChart from "Common/TimeSpentByHourChart";
-import GameAwardCollection from "GameProfiles/GameAwardCollection";
+import GameAwardBadge from "Awards/GameAwardBadge";
+import ListOf from "Common/ListOf";
+import ListWithShowMore from "Common/ListWithShowMore";
 
 interface GameProfileProps {
 	gameId: string;
 }
 
+export default (props: GameProfileProps) => {
+	const layout = useLayoutStyles();
+
+	React.useEffect(() => { GameProfileService.Instance.LoadProfile(props.gameId); }, []);
+	React.useEffect(() => { UserProfileService.Instance.LoadProfile(); }, []);
+
+	return (
+		<div className={clsx(layout.centerLayout1000)}>
+			<Loading
+				loadables={[GameProfileService.Instance.FindOrCreateProfile(props.gameId), UserProfileService.Instance.LoadingUserProfile]}
+				renderSuccess={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userProfile={userProfile} />}
+			/>
+		</div>
+	);
+};
+
 const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; userProfile: UserProfile }> = (props) => {
+	const [layout, background] = [useLayoutStyles(), useBackgroundStyles()];
+
 	return (
 		<>
 			<PageHeader UserName={props.userProfile.UserName} PageTitle={props.gameProfile.Game.Name} />
@@ -29,7 +49,13 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 			</Section>
 
 			<Section title="Game Awards" hide={props.gameProfile.GameAwards.length === 0}>
-				<GameAwardCollection gameId={props.gameId} awards={props.gameProfile.GameAwards} />
+				<ListOf
+					items={props.gameProfile.GameAwards}
+					createKey={(a) => a.GameAwardId}
+					renderItem={(award) => <div className={clsx(background.default, layout.paddingAll, layout.height100)}><GameAwardBadge gameAward={award} /></div>}
+					listClassName={clsx(layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}
+					listItemClassName={clsx(layout.width33, layout.marginBottom)}
+				/>
 			</Section>
 
 			<Section title="Time of day">
@@ -37,7 +63,14 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 			</Section>
 
 			<Section title="All Activity">
-				<UserActivityList activities={props.gameProfile.AllActivity} />
+				<ListWithShowMore
+					items={props.gameProfile.AllActivity}
+					createKey={(a) => a.UserActivityId}
+					renderItem={(activity) => <UserActivityBadge activity={activity} />}
+					listClassName={clsx(layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}
+					listItemClassName={clsx(layout.width33, layout.marginBottom)}
+					showMoreLimit={6}
+				/>
 			</Section>
 
 			<PageFooter />
@@ -57,21 +90,5 @@ const Section: React.FC<{ title: string, hide?: boolean }> = (props) => {
 			<h2 className={clsx(layout.marginVertical, text.font20)}>{props.title}</h2>
 			{props.children}
 		</>
-	);
-};
-
-export default (props: GameProfileProps) => {
-	const layout = useLayoutStyles();
-
-	React.useEffect(() => { GameProfileService.Instance.LoadProfile(props.gameId); }, []);
-	React.useEffect(() => { UserProfileService.Instance.LoadProfile(); }, []);
-
-	return (
-		<div className={clsx(layout.centerLayout1000)}>
-			<Loading
-				loadables={[GameProfileService.Instance.FindOrCreateProfile(props.gameId), UserProfileService.Instance.LoadingUserProfile]}
-				renderSuccess={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userProfile={userProfile} />}
-			/>
-		</div>
 	);
 };

@@ -1,11 +1,14 @@
 import * as React from "react";
 import clsx from "clsx";
-import { useLayoutStyles } from "AppStyles";
+import { useBackgroundStyles, useLayoutStyles, useTextStyles } from "AppStyles";
 import { UserProfileService, UserProfile } from "UserProfile/UserProfileService";
 import Loading from "Common/Loading";
-import AllGamesList from "Games/AllGamesList";
 import StatisticsSection from "Common/StatisticsSection";
 import PageHeader from "Common/PageHeader";
+import ListOf from "Common/ListOf";
+import GameLink from "Games/GameLink";
+import GameIcon from "Games/GameIcon";
+import { SortGamesByName } from "Games/SortGamesByName";
 
 export default () => {
 	const layout = useLayoutStyles();
@@ -23,7 +26,8 @@ export default () => {
 };
 
 function LoadedAllGamesView(props: { userProfile: UserProfile }) {
-	const layout = useLayoutStyles();
+	const [layout, text, background] = [useLayoutStyles(), useTextStyles(), useBackgroundStyles()];
+	const sortedGames = React.useMemo(() => SortGamesByName(props.userProfile.GamesByGameId), [props.userProfile]);
 	const totalGames = Object.keys(props.userProfile.GamesByGameId).length;
 
 	return (
@@ -45,7 +49,18 @@ function LoadedAllGamesView(props: { userProfile: UserProfile }) {
 			</section>
 
 			<section className={clsx(layout.marginBottom)}>
-				<AllGamesList showAll={true} />
+				<ListOf
+					items={sortedGames}
+					createKey={(game) => game.GameId}
+					renderItem={(game) => (
+						<GameLink gameId={game.GameId} className={clsx(layout.flexRow, layout.flexCenter)}>
+							<GameIcon gameId={game.GameId} />
+							<span className={clsx(layout.marginLeft, text.font16)}>{game.Name}</span>
+						</GameLink>
+					)}
+					listClassName={clsx(layout.flexRow, layout.flexWrap, background.default, layout.paddingAll)}
+					listItemClassName={clsx(layout.width50, layout.marginBottomHalf)}
+				/>
 			</section>
 		</>
 	);
