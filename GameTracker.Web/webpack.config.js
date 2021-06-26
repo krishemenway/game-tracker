@@ -28,7 +28,7 @@ module.exports = {
 		new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
 		new CopyPlugin({
 			patterns: [
-				{ from: "./**/*.html", to: "[name][ext]" },
+				{ from: "./app.html", to: "[name][ext]" },
 			]
 		}),
 	],
