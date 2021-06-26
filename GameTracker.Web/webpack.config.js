@@ -33,5 +33,11 @@ module.exports = {
 		}),
 	],
 
+	watchOptions: {
+		aggregateTimeout: 200,
+		poll: 3000,
+		followSymlinks: true,
+	},
+
 	externals: { },
 };
