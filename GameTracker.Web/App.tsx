@@ -11,6 +11,7 @@ import { useGlobalStyles } from "AppStyles";
 import AllGamesView from "Games/AllGamesView";
 import { ResetAllModals } from "Common/AnchoredModal";
 import AllAwardsView from "Awards/AllAwardsView";
+import ThemeStore, { UserProfileTheme } from "UserProfile/UserProfileTheme";
 
 const App: React.FC = () => {
 	useGlobalStyles();
@@ -19,7 +20,7 @@ const App: React.FC = () => {
 		<BrowserRouter>
 			<Switch>
 
-			<Route
+				<Route
 					exact
 					path="/awards"
 					component={() => <View><AllAwardsView /></View>}
@@ -75,6 +76,7 @@ const View: React.FC<{}> = (props) => {
 	return <>{props.children}</>;
 };
 
-(window as any).initialize = (element: Element) => {
+(window as any).initialize = (element: Element, initialTheme: UserProfileTheme) => {
+	ThemeStore.CurrentTheme = initialTheme;
 	reactDom.render(<App />, element);
 }

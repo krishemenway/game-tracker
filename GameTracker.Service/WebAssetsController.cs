@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GameTracker.UserProfiles;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 
 namespace GameTracker
@@ -29,7 +32,7 @@ namespace GameTracker
 		[HttpGet("{*url}", Order = int.MaxValue)]
 		public ContentResult AppMarkup(string url)
 		{
-			return Content(ReadFileContents(WebAssets.AppMarkupPath).Replace("{url}", url), "text/html", Encoding.UTF8);
+			return Content(ReadFileContents(WebAssets.AppMarkupPath).Replace("{theme}", JsonSerializer.Serialize(UserProfileTheme)).Replace("{url}", url), "text/html", Encoding.UTF8);
 		}
 
 		private byte[] ReadFileBytes(string filePath)
@@ -47,6 +50,8 @@ namespace GameTracker
 				return System.IO.File.ReadAllText(filePath);
 			});
 		}
+
+		private UserProfileTheme UserProfileTheme => Program.Configuration.GetSection("Theme").Get<UserProfileTheme>();
 
 		private readonly IMemoryCache _memoryCache;
 	}
