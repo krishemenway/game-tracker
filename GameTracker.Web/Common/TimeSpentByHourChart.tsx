@@ -1,11 +1,12 @@
 import * as React from "react";
 import clsx from "clsx";
-import { useBackgroundStyles, defaultBackground, defaultBorderColor } from "AppStyles";
+import { useBackgroundStyles } from "AppStyles";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { TimeSpan } from "Common/TimeSpan";
+import ThemeStore from "UserProfile/UserProfileTheme";
 
 const TimeSpentByHourChart: React.FC<{ className?: string; timeSpentInSecondsByHour: Dictionary<number> }> = (props) => {
-	const background = useBackgroundStyles();
+	const [background] = [useBackgroundStyles()];
 
 	const timeSpentInSecondsByHour = Object
 		.keys(props.timeSpentInSecondsByHour)
@@ -39,12 +40,12 @@ const TimeSpentByHourChart: React.FC<{ className?: string; timeSpentInSecondsByH
 					fill: "rgba(0,0,0,.33)",
 				}}
 				contentStyle={{
-					background: defaultBackground,
+					background: ThemeStore.CurrentTheme.PanelBackgroundColor,
 					border: "1px solid transparent",
-					borderColor: defaultBorderColor,
+					borderColor: ThemeStore.CurrentTheme.PanelBorderColor,
 				}}
 			/>
-			<Bar dataKey="timeSpent" fill="#C0C0C0" />
+			<Bar dataKey="timeSpent" fill={ThemeStore.CurrentTheme.GraphPrimaryColor} />
 		</BarChart>
 	)
 }

@@ -52,7 +52,7 @@ const UserActivityCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActi
 			>
 				{currentPopoverDate !== null && (
 					<div className={clsx(background.default, styles.selectedDayModal)}>
-						<div className={clsx(layout.paddingBottom, layout.marginHorizontal, layout.paddingTopDouble, text.center)} style={{ borderBottom: "1px solid #383838" }}>
+						<div className={clsx(layout.paddingBottom, layout.marginHorizontal, layout.paddingTopDouble, text.center, background.borderBottom)}>
 							<DayLink date={currentPopoverDate}>{currentPopoverDate.format("MMMM Do, YYYY")}</DayLink>
 						</div>
 
@@ -108,7 +108,7 @@ interface UserActivityCalendarMonthDayProps extends ControlDayPopoverProps {
 }
 
 const UserActivityCalendarMonthDay: React.FC<UserActivityCalendarMonthDayProps> = (props) => {
-	const [classes, layout, text] = [useStyles(), useLayoutStyles(), useTextStyles()];
+	const [classes, layout, text, background] = [useStyles(), useLayoutStyles(), useTextStyles(), useBackgroundStyles()];
 
 	const currentDayString = React.useMemo(() => `${props.firstDayInMonth.format("YYYY-MM")}-${padNumber(props.dayInMonth, 2)}`, [props.firstDayInMonth, props.dayInMonth]);
 	const startOfMonthPadding = React.useMemo(() => props.dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined, [props.firstDayInMonth, props.dayInMonth]);
@@ -117,7 +117,7 @@ const UserActivityCalendarMonthDay: React.FC<UserActivityCalendarMonthDayProps> 
 	const isSelectedDay = currentDayString === props.currentPopoverDate?.format("YYYY-MM-DD");
 
 	return (
-		<div className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, isSelectedDay && classes.selectedDay)} style={{marginLeft: startOfMonthPadding}}>
+		<div className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, isSelectedDay && background.borderAll)} style={{marginLeft: startOfMonthPadding}}>
 			<UserActivityCalendarMonthDayIcon
 				activities={activities}
 				onClick={(element) => { props.setCurrentPopoverDate(moment(currentDayString)); props.setPopoverAnchor(element); }}
@@ -195,18 +195,15 @@ function padNumber(value: number, size: number): string {
 	return s;
 }
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles(() => ({
 	calendarDay: {
 		width: "14.285714285714%", // 7 days of week
 		minWidth: "32px",
 		minHeight: "32px",
 	},
-	selectedDay: {
-		border: "1px solid #F0F0F0",
-	},
 	selectedDayModal: {
 		boxShadow: "0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12)",
 	},
-});
+}));
 
 export default UserActivityCalendar;

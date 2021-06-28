@@ -2,6 +2,7 @@ import { useLayoutStyles, useTextStyles } from "AppStyles";
 import clsx from "clsx";
 import * as React from "react";
 import { createUseStyles } from "react-jss";
+import ThemeStore from "UserProfile/UserProfileTheme"
 
 const LoadingSpinner: React.FC = () => {
 	const [loading, text, layout] = [useLoadingStyles(), useTextStyles(), useLayoutStyles()];
@@ -21,16 +22,16 @@ const LoadingSpinner: React.FC = () => {
 };
 
 const LoadingIcon: React.FC<{ style?: React.CSSProperties }> = (props) => {
-	const classes = useLoadingStyles();
+	const [loading] = [useLoadingStyles()];
 
 	return (
-		<svg style={{ height: "48px", width: "48px", color: "#D0D0D0" }} viewBox="22 22 44 44">
-			<circle className={classes.circle} cx="44" cy="44" r="20.2" fill="none" strokeWidth="3.6"></circle>
+		<svg className={loading.spinner} viewBox="22 22 44 44">
+			<circle className={loading.circle} cx="44" cy="44" r="20.2" fill="none" strokeWidth="3.6"></circle>
 		</svg>
 	);
 };
 
-export const useLoadingStyles = createUseStyles({
+export const useLoadingStyles = createUseStyles(() => ({
 	'@keyframes circleAnimation': {
 		"0%": { strokeDasharray: "1px,200px", strokeDashoffset: "0" },
 		"50%": { strokeDasharray: "100px,200px", strokeDashoffset: "-15px" },
@@ -43,6 +44,11 @@ export const useLoadingStyles = createUseStyles({
 		"65%": { width: "8px", },
 		"66%": { width: "12px", },
 		"100%": { width: "12px", },
+	},
+	spinner: {
+		width: "48px",
+		height: "48px",
+		color: ThemeStore.CurrentTheme.GraphPrimaryColor,
 	},
 	circle: {
 		stroke: "currentcolor",
@@ -57,6 +63,6 @@ export const useLoadingStyles = createUseStyles({
 		animation: "4s linear 0s infinite normal none running $ellipses",
 		overflow: "hidden",
 	},
-});
+}));
 
 export default LoadingSpinner;

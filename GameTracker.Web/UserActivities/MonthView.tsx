@@ -1,7 +1,7 @@
 import * as moment from "moment";
 import * as React from "react";
 import clsx from "clsx";
-import { useLayoutStyles, useBackgroundStyles, defaultBackground, defaultBorderColor, defaultFontColor } from "AppStyles";
+import { useLayoutStyles, useBackgroundStyles } from "AppStyles";
 import Loading from "Common/Loading";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import StatisticsSection from "Common/StatisticsSection";
@@ -14,6 +14,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Text } from "recha
 import TimeSpentByHourChart from "Common/TimeSpentByHourChart";
 import DayLink from "UserActivities/DayLink";
 import GameLink from "Games/GameLink";
+import ThemeStore from "UserProfile/UserProfileTheme";
 
 const MonthView: React.FC<{ year: string; month: string; className?: string }> = (props) => {
 	const layout = useLayoutStyles();
@@ -102,12 +103,12 @@ const TimeSpentEachGameChart: React.FC<{ userActivityForMonth: UserActivityForMo
 					fill: "rgba(0,0,0,.33)",
 				}}
 				contentStyle={{
-					background: defaultBackground,
+					background: ThemeStore.CurrentTheme.PanelBackgroundColor,
 					border: "1px solid transparent",
-					borderColor: defaultBorderColor,
+					borderColor: ThemeStore.CurrentTheme.PanelBorderColor,
 				}}
 			/>
-			<Bar dataKey="timeSpent" fill="#C0C0C0" isAnimationActive={false} />
+			<Bar dataKey="timeSpent" fill={ThemeStore.CurrentTheme.GraphPrimaryColor} isAnimationActive={false} />
 		</BarChart>
 	);
 }
@@ -145,15 +146,15 @@ const TimeSpentEachDayChart: React.FC<{ userActivityForMonth: UserActivityForMon
 					fill: "rgba(0,0,0,.33)",
 				}}
 				contentStyle={{
-					background: defaultBackground,
+					background: ThemeStore.CurrentTheme.PanelBackgroundColor,
 					border: "1px solid transparent",
-					borderColor: defaultBorderColor,
+					borderColor: ThemeStore.CurrentTheme.PanelBorderColor,
 				}}
 				labelStyle={{
-					color: "#E0E0E0",
+					color: ThemeStore.CurrentTheme.PrimaryTextColor,
 				}}
 			/>
-			<Bar dataKey="timeSpent" fill="#C0C0C0" isAnimationActive={false} />
+			<Bar dataKey="timeSpent" fill={ThemeStore.CurrentTheme.GraphPrimaryColor} isAnimationActive={false} />
 		</BarChart>
 	);
 };

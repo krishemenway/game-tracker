@@ -4,19 +4,18 @@ import { ProcessManagerService, ObservableProcess } from "ProcessManager/Process
 import { ObservedProcess as ProcessListItem } from "ProcessManager/ObservedProcess";
 import { useObservable } from "Common/useObservable";
 import Loading from "Common/Loading";
+import clsx from "clsx";
 
 const ProcessListItem: React.FC<{Process: ObservableProcess}> = (props) => {
-	const layout = useLayoutStyles();
-	const text = useTextStyles();
-
+	const [layout, text] = [useLayoutStyles(), useTextStyles()];
 	const isIgnoring = useObservable(props.Process.Ignore);
 
 	return (
-		<li className={`${layout.flexRow} ${layout.paddingVertical} ${layout.paddingLeft}`}>
-			<span className={`${layout.width85} ${text.font16}`}>{props.Process.ProcessPath}</span>
+		<li className={clsx(layout.flexRow, layout.paddingVertical, layout.paddingLeft)}>
+			<span className={clsx(layout.width85, text.font16)}>{props.Process.ProcessPath}</span>
 
 			<input
-				className={`${layout.width15} ${text.font32}`}
+				className={clsx(layout.width15, text.font32)}
 				type="checkbox"
 				checked={isIgnoring}
 				style={{alignSelf: "end"}}
@@ -27,17 +26,15 @@ const ProcessListItem: React.FC<{Process: ObservableProcess}> = (props) => {
 }
 
 const NonEmptyProcessList: React.FC<{ObservedProcesses: ObservableProcess[]}> = (props) => {
-	const layout = useLayoutStyles();
-	const text = useTextStyles();
-	const background = useBackgroundStyles();
+	const [layout, text, background] = [useLayoutStyles(), useTextStyles(), useBackgroundStyles()];
 
 	return (
 		<>
-			<div className={`${layout.flexRow}`}>
-				<span className={`${layout.width85}`}></span>
-				<span className={`${layout.width15} ${text.center} ${text.font16}`}>Should Ignore</span>
+			<div className={clsx(layout.flexRow)}>
+				<span className={clsx(layout.width85)}></span>
+				<span className={clsx(layout.width15, text.center, text.font16)}>Should Ignore</span>
 			</div>
-			<ul className={`${background.bgAlternateDarken}`}>
+			<ul className={clsx(background.bgAlternateDarken)}>
 				{props.ObservedProcesses.map(p => <ProcessListItem key={p.ProcessPath} Process={p} />)}
 			</ul>
 		</>
@@ -49,17 +46,14 @@ const EmptyProcessList: React.FC = () => (
 );
 
 export default () => {
-	const background = useBackgroundStyles();
-	const layout = useLayoutStyles();
-	const text = useTextStyles();
-
+	const [layout, text, background] = [useLayoutStyles(), useTextStyles(), useBackgroundStyles()];
 	React.useEffect(() => { ProcessManagerService.Instance.ReloadProcesses() }, []);
 
 	return (
-		<div className={`${layout.centerLayout1000} ${text.content} ${background.default} ${layout.paddingTop} ${layout.paddingHorizontal}`} style={{minHeight: "100%"}}>
-			<h1 className={`${text.content} ${text.font32} ${layout.marginBottom}`}>Observed Process Manager</h1>
-			<summary className={`${text.content} ${text.font20} ${layout.marginBottom}`}>Tool for managing all the observed processes to reduce logged information.</summary>
-			<hr className={`${layout.horzRule}`} />
+		<div className={clsx(layout.centerLayout1000, background.default, layout.paddingTop, layout.paddingHorizontal)} style={{minHeight: "100%"}}>
+			<h1 className={clsx(text.font32, layout.marginBottom)}>Observed Process Manager</h1>
+			<summary className={clsx(text.font20, layout.marginBottom)}>Tool for managing all the observed processes to reduce logged information.</summary>
+			<hr className={clsx(layout.horzRule)} />
 
 			<Loading
 				loadables={[ProcessManagerService.Instance.LoadingObservable]}

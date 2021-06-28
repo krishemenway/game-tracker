@@ -1,16 +1,13 @@
 import { createUseStyles } from "react-jss";
+import ThemeStore from "UserProfile/UserProfileTheme";
 
-export const defaultBackground = "#161616";
-export const defaultFontColor = "#F0F0F0";
-export const defaultBorderColor = "#2F2F2F";
-export const useGlobalStyles = createUseStyles({
+export const useGlobalStyles = createUseStyles(() => { console.log(ThemeStore.CurrentTheme.PrimaryTextColor); return ({
 	"@global": {
 		[`html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del,
 		dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label,
 		legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed,  figure, figcaption, footer, header, hgroup,
 		menu, nav, output, ruby, section, summary, time, mark, audio, video, button, text, tspan`]: {
-			color: defaultFontColor,
-			fill: defaultFontColor,
+			color: ThemeStore.CurrentTheme.PrimaryTextColor,
 			margin: "0",
 			padding: "0",
 			border: "0",
@@ -24,7 +21,7 @@ export const useGlobalStyles = createUseStyles({
 		},
 		"html": {
 			lineHeight: 1,
-			background: "#101010",
+			background: ThemeStore.CurrentTheme.PageBackgroundColor,
 			height: "100%",
 		},
 		"body": {
@@ -38,19 +35,23 @@ export const useGlobalStyles = createUseStyles({
 			borderSpacing: 0,
 		},
 	},
-});
+}); });
 
-export const useBackgroundStyles = createUseStyles({
-	default: { backgroundColor: defaultBackground, border: "1px solid #2F2F2F" },
-	borderBottom: { borderBottom: "1px solid #2F2F2F" },
+export const useBackgroundStyles = createUseStyles(() => ({
+	default: {
+		backgroundColor: ThemeStore.CurrentTheme.PanelBackgroundColor,
+		border: `1px solid ${ThemeStore.CurrentTheme.PanelBorderColor}`
+	},
+	borderAll: { border: `1px solid ${ThemeStore.CurrentTheme.PanelBorderColor}` },
+	borderBottom: { borderBottom: `1px solid ${ThemeStore.CurrentTheme.PanelBorderColor}` },
 	bgAlternateDarken: {
 		"& li:nth-child(even), & tr:nth-child(even)": {
-			backgroundColor: "#2F2F2F",
+			backgroundColor: ThemeStore.CurrentTheme.PanelAlternatingBackgroundColor,
 		},
 	},
-});
+}));
 
-export const useActionStyles = createUseStyles({
+export const useActionStyles = createUseStyles(() => ({
 	clickable: {
 		cursor: "pointer",
 	},
@@ -62,21 +63,20 @@ export const useActionStyles = createUseStyles({
 		},
 	},
 	clickableBackground: {
-		color: "#F0F0F0",
-		backgroundColor: defaultBackground,
+		backgroundColor: ThemeStore.CurrentTheme.PanelBackgroundColor,
 		"&:hover": {
-			backgroundColor: "#242424",
+			backgroundColor: ThemeStore.CurrentTheme.PanelAlternatingBackgroundColor,
 		},
 	},
 	clickableBackgroundBorder: {
-		border: `1px solid ${defaultBorderColor}`,
+		border: `1px solid ${ThemeStore.CurrentTheme.PanelBorderColor}`,
 		"&:hover": {
-			borderColor: "#C0C0C0",
+			borderColor: ThemeStore.CurrentTheme.PanelBackgroundColor,
 		},
 	}
-});
+}));
 
-export const useLayoutStyles = createUseStyles({
+export const useLayoutStyles = createUseStyles(() => ({
 	relative: { position: "relative" },
 	absolute: { position: "absolute" },
 	bottomRight: { bottom: "0", right: "0" },
@@ -175,9 +175,12 @@ export const useLayoutStyles = createUseStyles({
 	marginBottomDouble: { marginBottom: "20px", },
 
 	marginBottomDoubleNegative: { marginBottom: "-20px" },
-});
+}));
 
-export const useTextStyles = createUseStyles({
+export const useTextStyles = createUseStyles(() => ({
+	primary: { color: ThemeStore.CurrentTheme.PrimaryTextColor },
+	secondary: { color: ThemeStore.CurrentTheme.SecondaryTextColor },
+
 	light: { fontWeight: 100 },
 	bold: { fontWeight: "bold" },
 
@@ -202,11 +205,6 @@ export const useTextStyles = createUseStyles({
 	right: { textAlign: "right" },
 
 	smallCaps: { fontVariant: "small-caps" },
-	inset: {
-		letterSpacing: "5px",
-		"-webkit-text-stroke-width": "1px",
-		"-webkit-text-stroke-color": "#151515",
-	},
 
 	noSelect: {
 		"-webkit-touch-callout": "none",
@@ -227,9 +225,4 @@ export const useTextStyles = createUseStyles({
 		textTransform: "uppercase",
 		letterSpacing: "5px",
 	},
-
-	content: { color: "#E8E8E8" },
-	gray: { color: "#555555" },
-	gray9f: { color: "#9F9F9F" },
-	graye8: { color: "#E8E8E8" },
-});
+}));

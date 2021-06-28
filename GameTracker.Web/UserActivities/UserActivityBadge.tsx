@@ -25,8 +25,8 @@ export default (props: { activity: UserActivity }) => {
 
 			<div className={clsx(layout.relative, layout.flexFillRemaining)}>
 				<div className={clsx(text.font16, layout.marginBottomHalf)}><GameLink gameId={props.activity.GameId}><GameName gameId={props.activity.GameId} /></GameLink></div>
-				<div className={clsx(text.font14, text.gray9f, layout.marginBottomHalf)}>{startTime} &ndash; {endTime}</div>
-				<div className={clsx(text.font14, text.gray9f, layout.marginBottomHalf)}>{timeSpentInSeconds}</div>
+				<div className={clsx(text.font14, text.secondary, layout.marginBottomHalf)}>{startTime} &ndash; {endTime}</div>
+				<div className={clsx(text.font14, text.secondary, layout.marginBottomHalf)}>{timeSpentInSeconds}</div>
 				<div className={clsx(text.font14, layout.absolute, layout.bottomRight)}><DayLink date={assignedDate}>{assignedDate.format("MMMM Do, YYYY")}</DayLink></div>
 			</div>
 		</div>
