@@ -1,4 +1,4 @@
-﻿using GameTracker.Games;
+﻿using GameMetadata;
 using GameTracker.ProcessSessions;
 using Range.Net;
 using System;

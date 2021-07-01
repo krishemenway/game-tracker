@@ -1,5 +1,5 @@
-﻿using GameTracker;
-using GameTracker.Games;
+﻿using GameMetadata;
+using GameTracker;
 using GlobExpressions;
 using System;
 using System.Collections.Generic;
@@ -153,16 +153,16 @@ namespace SteamDataExtractor
 			return current;
 		}
 
-		private static GamesConfiguration FindAllGames(FileInfo jsonPath)
+		private static GamesConfigurationFile FindAllGames(FileInfo jsonPath)
 		{
 			using (var streamReader = new StreamReader(jsonPath.FullName))
 			{
 				var json = streamReader.ReadToEnd();
-				return JsonSerializer.Deserialize<GamesConfiguration>(json, JsonOptions);
+				return JsonSerializer.Deserialize<GamesConfigurationFile>(json, JsonOptions);
 			}
 		}
 
-		private static void WriteNewGames(FileInfo jsonPath, GamesConfiguration configuration)
+		private static void WriteNewGames(FileInfo jsonPath, GamesConfigurationFile configuration)
 		{
 			using (var streamWriter = new StreamWriter(jsonPath.FullName))
 			{

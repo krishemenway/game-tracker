@@ -11,7 +11,7 @@
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20574.7" />
   </ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\GameTracker.Service\GameTracker.Service.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameMetadata\GameMetadata.csproj" />
+  </ItemGroup>
 </Project>

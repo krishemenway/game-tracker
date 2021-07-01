@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTracker.Tests", "GameTr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamDataExtractor", "SteamDataExtractor\SteamDataExtractor.csproj", "{B82844E9-362A-4C34-8413-9D1550B0D6FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameMetadata", "GameMetadata\GameMetadata.csproj", "{528D44B5-DAE5-45E0-B107-88823140B065}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{B82844E9-362A-4C34-8413-9D1550B0D6FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B82844E9-362A-4C34-8413-9D1550B0D6FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B82844E9-362A-4C34-8413-9D1550B0D6FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{528D44B5-DAE5-45E0-B107-88823140B065}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{528D44B5-DAE5-45E0-B107-88823140B065}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{528D44B5-DAE5-45E0-B107-88823140B065}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{528D44B5-DAE5-45E0-B107-88823140B065}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

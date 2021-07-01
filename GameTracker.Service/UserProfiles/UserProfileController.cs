@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 
-namespace GameTracker.Service.UserProfiles
+namespace GameTracker.UserProfiles
 {
 	[Route("WebAPI")]
 	public class UserProfileController : ControllerBase
@@ -41,8 +41,9 @@ namespace GameTracker.Service.UserProfiles
 			var gamesByGameId = _gameStore.FindGames(relevantGameIds);
 
 			return new UserProfile
-			{ 
+			{
 				UserName = Program.Configuration.GetValue<string>("UserName"),
+				TotalTimeSpentInSeconds = orderedActivities.Sum(x => x.TimeSpentInSeconds),
 				MostRecentActivity = mostRecentActivity,
 				StartedCollectingDataTime = oldestActivity?.StartTime,
 				RecentActivities = orderedActivities.Take(10).ToList(),

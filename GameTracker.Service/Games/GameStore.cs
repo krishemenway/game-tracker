@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using GameMetadata;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using StronglyTyped.StringIds;
 using System;
@@ -61,16 +62,11 @@ namespace GameTracker.Games
 		}
 
 		public static string GamesFilePath = Path.Combine(Program.ExecutableFolderPath, "games.json");
-		private IReadOnlyList<Game> AllGames => LazyGamesConfiguration.Value.Get<GamesConfiguration>().Games;
+		private IReadOnlyList<Game> AllGames => LazyGamesConfiguration.Value.Get<GamesConfigurationFile>().Games;
 
 		private static readonly HttpClient HttpClient = new HttpClient();
 
 		private static readonly Lazy<IConfigurationRoot> LazyGamesConfiguration
 			= new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(Program.ExecutableFolderPath).AddJsonFile("games.json", optional: false, reloadOnChange: true).Build());
-	}
-
-	public class GamesConfiguration
-	{
-		public List<Game> Games { get; set; }
 	}
 }

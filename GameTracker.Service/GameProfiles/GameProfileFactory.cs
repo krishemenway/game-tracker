@@ -1,4 +1,5 @@
-﻿using GameTracker.Games;
+﻿using GameMetadata;
+using GameTracker.Games;
 using GameTracker.UserActivities;
 using System.Collections.Generic;
 using System.Linq;

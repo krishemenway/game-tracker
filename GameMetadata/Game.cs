@@ -2,7 +2,7 @@
 using StronglyTyped.StringIds;
 using System;
 
-namespace GameTracker.Games
+namespace GameMetadata
 {
 	public interface IGame
 	{

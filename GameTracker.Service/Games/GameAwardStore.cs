@@ -1,4 +1,5 @@
-﻿using GameTracker.UserActivities;
+﻿using GameMetadata;
+using GameTracker.UserActivities;
 using StronglyTyped.StringIds;
 using System;
 using System.Collections.Generic;

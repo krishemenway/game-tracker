@@ -1,4 +1,5 @@
 ﻿using GameTracker.GameMatching;
+using GameTracker.Games;
 using GameTracker.ProcessSessions;
 using Serilog;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace GameTracker.UserActivities
 			IGameMatcher gameMatcher = null,
 			IUserActivityFactory userActivityFactory = null)
 		{
-			_gameMatcher = gameMatcher ?? new GameMatcher();
+			_gameMatcher = gameMatcher ?? new GameMatcher(new GameStore().FindAll);
 			_userActivityFactory = userActivityFactory ?? new UserActivityFactory();
 		}
 

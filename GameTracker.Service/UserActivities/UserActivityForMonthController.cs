@@ -1,4 +1,5 @@
-﻿using GameTracker.Games;
+﻿using GameMetadata;
+using GameTracker.Games;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System;

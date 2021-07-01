@@ -1,13 +1,16 @@
-﻿using GameTracker.Games;
+﻿using GameMetadata;
+using GameTracker.Games;
 using GameTracker.UserActivities;
 using System;
 using System.Collections.Generic;
 
-namespace GameTracker.Service.UserProfiles
+namespace GameTracker.UserProfiles
 {
 	public class UserProfile
 	{
 		public string UserName { get; set; }
+
+		public double TotalTimeSpentInSeconds { get; set; }
 
 		public DateTimeOffset? StartedCollectingDataTime { get; set; }
 		public UserActivity MostRecentActivity { get; set; }

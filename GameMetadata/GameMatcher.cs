@@ -1,4 +1,6 @@
-﻿using GameTracker.Games;
+﻿using GameMetadata;
+using StronglyTyped.StringIds;
+using System.Collections.Generic;
 
 namespace GameTracker.GameMatching
 {
@@ -9,14 +11,14 @@ namespace GameTracker.GameMatching
 
 	public class GameMatcher : IGameMatcher
 	{
-		public GameMatcher(IGameStore gameStore = null)
+		public GameMatcher(FindAllGames findAllGamesFunc)
 		{
-			_gameStore = gameStore ?? new GameStore();
+			_findAllGamesFunc = findAllGamesFunc;
 		}
 
 		public bool TryMatch(string filePath, out IGame gameOrNull)
 		{
-			foreach(var (gameId, game) in _gameStore.FindAll())
+			foreach(var (gameId, game) in _findAllGamesFunc())
 			{
 				if (game.Pattern.IsMatch(filePath))
 				{
@@ -29,6 +31,8 @@ namespace GameTracker.GameMatching
 			return false;
 		}
 
-		private readonly IGameStore _gameStore;
+		public delegate IReadOnlyDictionary<Id<Game>, IGame> FindAllGames();
+
+		private readonly FindAllGames _findAllGamesFunc;
 	}
 }

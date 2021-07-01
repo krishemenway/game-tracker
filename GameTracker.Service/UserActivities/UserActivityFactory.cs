@@ -1,4 +1,4 @@
-﻿using GameTracker.Games;
+﻿using GameMetadata;
 using GameTracker.ProcessSessions;
 using System;
 using Guid = StronglyTyped.GuidIds;
