@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using Range.Net;
 using System;
@@ -10,9 +11,10 @@ namespace GameTracker.UserActivities
 {
 	public class AllUserActivityCache
 	{
-		public AllUserActivityCache(IMemoryCache memoryCache)
+		public AllUserActivityCache(IMemoryCache memoryCache, IUserActivityStore userActivityStore = null)
 		{
 			_memoryCache = memoryCache;
+			_userActivityStore = userActivityStore ?? (Program.Configuration.GetValue<bool>("DemoMode") ? new DemoUserActivityStore() : new UserActivityStore());
 		}
 
 		public IReadOnlyList<UserActivity> AllUserActivity
@@ -21,7 +23,7 @@ namespace GameTracker.UserActivities
 			{
 				return _memoryCache.GetOrCreate("AllUserActivity", (cache) => {
 					cache.AddExpirationToken(new CancellationChangeToken(CancellationTokenSource.Token));
-					return new UserActivityStore().FindAllUserActivity();
+					return _userActivityStore.FindAllUserActivity();
 				});
 			}
 		}
@@ -43,5 +45,6 @@ namespace GameTracker.UserActivities
 		public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
 
 		private readonly IMemoryCache _memoryCache;
+		private readonly IUserActivityStore _userActivityStore;
 	}
 }
