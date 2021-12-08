@@ -26,7 +26,7 @@ namespace GameTracker.ProcessSessions
 			CsvConfiguration = new CsvConfiguration(CultureInfo.CurrentCulture)
 			{
 				HasHeaderRecord = false,
-				ShouldQuote = (a, b, c) => true,
+				ShouldQuote = (args) => true,
 			};
 		}
 

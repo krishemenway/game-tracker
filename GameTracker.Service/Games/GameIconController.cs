@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using StronglyTyped.StringIds;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace GameTracker.Games
 {
@@ -13,14 +16,16 @@ namespace GameTracker.Games
 	{
 		public GameIconController(
 			IMemoryCache memoryCache,
+			IHttpClientFactory httpClientFactory,
 			IGameStore gameStore = null)
 		{
 			_memoryCache = memoryCache;
+			_httpClientFactory = httpClientFactory;
 			_gameStore = gameStore ?? new GameStore();
 		}
 
 		[HttpGet("{gameId}/Icon32")]
-		public ActionResult Icon32([FromRoute] Id<Game> gameId)
+		public async Task<ActionResult> Icon32([FromRoute] Id<Game> gameId)
 		{
 			if (!_gameStore.TryGetGame(gameId, out var game))
 			{
@@ -29,68 +34,61 @@ namespace GameTracker.Games
 
 			if (string.IsNullOrEmpty(game.IconUri))
 			{
-				return DefaultIcon();
+				return await DefaultIcon();
 			}
 
-			return File(CreateOrRead(gameId, game.IconUri, out var contentType), contentType, false);
+			var icon = await CreateOrRead(gameId, game.IconUri);
+			return File(icon.FileContents, icon.ContentType, false);
 		}
 
-		private byte[] CreateOrRead(Id<Game> gameId, string defaultUri, out string contentType)
+		private async Task<Icon> CreateOrRead(Id<Game> gameId, string defaultUri)
 		{
-			if (TryLoadFromTempFolder(gameId, out var attemptOneBytes, out contentType))
+			foreach(var (contentType, fileExtension) in FileExtensionsByContentType)
 			{
-				return attemptOneBytes;
+				var fileContents = await TryReadImage(gameId, fileExtension);
+
+				if (fileContents != null)
+				{
+					return new Icon { FileContents = fileContents, ContentType = contentType };
+				}
 			}
 
-			DownloadDefaultIcon(gameId, defaultUri);
+			await DownloadDefaultIcon(gameId, defaultUri);
 
-			if (TryLoadFromTempFolder(gameId, out var attemptTwoBytes, out contentType))
+			foreach (var (contentType, fileExtension) in FileExtensionsByContentType)
 			{
-				return attemptTwoBytes;
+				var fileContents = await TryReadImage(gameId, fileExtension);
+
+				if (fileContents != null)
+				{
+					return new Icon { FileContents = fileContents, ContentType = contentType };
+				}
 			}
 
 			throw new Exception("Failed to download image for uri!");
 		}
 
-		private bool TryLoadFromTempFolder(Id<Game> gameId, out byte[] imageBytes, out string contentType)
-		{
-			if (TryReadImage(gameId, ".jpg", out imageBytes))
-			{
-				contentType = "image/jpg";
-				return true;
-			}
-
-			if (TryReadImage(gameId, ".png", out imageBytes))
-			{
-				contentType = "image/png";
-				return true;
-			}
-
-			contentType = null;
-			return false;
-		}
-
-		private FileResult DefaultIcon()
+		private async Task<FileResult> DefaultIcon()
 		{
 			var defaultGameIconPath = Program.FilePathInExecutableFolder("DefaultGameIcon32.png");
-			return File(_memoryCache.GetOrCreate($"GameIcon-Default-32", (cache) => System.IO.File.ReadAllBytes(defaultGameIconPath)), "image/png", true);
+			var iconContents = await _memoryCache.GetOrCreateAsync($"GameIcon-Default-32", (cache) => System.IO.File.ReadAllBytesAsync(defaultGameIconPath));
+
+			return File(iconContents, "image/png", true);
 		}
 
-		private bool TryReadImage(Id<Game> gameId, string fileExtension, out byte[] imageBytes)
+		private async Task<byte[]> TryReadImage(Id<Game> gameId, string fileExtension)
 		{
 			var iconPath = IconPath(gameId, fileExtension);
 
 			if (!System.IO.File.Exists(iconPath))
 			{
-				imageBytes = null;
-				return false;
+				return null;
 			}
 
-			imageBytes = _memoryCache.GetOrCreate($"GameIcon-{gameId}-32", (cache) => System.IO.File.ReadAllBytes(iconPath));
-			return imageBytes != null;
+			return await _memoryCache.GetOrCreateAsync($"GameIcon-{gameId}-32", (cache) => System.IO.File.ReadAllBytesAsync(iconPath));
 		}
 
-		private void DownloadDefaultIcon(Id<Game> gameId, string defaultUri)
+		private async Task DownloadDefaultIcon(Id<Game> gameId, string defaultUri)
 		{
 			if (!Path.HasExtension(defaultUri))
 			{
@@ -98,15 +96,14 @@ namespace GameTracker.Games
 			}
 
 			var fileExtension = Path.GetExtension(defaultUri);
-			var request = WebRequest.Create(defaultUri);
 			var iconPath = IconPath(gameId, fileExtension);
 
 			Directory.CreateDirectory(IconFolderPath(gameId));
 
-			using (var response = request.GetResponse())
+			using (var responseStream = await _httpClientFactory.CreateClient().GetStreamAsync(defaultUri))
 			using (var iconPathStream = System.IO.File.OpenWrite(iconPath))
 			{
-				response.GetResponseStream().CopyTo(iconPathStream);
+				responseStream.CopyTo(iconPathStream);
 			}
 		}
 
@@ -120,7 +117,16 @@ namespace GameTracker.Games
 			return Path.Combine(Path.GetTempPath(), "Games", gameId.ToString());
 		}
 
+		private class Icon
+		{
+			public byte[] FileContents { get; set; }
+			public string ContentType { get; set; }
+		}
+
+		private Dictionary<string, string> FileExtensionsByContentType { get; set; }
+
 		private readonly IMemoryCache _memoryCache;
 		private readonly IGameStore _gameStore;
+		private readonly IHttpClientFactory _httpClientFactory;
 	}
 }

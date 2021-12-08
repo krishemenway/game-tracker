@@ -44,7 +44,7 @@ namespace GameTracker.Games
 		{
 			var uri = Program.Configuration.GetValue<string>("GamesUrl");
 			Log.Information("Starting request for updated game information: {Uri}", uri);
-			HttpClient.GetAsync(uri).ContinueWith((responseTask) => WriteUpdatedGamesData(responseTask.Result));
+			GameTrackerService.HttpClient.GetAsync(uri).ContinueWith((responseTask) => WriteUpdatedGamesData(responseTask.Result));
 		}
 
 		private void WriteUpdatedGamesData(HttpResponseMessage response)
@@ -63,8 +63,6 @@ namespace GameTracker.Games
 
 		public static string GamesFilePath = Path.Combine(Program.ExecutableFolderPath, "games.json");
 		private IReadOnlyList<Game> AllGames => LazyGamesConfiguration.Value.Get<GamesConfigurationFile>().Games;
-
-		private static readonly HttpClient HttpClient = new HttpClient();
 
 		private static readonly Lazy<IConfigurationRoot> LazyGamesConfiguration
 			= new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(Program.ExecutableFolderPath).AddJsonFile("games.json", optional: false, reloadOnChange: true).Build());

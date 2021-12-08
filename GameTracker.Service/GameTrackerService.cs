@@ -12,7 +12,7 @@ using Serilog;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Runtime.Caching;
 using System.Threading.Tasks;
 using System.Timers;
@@ -58,7 +58,7 @@ namespace GameTracker
 			WebHost.Start();
 
 			Task.Delay(1000).ContinueWith((_) => { new GameStore().ReloadGamesFromCentralRepository(); });
-			Task.Delay(1000).ContinueWith((_) => { WebRequest.Create($"http://localhost:{Program.Configuration.GetValue<string>("WebPort")}/WebAPI/UserProfile").GetResponse(); });
+			Task.Delay(1000).ContinueWith((_) => { HttpClient.GetAsync($"http://localhost:{Program.Configuration.GetValue<string>("WebPort")}/WebAPI/UserProfile"); });
 
 			return true;
 		}
@@ -106,6 +106,7 @@ namespace GameTracker
 		}
 
 		public static string WebHostListenAddress => $"http://*:{Program.Configuration.GetValue<string>("WebPort")}";
+		public static readonly HttpClient HttpClient = new();
 
 		private HostFileChangeMonitor UserActivityFileMonitor { get; }
 		private HostFileChangeMonitor WebAssetsFileMonitor { get; }

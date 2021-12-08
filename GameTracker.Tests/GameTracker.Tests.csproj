@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<DefaultItemExcludes>$(DefaultItemExcludes);TestResults\**</DefaultItemExcludes>
 	</PropertyGroup>
 
@@ -11,6 +11,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="FluentAssertions" Version="5.8.0" />
+		<PackageReference Include="FluentValidation" Version="10.3.4" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
 		<PackageReference Include="Moq" Version="4.12.0" />
 		<PackageReference Include="NUnit" Version="3.12.0" />
@@ -19,6 +20,13 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\GameTracker.Service\GameTracker.Service.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="../GameTracker.Service/appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</None>
 	</ItemGroup>
 
 </Project>
