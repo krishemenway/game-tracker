@@ -42,7 +42,7 @@ namespace GameTracker.UserProfiles
 
 			return new UserProfile
 			{
-				UserName = Program.Configuration.GetValue<string>("UserName"),
+				UserName = AppSettings.Instance.UserName,
 				TotalTimeSpentInSeconds = orderedActivities.Sum(x => x.TimeSpentInSeconds),
 				MostRecentActivity = mostRecentActivity,
 				StartedCollectingDataTime = oldestActivity?.StartTime,

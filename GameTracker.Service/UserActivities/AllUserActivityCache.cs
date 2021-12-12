@@ -14,7 +14,7 @@ namespace GameTracker.UserActivities
 		public AllUserActivityCache(IMemoryCache memoryCache, IUserActivityStore userActivityStore = null)
 		{
 			_memoryCache = memoryCache;
-			_userActivityStore = userActivityStore ?? (Program.Configuration.GetValue<bool>("DemoMode") ? new DemoUserActivityStore() : new UserActivityStore());
+			_userActivityStore = userActivityStore ?? (AppSettings.Instance.DemoMode ? new DemoUserActivityStore() : new UserActivityStore());
 		}
 
 		public IReadOnlyList<UserActivity> AllUserActivity

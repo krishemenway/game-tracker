@@ -6,7 +6,6 @@ using GlobExpressions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System;
@@ -28,8 +27,8 @@ namespace GameTracker
 			GamesDataUpdateTimer = new Timer(TimeSpan.FromDays(1).TotalMilliseconds) { AutoReset = true };
 			GamesDataUpdateTimer.Elapsed += (sender, args) => new GameStore().ReloadGamesFromCentralRepository();
 
-			ProcessScannerTimer = new Timer(Program.Configuration.GetValue<int>("ProcessScanIntervalInSeconds") * 1000) { AutoReset = true };
-			ProcessScannerTimer.Elapsed += (sender, args) => new ProcessScanner().ScanProcesses();
+			ProcessScannerTimer = new Timer(AppSettings.Instance.ProcessScanIntervalInSeconds * 1000) { AutoReset = true };
+			ProcessScannerTimer.Elapsed += (sender, args) => { new ProcessScanner().ScanProcesses(ProcessScannerTimer); };
 
 			UserActivityBackfillerTimer = new Timer(TimeSpan.FromHours(1).TotalMilliseconds) { AutoReset = true };
 			UserActivityBackfillerTimer.Elapsed += (sender, args) => new UserActivityBackfiller().Backfill();
@@ -43,7 +42,7 @@ namespace GameTracker
 			WebHost = new WebHostBuilder()
 				.UseKestrel()
 				.UseStartup<WebHostConfiguration>()
-				.UseConfiguration(Program.Configuration)
+				.UseConfiguration(AppSettings.Instance.Configuration)
 				.UseSerilog()
 				.UseUrls(WebHostListenAddress)
 				.Build();
@@ -58,7 +57,7 @@ namespace GameTracker
 			WebHost.Start();
 
 			Task.Delay(1000).ContinueWith((_) => { new GameStore().ReloadGamesFromCentralRepository(); });
-			Task.Delay(1000).ContinueWith((_) => { HttpClient.GetAsync($"http://localhost:{Program.Configuration.GetValue<string>("WebPort")}/WebAPI/UserProfile"); });
+			Task.Delay(1000).ContinueWith((_) => { HttpClient.GetAsync($"http://localhost:{AppSettings.Instance.WebPort}/WebAPI/UserProfile"); });
 
 			return true;
 		}
@@ -105,7 +104,7 @@ namespace GameTracker
 			}
 		}
 
-		public static string WebHostListenAddress => $"http://*:{Program.Configuration.GetValue<string>("WebPort")}";
+		public static string WebHostListenAddress => $"http://*:{AppSettings.Instance.WebPort}";
 		public static readonly HttpClient HttpClient = new();
 
 		private HostFileChangeMonitor UserActivityFileMonitor { get; }

@@ -18,7 +18,7 @@ namespace GameTracker
 				LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Debug);
 
 				Log.Logger = new LoggerConfiguration()
-					.ReadFrom.Configuration(Configuration)
+					.ReadFrom.Configuration(AppSettings.Instance.Configuration)
 					.MinimumLevel.ControlledBy(LoggingLevelSwitch)
 					.WriteTo.Console()
 					.WriteTo.File(Path.Combine(ExecutableFolderPath, "GameTracker.Service.log"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 5)
@@ -58,10 +58,6 @@ namespace GameTracker
 		public static string FilePathInExecutableFolder(string fileName) => Path.Combine(ExecutableFolderPath, fileName);
 		public static string FilePathInAppData(string fileName) => Path.Combine(AppDataFolderPath, fileName);
 
-		public static IConfigurationRoot Configuration => LazyConfiguration.Value;
 		public static LoggingLevelSwitch LoggingLevelSwitch { get; set; }
-
-		private static readonly Lazy<IConfigurationRoot> LazyConfiguration
-			= new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(ExecutableFolderPath).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build());
 	}
 }

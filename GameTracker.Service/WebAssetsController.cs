@@ -1,12 +1,11 @@
-﻿using GameTracker.UserProfiles;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GameTracker
 {
@@ -18,40 +17,44 @@ namespace GameTracker
 		}
 
 		[HttpGet("favicon.ico")]
-		public FileContentResult Icon()
+		public async Task<FileContentResult> Icon()
 		{
-			return File(ReadFileBytes(WebAssets.FaviconPath), "image/x-icon", false);
+			return File(await ReadFileBytes(WebAssets.FaviconPath), "image/x-icon", false);
 		}
 
 		[HttpGet("app.js")]
-		public ContentResult AppJavascript()
+		public async Task<ContentResult> AppJavascript()
 		{
-			return Content(ReadFileContents(WebAssets.AppJavascriptPath), "application/javascript", Encoding.UTF8);
+			return Content(await ReadFileContents(WebAssets.AppJavascriptPath), "application/javascript", Encoding.UTF8);
 		}
 
 		[HttpGet("{*url}", Order = int.MaxValue)]
-		public ContentResult AppMarkup(string url)
+		public async Task<ContentResult> AppMarkup(string url)
 		{
-			return Content(ReadFileContents(WebAssets.AppMarkupPath).Replace("{theme}", JsonSerializer.Serialize(UserProfileTheme)).Replace("{url}", url), "text/html", Encoding.UTF8);
+			var appMarkup = await ReadFileContents(WebAssets.AppMarkupPath);
+
+			appMarkup = appMarkup
+				.Replace("{theme}", JsonSerializer.Serialize(AppSettings.Instance.Theme))
+				.Replace("{url}", url);
+
+			return Content(appMarkup, "text/html", Encoding.UTF8);
 		}
 
-		private byte[] ReadFileBytes(string filePath)
+		private async Task<byte[]> ReadFileBytes(string filePath)
 		{
-			return _memoryCache.GetOrCreate($"AssetsContents-{filePath}", (cache) => {
+			return await _memoryCache.GetOrCreateAsync($"AssetsContents-{filePath}", (cache) => {
 				cache.AddExpirationToken(new CancellationChangeToken(WebAssets.CancellationTokenSource.Token));
-				return System.IO.File.ReadAllBytes(filePath);
+				return System.IO.File.ReadAllBytesAsync(filePath);
 			});
 		}
 
-		private string ReadFileContents(string filePath)
+		private async Task<string> ReadFileContents(string filePath)
 		{
-			return _memoryCache.GetOrCreate($"AssetsContents-{filePath}", (cache) => {
+			return await _memoryCache.GetOrCreateAsync($"AssetsContents-{filePath}", (cache) => {
 				cache.AddExpirationToken(new CancellationChangeToken(WebAssets.CancellationTokenSource.Token));
-				return System.IO.File.ReadAllText(filePath);
+				return System.IO.File.ReadAllTextAsync(filePath);
 			});
 		}
-
-		private UserProfileTheme UserProfileTheme => Program.Configuration.GetSection("Theme").Get<UserProfileTheme>();
 
 		private readonly IMemoryCache _memoryCache;
 	}

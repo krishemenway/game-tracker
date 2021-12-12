@@ -14,13 +14,8 @@ namespace GameTracker.RunningProcesses
 
 	public class RunningProcessReader : IRunningProcessReader
 	{
-		public RunningProcessReader(
-			Lazy<IReadOnlyDictionary<string, string>> processNameExclusions = null,
-			Lazy<IReadOnlyList<string>> startsWithExclusions = null,
-			IProcessFileNameReader processFileNameReader = null)
+		public RunningProcessReader(IProcessFileNameReader processFileNameReader = null)
 		{
-			_processNameExclusions = processNameExclusions ?? LazyProcessNameExclusions;
-			_startsWithExclusions = startsWithExclusions ?? LazyStartsWithExclusions;
 			_processFileNameReader = processFileNameReader ?? new ProcessFileNameReader();
 		}
 
@@ -87,22 +82,14 @@ namespace GameTracker.RunningProcesses
 
 		private bool MatchesStartsWithExclusions(string filePath)
 		{
-			return filePath.StartsWithAny(_startsWithExclusions.Value, StringComparison.CurrentCultureIgnoreCase);
+			return filePath.StartsWithAny(AppSettings.Instance.StartsWithExclusions, StringComparison.CurrentCultureIgnoreCase);
 		}
 
 		private bool MatchesProcessNameExclusion(string processName)
 		{
-			return _processNameExclusions.Value.ContainsKey(processName);
+			return AppSettings.Instance.ProcessNameExclusions.Contains(processName);
 		}
 
-		private readonly Lazy<IReadOnlyDictionary<string, string>> _processNameExclusions;
-		private readonly Lazy<IReadOnlyList<string>> _startsWithExclusions;
 		private readonly IProcessFileNameReader _processFileNameReader;
-
-		private static readonly Lazy<IReadOnlyDictionary<string, string>> LazyProcessNameExclusions
-			= new Lazy<IReadOnlyDictionary<string, string>>(() => Program.Configuration.GetSection("ProcessNameExclusions").Get<string[]>().Distinct().ToDictionary(x => x, x => x), false);
-
-		private static readonly Lazy<IReadOnlyList<string>> LazyStartsWithExclusions
-			= new Lazy<IReadOnlyList<string>>(() => Program.Configuration.GetSection("StartsWithExclusions").Get<string[]>(), false);
 	}
 }

@@ -42,7 +42,7 @@ namespace GameTracker.Games
 
 		public void ReloadGamesFromCentralRepository()
 		{
-			var uri = Program.Configuration.GetValue<string>("GamesUrl");
+			var uri = AppSettings.Instance.GamesUrl;
 			Log.Information("Starting request for updated game information: {Uri}", uri);
 			GameTrackerService.HttpClient.GetAsync(uri).ContinueWith((responseTask) => WriteUpdatedGamesData(responseTask.Result));
 		}
@@ -65,6 +65,6 @@ namespace GameTracker.Games
 		private IReadOnlyList<Game> AllGames => LazyGamesConfiguration.Value.Get<GamesConfigurationFile>().Games;
 
 		private static readonly Lazy<IConfigurationRoot> LazyGamesConfiguration
-			= new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(Program.ExecutableFolderPath).AddJsonFile("games.json", optional: false, reloadOnChange: true).Build());
+			= new(() => new ConfigurationBuilder().SetBasePath(Program.ExecutableFolderPath).AddJsonFile("games.json", optional: false, reloadOnChange: true).Build());
 	}
 }

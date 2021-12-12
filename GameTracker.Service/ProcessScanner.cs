@@ -4,6 +4,7 @@ using GameTracker.RunningProcesses;
 using Serilog;
 using System;
 using System.Linq;
+using System.Timers;
 
 namespace GameTracker
 {
@@ -19,7 +20,7 @@ namespace GameTracker
 			_processSessionStore = processSessionStore ?? new ProcessSessionStore();
 		}
 
-		public void ScanProcesses()
+		public void ScanProcesses(Timer timer)
 		{
 			try
 			{
@@ -35,6 +36,18 @@ namespace GameTracker
 			catch (Exception exception)
 			{
 				Log.Error(exception, "Something went wrong while running the process scan job!");
+			}
+
+			EnsureTimerIntervalIsUpdated(timer);
+		}
+
+		private void EnsureTimerIntervalIsUpdated(Timer timer)
+		{
+			var expectedInterval = AppSettings.Instance.ProcessScanIntervalInSeconds * 1000;
+
+			if (timer.Interval != expectedInterval)
+			{
+				timer.Interval = expectedInterval;
 			}
 		}
 
