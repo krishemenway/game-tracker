@@ -123,7 +123,11 @@ namespace GameTracker.Games
 			public string ContentType { get; set; }
 		}
 
-		private Dictionary<string, string> FileExtensionsByContentType { get; set; }
+		private Dictionary<string, string> FileExtensionsByContentType { get; } = new Dictionary<string, string>
+			{
+				{ "image/jpg", ".jpg" },
+				{ "image/png", ".png" },
+			};
 
 		private readonly IMemoryCache _memoryCache;
 		private readonly IGameStore _gameStore;

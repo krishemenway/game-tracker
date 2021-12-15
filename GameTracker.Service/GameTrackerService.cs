@@ -1,4 +1,4 @@
-﻿using GameTracker.Games;
+using GameTracker.Games;
 using GameTracker.ObservedProcesses;
 using GameTracker.ProcessSessions;
 using GameTracker.UserActivities;
@@ -87,6 +87,7 @@ namespace GameTracker
 			{
 				services.AddMvcCore().AddJsonOptions(FixJsonCamelCasing);
 				services.AddMemoryCache();
+				services.AddHttpClient();
 			}
 
 			// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
