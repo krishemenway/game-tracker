@@ -61,9 +61,9 @@ namespace GameTracker
 
 	public static class WebAssets
 	{
-		public static string AppMarkupPath = Program.FilePathInAppData("app.html");
-		public static string AppJavascriptPath = Program.FilePathInAppData("app.js");
-		public static string FaviconPath = Program.FilePathInAppData("favicon.ico");
+		public static string AppMarkupPath { get; } = Program.FilePathInAppData("app.html");
+		public static string AppJavascriptPath { get; } = Program.FilePathInAppData("app.js");
+		public static string FaviconPath { get; } = Program.FilePathInAppData("app.ico");
 
 		public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
 

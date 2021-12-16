@@ -73,7 +73,7 @@ namespace SteamDataExtractor
 		{
 			var stringWriter = new StringWriter();
 
-			using (Process process = new Process())
+			using (var process = new Process())
 			{
 				process.StartInfo.FileName = steamCMD.FullName;
 				process.StartInfo.Arguments = $" +login anonymous {string.Join(" ", appIds.Select(appId => $"+app_info_print {appId}"))} +exit";
@@ -174,7 +174,6 @@ namespace SteamDataExtractor
 		{
 			AllowTrailingCommas = true,
 			PropertyNameCaseInsensitive = true,
-			IgnoreNullValues = false,
 			WriteIndented = true,
 		};
 

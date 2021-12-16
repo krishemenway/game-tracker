@@ -41,7 +41,7 @@ namespace GameTracker
 			EnsureTimerIntervalIsUpdated(timer);
 		}
 
-		private void EnsureTimerIntervalIsUpdated(Timer timer)
+		private static void EnsureTimerIntervalIsUpdated(Timer timer)
 		{
 			var expectedInterval = AppSettings.Instance.ProcessScanIntervalInSeconds * 1000;
 

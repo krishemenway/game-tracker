@@ -60,9 +60,9 @@ namespace GameTracker.UserActivities
 			throw new NotImplementedException();
 		}
 
-		private static int StartTimeOfDayInSeconds = (int)TimeSpan.FromHours(12).TotalSeconds;
-		private static int EndTimeOfDayInSeconds = (int)TimeSpan.FromHours(21).TotalSeconds;
-		private static int MinimumLengthOfSessions = (int)TimeSpan.FromMinutes(15).TotalSeconds;
-		private static int MaximumLengthOfSessions = (int)TimeSpan.FromHours(4).TotalSeconds;
+		private static int StartTimeOfDayInSeconds { get; } = (int)TimeSpan.FromHours(12).TotalSeconds;
+		private static int EndTimeOfDayInSeconds { get; } = (int)TimeSpan.FromHours(21).TotalSeconds;
+		private static int MinimumLengthOfSessions { get; } = (int)TimeSpan.FromMinutes(15).TotalSeconds;
+		private static int MaximumLengthOfSessions { get; } = (int)TimeSpan.FromHours(4).TotalSeconds;
 	}
 }

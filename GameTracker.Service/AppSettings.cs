@@ -6,9 +6,9 @@ namespace GameTracker
 {
 	public class AppSettings
 	{
-		public AppSettings()
+		static AppSettings()
 		{
-			_lazyConfiguration = LazyConfiguration;
+			LazyConfiguration = new Lazy<IConfigurationRoot>(() => new ConfigurationBuilder().SetBasePath(Program.ExecutableFolderPath).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build());
 		}
 
 		public string UserName => Configuration.GetValue<string>("UserName");
@@ -21,12 +21,10 @@ namespace GameTracker
 		public string[] StartsWithExclusions => Configuration.GetSection("StartsWithExclusions").Get<string[]>();
 		public string[] ProcessNameExclusions => Configuration.GetSection("ProcessNameExclusions").Get<string[]>();
 
-		public IConfigurationRoot Configuration => _lazyConfiguration.Value;
-		private Lazy<IConfigurationRoot> _lazyConfiguration;
+		public IConfigurationRoot Configuration => LazyConfiguration.Value;
 
 		public static AppSettings Instance { get; } = new AppSettings();
 
-		private static readonly Lazy<IConfigurationRoot> LazyConfiguration
-			= new(() => new ConfigurationBuilder().SetBasePath(Program.ExecutableFolderPath).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build());
+		private static readonly Lazy<IConfigurationRoot> LazyConfiguration;
 	}
 }
