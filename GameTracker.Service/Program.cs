@@ -1,55 +1,20 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using GameTracker.RunningProcesses;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using System;
 using System.Diagnostics;
 using System.IO;
-using Topshelf;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace GameTracker
 {
 	public class Program
 	{
-		public static int Main()
-		{
-			return (int)HostFactory.Run(config =>
-			{
-				LoggingLevelSwitch = new LoggingLevelSwitch(LogEventLevel.Debug);
-
-				Log.Logger = new LoggerConfiguration()
-					.ReadFrom.Configuration(AppSettings.Instance.Configuration)
-					.MinimumLevel.ControlledBy(LoggingLevelSwitch)
-					.WriteTo.Console()
-					.WriteTo.File(Path.Combine(ExecutableFolderPath, "GameTracker.Service.log"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 5)
-					.CreateLogger();
-
-				config.Service<GameTrackerService>(s =>
-				{
-					s.ConstructUsing(hostSettings => new GameTrackerService());
-					s.WhenStarted(service => service.Start());
-					s.WhenStopped(service => service.Stop());
-				});
-
-				config.SetDisplayName("Game Tracker");
-				config.SetServiceName("GameTracker");
-				config.SetDescription("A system for helping track what and when you are playing games on your computer!");
-				config.StartAutomaticallyDelayed();
-
-				config.UseSerilog();
-				config.RunAsLocalSystem();
-
-				config.EnableServiceRecovery(r =>
-				{
-					r.RestartService(3);
-				});
-
-				config.OnException((exception) =>
-				{
-					Log.Error(exception, "Something went wrong with the service!");
-				});
-			});
-		}
+		public const string StartedWindowlessArg = "nowindow";
 
 		public static string ExecutablePath { get; } = Process.GetCurrentProcess().MainModule.FileName;
 		public static string ExecutableFolderPath { get; } = Path.GetDirectoryName(ExecutablePath);
@@ -58,6 +23,40 @@ namespace GameTracker
 		public static string FilePathInExecutableFolder(string fileName) => Path.Combine(ExecutableFolderPath, fileName);
 		public static string FilePathInAppData(string fileName) => Path.Combine(AppDataFolderPath, fileName);
 
-		public static LoggingLevelSwitch LoggingLevelSwitch { get; set; }
+		public static LoggingLevelSwitch LoggingLevelSwitch { get; } = new LoggingLevelSwitch(LogEventLevel.Debug);
+		public static CancellationTokenSource CloseServiceToken { get; } = new CancellationTokenSource();
+
+		public static async Task Main(string[] args)
+		{
+			if (Process.GetProcessesByName("GameTracker").Length > 1)
+			{
+				return;
+			}
+
+			if (args.Contains(StartedWindowlessArg))
+			{
+				Log.Logger = new LoggerConfiguration()
+					.ReadFrom.Configuration(AppSettings.Instance.Configuration)
+					.MinimumLevel.ControlledBy(LoggingLevelSwitch)
+					.WriteTo.Console()
+					.WriteTo.File(Path.Combine(ExecutableFolderPath, "GameTracker.Service.log"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 5)
+					.CreateLogger();
+
+				await Host.CreateDefaultBuilder(args)
+					.UseSerilog(Log.Logger)
+					.ConfigureServices((_, services) => { services.AddHostedService<GameTrackerService>(); })
+					.RunConsoleAsync(CloseServiceToken.Token);
+			}
+			else
+			{
+				var newArgs = args.Concat(new[] { StartedWindowlessArg }).ToArray();
+				var startInfo = new ProcessStartInfo(ExecutablePath, string.Join(' ', newArgs))
+					{
+						CreateNoWindow = true
+					};
+
+				Process.Start(startInfo);
+			}
+		}
 	}
 }

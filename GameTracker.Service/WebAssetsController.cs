@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -19,19 +22,38 @@ namespace GameTracker
 		[HttpGet("favicon.ico")]
 		public async Task<FileContentResult> Icon()
 		{
-			return File(await ReadFileBytes(WebAssets.FaviconPath), "image/x-icon", false);
+			var fileBytes = await ReadFileBytes(WebAssets.FaviconPath);
+
+			if (fileBytes.Length == 0)
+			{
+				return File(DefaultAppIconBytes, "image/x-icon", false);
+			}
+
+			return File(fileBytes, "image/x-icon", false);
 		}
 
 		[HttpGet("app.js")]
 		public async Task<ContentResult> AppJavascript()
 		{
-			return Content(await ReadFileContents(WebAssets.AppJavascriptPath), "application/javascript", Encoding.UTF8);
+			var javascript = await ReadFileContents(WebAssets.AppJavascriptPath);
+
+			if (string.IsNullOrEmpty(javascript))
+			{
+				throw new System.Exception("Missing app.js file!");
+			}
+
+			return Content(javascript, "application/javascript", Encoding.UTF8);
 		}
 
 		[HttpGet("{*url}", Order = int.MaxValue)]
 		public async Task<ContentResult> AppMarkup(string url)
 		{
 			var appMarkup = await ReadFileContents(WebAssets.AppMarkupPath);
+
+			if (string.IsNullOrEmpty(appMarkup))
+			{
+				throw new System.Exception("Missing app.html file!");
+			}
 
 			appMarkup = appMarkup
 				.Replace("{theme}", JsonSerializer.Serialize(AppSettings.Instance.Theme))
@@ -44,7 +66,15 @@ namespace GameTracker
 		{
 			return await _memoryCache.GetOrCreateAsync($"AssetsContents-{filePath}", (cache) => {
 				cache.AddExpirationToken(new CancellationChangeToken(WebAssets.CancellationTokenSource.Token));
-				return System.IO.File.ReadAllBytesAsync(filePath);
+
+				try
+				{
+					return System.IO.File.ReadAllBytesAsync(filePath);
+				}
+				catch (FileNotFoundException)
+				{
+					return Task.FromResult(Array.Empty<byte>());
+				}
 			});
 		}
 
@@ -52,9 +82,37 @@ namespace GameTracker
 		{
 			return await _memoryCache.GetOrCreateAsync($"AssetsContents-{filePath}", (cache) => {
 				cache.AddExpirationToken(new CancellationChangeToken(WebAssets.CancellationTokenSource.Token));
-				return System.IO.File.ReadAllTextAsync(filePath);
+
+				try
+				{
+					return System.IO.File.ReadAllTextAsync(filePath);
+				}
+				catch (FileNotFoundException)
+				{
+					return Task.FromResult("");
+				}
 			});
 		}
+
+		private static Icon LoadDefaultAppIcon()
+		{
+			using (var defaultAppIconStream = typeof(GameTrackerService).Assembly.GetManifestResourceStream("GameTracker.app.ico"))
+			{
+				return new Icon(defaultAppIconStream);
+			}
+		}
+
+		private static byte[] LoadDefaultAppIconBytes()
+		{
+			using (var memoryStream = new MemoryStream())
+			{
+				DefaultAppIcon.Save(memoryStream);
+				return memoryStream.ToArray();
+			}
+		}
+
+		public static Icon DefaultAppIcon { get; } = LoadDefaultAppIcon();
+		public static byte[] DefaultAppIconBytes { get; } = LoadDefaultAppIconBytes();
 
 		private readonly IMemoryCache _memoryCache;
 	}
