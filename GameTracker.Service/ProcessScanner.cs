@@ -12,10 +12,12 @@ namespace GameTracker
 	{
 		public ProcessScanner(
 			IRunningProcessReader runningProcessReader = null,
+			IRunningProcessCache runningProcessCache = null,
 			IObservedProcessStore observedProcessStore = null,
 			IProcessSessionStore processSessionStore = null)
 		{
 			_runningProcessReader = runningProcessReader ?? new RunningProcessReader();
+			_runningProcessCache = runningProcessCache ?? new RunningProcessCache();
 			_observedProcessStore = observedProcessStore ?? new ObservedProcessStore();
 			_processSessionStore = processSessionStore ?? new ProcessSessionStore();
 		}
@@ -26,10 +28,11 @@ namespace GameTracker
 			{
 				var runningProcesses = _runningProcessReader.FindRunningProcesses()
 					.Where(runningProcess => !_observedProcessStore.ShouldIgnoreByUserDecision(runningProcess.FilePath))
-					.ToList();
+					.ToArray();
 
-				Log.Debug("Found {RelevantRunningProcessCount} Distinct Running Processes", runningProcesses.Count);
+				Log.Debug("Found {RelevantRunningProcessCount} Distinct Running Processes", runningProcesses.Length);
 
+				_runningProcessCache.Update(runningProcesses);
 				_observedProcessStore.UpdateWithRunningProcesses(runningProcesses);
 				_processSessionStore.UpdatePendingProcessSessions(runningProcesses);
 			}
@@ -52,6 +55,7 @@ namespace GameTracker
 		}
 
 		private readonly IRunningProcessReader _runningProcessReader;
+		private readonly IRunningProcessCache _runningProcessCache;
 		private readonly IObservedProcessStore _observedProcessStore;
 		private readonly IProcessSessionStore _processSessionStore;
 	}

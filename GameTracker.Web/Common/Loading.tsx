@@ -8,12 +8,12 @@ interface BaseLoadingComponentProps {
 	loadingComponent?: JSX.Element,
 }
 
-function Loading<A>(props: { loadables: [Loadable<A>], renderSuccess: (a: A) => JSX.Element }&BaseLoadingComponentProps): JSX.Element;
-function Loading<A, B>(props: { loadables: [Loadable<A>, Loadable<B>], renderSuccess: (a: A, b: B) => JSX.Element }&BaseLoadingComponentProps): JSX.Element;
-function Loading<A, B, C>(props: { loadables: [Loadable<A>, Loadable<B>, Loadable<C>], renderSuccess: (a: A, b: B, c: C) => JSX.Element }&BaseLoadingComponentProps): JSX.Element;
-function Loading<A, B, C, D>(props: { loadables: [Loadable<A>, Loadable<B>, Loadable<C>, Loadable<D>], renderSuccess: (a: A, b: B, c: C, d: D) => JSX.Element }&BaseLoadingComponentProps): JSX.Element;
+function Loading<A>(props: { loadables: [Loadable<A>], successComponent: (a: A) => JSX.Element }&BaseLoadingComponentProps): JSX.Element;
+function Loading<A, B>(props: { loadables: [Loadable<A>, Loadable<B>], successComponent: (a: A, b: B) => JSX.Element }&BaseLoadingComponentProps): JSX.Element;
+function Loading<A, B, C>(props: { loadables: [Loadable<A>, Loadable<B>, Loadable<C>], successComponent: (a: A, b: B, c: C) => JSX.Element }&BaseLoadingComponentProps): JSX.Element;
+function Loading<A, B, C, D>(props: { loadables: [Loadable<A>, Loadable<B>, Loadable<C>, Loadable<D>], successComponent: (a: A, b: B, c: C, d: D) => JSX.Element }&BaseLoadingComponentProps): JSX.Element;
 
-function Loading(props: { loadables: Loadable<unknown>[], renderSuccess: (...inputValues: unknown[]) => JSX.Element, }&BaseLoadingComponentProps): JSX.Element {
+function Loading(props: { loadables: Loadable<unknown>[], successComponent: (...inputValues: unknown[]) => JSX.Element, }&BaseLoadingComponentProps): JSX.Element {
 	const loadableDatas = props.loadables.map((loadable) => useObservable(loadable.Data));
 	const loadState = DetermineLoadState(loadableDatas);
 
@@ -21,7 +21,7 @@ function Loading(props: { loadables: Loadable<unknown>[], renderSuccess: (...inp
 		case LoadState.Failed:
 			return <LoadingErrorMessages errorMessages={loadableDatas.map((data) => data.ErrorMessage).filter(message => message !== null)} />;
 		case LoadState.Loaded:
-			return props.renderSuccess(...loadableDatas.map((data) => data.SuccessData));
+			return props.successComponent(...loadableDatas.map((data) => data.SuccessData));
 		case LoadState.NotStarted:
 		case LoadState.Loading:
 		default:

@@ -1,7 +1,7 @@
 import { createUseStyles } from "react-jss";
 import ThemeStore from "UserProfile/UserProfileTheme";
 
-export const useGlobalStyles = createUseStyles(() => { console.log(ThemeStore.CurrentTheme.PrimaryTextColor); return ({
+export const useGlobalStyles = createUseStyles(() => ({
 	"@global": {
 		[`html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del,
 		dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label,
@@ -35,7 +35,7 @@ export const useGlobalStyles = createUseStyles(() => { console.log(ThemeStore.Cu
 			borderSpacing: 0,
 		},
 	},
-}); });
+}));
 
 export const useBackgroundStyles = createUseStyles(() => ({
 	default: {

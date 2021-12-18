@@ -1,73 +1,91 @@
 import * as React from "react";
 import * as reactDom from "react-dom";
 import { BrowserRouter, Switch, Route, RouteComponentProps, useLocation } from "react-router-dom";
+import { useGlobalStyles } from "AppStyles";
+import { ResetAllModals } from "Common/AnchoredModal";
+import ThemeStore, { UserProfileTheme } from "UserProfile/UserProfileTheme";
 import UserProfile from "UserProfile/UserProfile";
 import GameProfile from "GameProfiles/GameProfileView";
 import DayView from "UserActivities/DayView";
 import MonthView from "UserActivities/MonthView";
-import ProcessManager from "ProcessManager/ProcessManager";
+import ControlPanel from "ControlPanel/ControlPanel";
 import NotFound from "Common/NotFound";
-import { useGlobalStyles } from "AppStyles";
 import AllGamesView from "Games/AllGamesView";
-import { ResetAllModals } from "Common/AnchoredModal";
 import AllAwardsView from "Awards/AllAwardsView";
-import ThemeStore, { UserProfileTheme } from "UserProfile/UserProfileTheme";
+import ProcessManager from "ControlPanel/ProcessManager";
+import EditSettings from "ControlPanel/EditSettings";
+import CatchAllErrors from "Common/CatchAllErrors";
+import LoadingErrorMessages from "Common/LoadingErrorMessages";
 
 const App: React.FC = () => {
 	useGlobalStyles();
 
 	return (
-		<BrowserRouter>
-			<Switch>
+		<CatchAllErrors errorComponent={<LoadingErrorMessages errorMessages={["Something went wrong, please try again later."]}/>}>
+			<BrowserRouter>
+				<Switch>
 
-				<Route
-					exact
-					path="/awards"
-					component={() => <View><AllAwardsView /></View>}
-				/>
+					<Route
+						exact
+						path="/awards"
+						component={() => <View><AllAwardsView /></View>}
+					/>
 
-				<Route
-					exact
-					path="/activity/:year/:month/:day"
-					component={(props: RouteComponentProps<{ year: string; month: string; day: string }>) => <View><DayView year={props.match.params.year} month={props.match.params.month} day={props.match.params.day} /></View>}
-				/>
+					<Route
+						exact
+						path="/activity/:year/:month/:day"
+						component={(props: RouteComponentProps<{ year: string; month: string; day: string }>) => <View><DayView year={props.match.params.year} month={props.match.params.month} day={props.match.params.day} /></View>}
+					/>
 
-				<Route
-					exact
-					path="/activity/:year/:month"
-					component={(props: RouteComponentProps<{ year: string; month: string }>) => <View><MonthView year={props.match.params.year} month={props.match.params.month} /></View>}
-				/>
+					<Route
+						exact
+						path="/activity/:year/:month"
+						component={(props: RouteComponentProps<{ year: string; month: string }>) => <View><MonthView year={props.match.params.year} month={props.match.params.month} /></View>}
+					/>
 
-				<Route
-					exact
-					path="/games"
-					component={() => <View><AllGamesView /></View>}
-				/>
+					<Route
+						exact
+						path="/games"
+						component={() => <View><AllGamesView /></View>}
+					/>
 
-				<Route
-					exact
-					path="/game/:gameId"
-					component={(props: RouteComponentProps<{ gameId: string }>) => <View><GameProfile gameId={props.match.params.gameId} /></View>}
-				/>
+					<Route
+						exact
+						path="/game/:gameId"
+						component={(props: RouteComponentProps<{ gameId: string }>) => <View><GameProfile gameId={props.match.params.gameId} /></View>}
+					/>
 
-				<Route
-					exact
-					path="/process-manager"
-					component={() => <View><ProcessManager /></View>}
-				/>
+					<Route
+						exact
+						path="/ControlPanel/ProcessManager"
+						component={() => <View><ProcessManager /></View>}
+					/>
 
-				<Route
-					exact
-					path="/"
-					component={() => <View><UserProfile /></View>}
-				/>
+					<Route
+						exact
+						path="/ControlPanel/EditSettings"
+						component={() => <View><EditSettings /></View>}
+					/>
 
-				<Route
-					component={() => <View><NotFound /></View>}
-				/>
+					<Route
+						exact
+						path="/ControlPanel"
+						component={() => <View><ControlPanel /></View>}
+					/>
 
-			</Switch>
-		</BrowserRouter >
+					<Route
+						exact
+						path="/"
+						component={() => <View><UserProfile /></View>}
+					/>
+
+					<Route
+						component={() => <View><NotFound /></View>}
+					/>
+
+				</Switch>
+			</BrowserRouter >
+		</CatchAllErrors>
 	);
 };
 

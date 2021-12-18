@@ -25,7 +25,7 @@ const DayView: React.FC<{ year:string; month: string; day: string; className?: s
 		<div className={layout.centerLayout1000}>
 			<Loading
 				loadables={[UserActivityService.Instance.FindOrCreateUserActivityForDate(dateKey), UserProfileService.Instance.LoadingUserProfile]}
-				renderSuccess={(userActivityForDate, userProfile) => <LoadedDayView dateKey={dateKey} userActivityForDate={userActivityForDate} userName={userProfile.UserName} />}
+				successComponent={(userActivityForDate, userProfile) => <LoadedDayView dateKey={dateKey} userActivityForDate={userActivityForDate} userName={userProfile.UserName} />}
 			/>
 		</div>
 	);

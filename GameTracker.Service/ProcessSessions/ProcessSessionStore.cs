@@ -53,6 +53,17 @@ namespace GameTracker.ProcessSessions
 			}
 		}
 
+		public IReadOnlyList<ProcessSession> FindRecent()
+		{
+			using (var reader = new StreamReader(File.Open(DataFilePath, FileMode.OpenOrCreate)))
+			using (var csv = new CsvReader(reader, CsvConfiguration))
+			{
+				csv.Context.RegisterClassMap<ProcessSession.ClassMap>();
+
+				return csv.GetRecords<ProcessSession>().TakeLast(10).ToArray();
+			}
+		}
+
 		public void UpdatePendingProcessSessions(IReadOnlyList<RunningProcess> runningProcesses)
 		{
 			var endedProcesses = FindEndedProcesses(runningProcesses);

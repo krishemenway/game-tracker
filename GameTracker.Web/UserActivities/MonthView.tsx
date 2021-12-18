@@ -28,7 +28,7 @@ const MonthView: React.FC<{ year: string; month: string; className?: string }> =
 		<div className={layout.centerLayout1000}>
 			<Loading
 				loadables={[UserProfileService.Instance.LoadingUserProfile, UserActivityService.Instance.FindOrCreateUserActivityForMonth(`${year}-${month}`)]}
-				renderSuccess={(userProfile, userActivityForMonth) => <LoadedMonthView monthKey={`${props.year}-${props.month}`} userName={userProfile.UserName} userActivityForMonth={userActivityForMonth} />}
+				successComponent={(userProfile, userActivityForMonth) => <LoadedMonthView monthKey={`${props.year}-${props.month}`} userName={userProfile.UserName} userActivityForMonth={userActivityForMonth} />}
 			/>
 		</div>
 	);

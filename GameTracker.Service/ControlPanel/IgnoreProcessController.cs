@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GameTracker.ObservedProcesses;
+using Microsoft.AspNetCore.Mvc;
 
-namespace GameTracker.ObservedProcesses
+namespace GameTracker.ControlPanel
 {
 	[Route("WebAPI")]
 	[RestrictToLocalhost]

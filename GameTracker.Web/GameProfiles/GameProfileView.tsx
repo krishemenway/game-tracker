@@ -29,7 +29,7 @@ export default (props: GameProfileProps) => {
 		<div className={clsx(layout.centerLayout1000)}>
 			<Loading
 				loadables={[GameProfileService.Instance.FindOrCreateProfile(props.gameId), UserProfileService.Instance.LoadingUserProfile]}
-				renderSuccess={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userProfile={userProfile} />}
+				successComponent={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userProfile={userProfile} />}
 			/>
 		</div>
 	);

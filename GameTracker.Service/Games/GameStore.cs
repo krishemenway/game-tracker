@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace GameTracker.Games
 {
@@ -40,14 +41,16 @@ namespace GameTracker.Games
 				.ToDictionary(game => game.GameId, game => game);
 		}
 
-		public void ReloadGamesFromCentralRepository()
+		public Task ReloadGamesFromCentralRepository()
 		{
-			var uri = AppSettings.Instance.GamesUrl;
-			Log.Information("Starting request for updated game information: {Uri}", uri);
-			GameTrackerService.HttpClient.GetAsync(uri).ContinueWith((responseTask) => WriteUpdatedGamesData(responseTask.Result));
+			Log.Information("Starting request for updated game information: {Uri}", AppSettings.Instance.GamesUrl);
+
+			return GameTrackerService.HttpClient
+				.GetAsync(AppSettings.Instance.GamesUrl)
+				.ContinueWith((responseTask) => WriteUpdatedGamesData(responseTask.Result));
 		}
 
-		private void WriteUpdatedGamesData(HttpResponseMessage response)
+		private static void WriteUpdatedGamesData(HttpResponseMessage response)
 		{
 			if (response.StatusCode != HttpStatusCode.OK)
 			{
@@ -61,8 +64,8 @@ namespace GameTracker.Games
 			});
 		}
 
-		public static string GamesFilePath = Path.Combine(Program.ExecutableFolderPath, "games.json");
-		private IReadOnlyList<Game> AllGames => LazyGamesConfiguration.Value.Get<GamesConfigurationFile>().Games;
+		public static string GamesFilePath { get; } = Path.Combine(Program.ExecutableFolderPath, "games.json");
+		private static IReadOnlyList<Game> AllGames => LazyGamesConfiguration.Value.Get<GamesConfigurationFile>().Games;
 
 		private static readonly Lazy<IConfigurationRoot> LazyGamesConfiguration
 			= new(() => new ConfigurationBuilder().SetBasePath(Program.ExecutableFolderPath).AddJsonFile("games.json", optional: false, reloadOnChange: true).Build());

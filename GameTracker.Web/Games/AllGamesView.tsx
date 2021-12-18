@@ -19,7 +19,7 @@ export default () => {
 		<div className={layout.centerLayout1000}>
 			<Loading
 				loadables={[UserProfileService.Instance.LoadingUserProfile]}
-				renderSuccess={(profile) => <LoadedAllGamesView userProfile={profile} />}
+				successComponent={(profile) => <LoadedAllGamesView userProfile={profile} />}
 			/>
 		</div>
 	);
