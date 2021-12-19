@@ -6,17 +6,14 @@ using GlobExpressions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
 using System.Runtime.Caching;
 using System.Threading;
 using System.Threading.Tasks;
@@ -144,8 +141,9 @@ namespace GameTracker
 				ContextMenuStrip = new ContextMenuStrip(),
 			};
 
+			notifyIcon.ContextMenuStrip.Items.Add("&Profile", null, (o, s) => { Process.Start(OpenProfile); });
 			notifyIcon.ContextMenuStrip.Items.Add("&Control Panel", null, (o, s) => { Process.Start(OpenControlPanel); });
-			notifyIcon.ContextMenuStrip.Items.Add("&Add to startup", null, (o, s) => { Process.Start(OpenControlPanel); });
+			notifyIcon.ContextMenuStrip.Items.Add("&Add to startup", null, (o, s) => { AddToStartupAction.Execute(); notifyIcon.ShowBalloonTip(5000, "Successly added to startup", $"A startup link was added here: {AddToStartupAction.GameTrackerStartupLinkPath}", ToolTipIcon.Info); });
 			notifyIcon.ContextMenuStrip.Items.Add("&Exit", null, (o, s) => { Application.Exit(); Program.CloseServiceToken.Cancel(); });
 		}
 
@@ -153,6 +151,12 @@ namespace GameTracker
 		{
 			base.SetVisibleCore(false); // This keeps this fake form thing invisible
 		}
+
+		private static ProcessStartInfo OpenProfile { get; } = new ProcessStartInfo($"http://127.0.0.1:{AppSettings.Instance.WebPort}/")
+			{
+				UseShellExecute = true,
+				Verb = "open"
+			};
 
 		private static ProcessStartInfo OpenControlPanel { get; } = new ProcessStartInfo($"http://127.0.0.1:{AppSettings.Instance.WebPort}/ControlPanel")
 			{

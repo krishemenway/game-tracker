@@ -5,7 +5,6 @@ using StronglyTyped.StringIds;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -32,29 +31,44 @@ namespace GameTracker.Games
 				return NotFound();
 			}
 
-			if (string.IsNullOrEmpty(game.IconUri))
+			var icon = await CreateOrRead(gameId, game.IconUri);
+
+			if (icon == null)
 			{
-				return await DefaultIcon();
+				return NotFound();
 			}
 
-			var icon = await CreateOrRead(gameId, game.IconUri);
 			return File(icon.FileContents, icon.ContentType, false);
 		}
 
 		private async Task<Icon> CreateOrRead(Id<Game> gameId, string defaultUri)
 		{
-			foreach(var (contentType, fileExtension) in FileExtensionsByContentType)
-			{
-				var fileContents = await TryReadImage(gameId, fileExtension);
+			var previouslySavedIcon = await TryReadFromAllFileExtensionsOrNull(gameId);
 
-				if (fileContents != null)
-				{
-					return new Icon { FileContents = fileContents, ContentType = contentType };
-				}
+			if (previouslySavedIcon != null)
+			{
+				return previouslySavedIcon;
+			}
+
+			if (string.IsNullOrEmpty(defaultUri))
+			{
+				return null;
 			}
 
 			await DownloadDefaultIcon(gameId, defaultUri);
 
+			var recentlySavedIcon = await TryReadFromAllFileExtensionsOrNull(gameId);
+
+			if (recentlySavedIcon == null)
+			{
+				throw new Exception("Failed to download image for uri!");
+			}
+
+			return recentlySavedIcon;
+		}
+
+		private async Task<Icon> TryReadFromAllFileExtensionsOrNull(Id<Game> gameId)
+		{
 			foreach (var (contentType, fileExtension) in FileExtensionsByContentType)
 			{
 				var fileContents = await TryReadImage(gameId, fileExtension);
@@ -65,7 +79,7 @@ namespace GameTracker.Games
 				}
 			}
 
-			throw new Exception("Failed to download image for uri!");
+			return null;
 		}
 
 		private async Task<FileResult> DefaultIcon()
@@ -114,7 +128,7 @@ namespace GameTracker.Games
 
 		private string IconFolderPath(Id<Game> gameId)
 		{
-			return Path.Combine(Path.GetTempPath(), "Games", gameId.ToString());
+			return Path.Combine(BaseIconFolderPath, gameId.ToString());
 		}
 
 		private class Icon
@@ -128,6 +142,8 @@ namespace GameTracker.Games
 				{ "image/jpg", ".jpg" },
 				{ "image/png", ".png" },
 			};
+
+		public static string BaseIconFolderPath { get; } = Path.Combine(Path.GetTempPath(), "GameTrackerIcons");
 
 		private readonly IMemoryCache _memoryCache;
 		private readonly IGameStore _gameStore;
