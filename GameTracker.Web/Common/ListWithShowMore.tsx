@@ -7,8 +7,6 @@ import ListOf, { ListPropsOf } from "Common/ListOf";
 interface Props<T> extends ListPropsOf<T> {
 	showMoreLimit: number;
 	showMorePath?: string;
-	listClassName?: string;
-	listItemClassName?: (first: boolean, last: boolean) => string;
 }
 
 function ListWithShowMore<T>(props: Props<T>): JSX.Element {
@@ -22,8 +20,8 @@ function ListWithShowMore<T>(props: Props<T>): JSX.Element {
 				items={props.items.slice(0, !showAll ? props.showMoreLimit : undefined)}
 				renderItem={props.renderItem}
 				createKey={props.createKey}
-				listClassName={clsx(props.listClassName)}
-				listItemClassName={() => clsx(props.listItemClassName)}
+				listClassName={props.listClassName}
+				listItemClassName={props.listItemClassName}
 			/>
 
 			{props.showMorePath === undefined && showButton ? (
