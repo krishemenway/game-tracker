@@ -12,7 +12,6 @@ import ControlPanel from "ControlPanel/ControlPanel";
 import NotFound from "Common/NotFound";
 import AllGamesView from "Games/AllGamesView";
 import AllAwardsView from "Awards/AllAwardsView";
-import ProcessManager from "ControlPanel/ProcessManager";
 import EditSettings from "ControlPanel/EditSettings";
 import CatchAllErrors from "Common/CatchAllErrors";
 import LoadingErrorMessages from "Common/LoadingErrorMessages";
@@ -53,12 +52,6 @@ const App: React.FC = () => {
 						exact
 						path="/game/:gameId"
 						component={(props: RouteComponentProps<{ gameId: string }>) => <View><GameProfile gameId={props.match.params.gameId} /></View>}
-					/>
-
-					<Route
-						exact
-						path="/ControlPanel/ProcessManager"
-						component={() => <View><ProcessManager /></View>}
 					/>
 
 					<Route

@@ -54,7 +54,7 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 					createKey={(a) => a.GameAwardId}
 					renderItem={(award) => <div className={clsx(background.default, layout.paddingAll, layout.height100)}><GameAwardBadge gameAward={award} /></div>}
 					listClassName={clsx(layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}
-					listItemClassName={clsx(layout.width33, layout.marginBottom)}
+					listItemClassName={() => clsx(layout.width33, layout.marginBottom)}
 				/>
 			</Section>
 
@@ -68,7 +68,7 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 					createKey={(a) => a.UserActivityId}
 					renderItem={(activity) => <UserActivityBadge activity={activity} />}
 					listClassName={clsx(layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}
-					listItemClassName={clsx(layout.width33, layout.marginBottom)}
+					listItemClassName={() => clsx(layout.width33, layout.marginBottom)}
 					showMoreLimit={6}
 				/>
 			</Section>

@@ -59,7 +59,7 @@ function LoadedAllGamesView(props: { userProfile: UserProfile }) {
 						</GameLink>
 					)}
 					listClassName={clsx(layout.flexRow, layout.flexWrap, background.default, layout.paddingAll)}
-					listItemClassName={clsx(layout.width50, layout.marginBottomHalf)}
+					listItemClassName={() => clsx(layout.width50, layout.marginBottomHalf)}
 				/>
 			</section>
 		</>

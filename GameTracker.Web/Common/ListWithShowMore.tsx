@@ -8,7 +8,7 @@ interface Props<T> extends ListPropsOf<T> {
 	showMoreLimit: number;
 	showMorePath?: string;
 	listClassName?: string;
-	listItemClassName?: string;
+	listItemClassName?: (first: boolean, last: boolean) => string;
 }
 
 function ListWithShowMore<T>(props: Props<T>): JSX.Element {
@@ -23,7 +23,7 @@ function ListWithShowMore<T>(props: Props<T>): JSX.Element {
 				renderItem={props.renderItem}
 				createKey={props.createKey}
 				listClassName={clsx(props.listClassName)}
-				listItemClassName={clsx(props.listItemClassName)}
+				listItemClassName={() => clsx(props.listItemClassName)}
 			/>
 
 			{props.showMorePath === undefined && showButton ? (

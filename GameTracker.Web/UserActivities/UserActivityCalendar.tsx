@@ -31,7 +31,7 @@ const UserActivityCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActi
 				items={firstDaysInMonth}
 				createKey={(m) => m.format("YYYY-MM")}
 				listClassName={clsx(props.className, layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}
-				listItemClassName={clsx(layout.width33, layout.marginVerticalHalf)}
+				listItemClassName={() => clsx(layout.width33, layout.marginVerticalHalf)}
 				showMoreLimit={6}
 				renderItem={(firstDayInMonth) => (
 					<UserActivityCalendarMonth

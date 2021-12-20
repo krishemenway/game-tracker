@@ -42,10 +42,11 @@ export const useBackgroundStyles = createUseStyles(() => ({
 		backgroundColor: ThemeStore.CurrentTheme.PanelBackgroundColor,
 		border: `1px solid ${ThemeStore.CurrentTheme.PanelBorderColor}`
 	},
+	transparent: { backgroundColor: "transparent", borderColor: "transparent" },
 	borderAll: { border: `1px solid ${ThemeStore.CurrentTheme.PanelBorderColor}` },
 	borderBottom: { borderBottom: `1px solid ${ThemeStore.CurrentTheme.PanelBorderColor}` },
 	bgAlternateDarken: {
-		"& li:nth-child(even), & tr:nth-child(even)": {
+		"& li:nth-child(odd), & tr:nth-child(odd)": {
 			backgroundColor: ThemeStore.CurrentTheme.PanelAlternatingBackgroundColor,
 		},
 	},
@@ -54,6 +55,10 @@ export const useBackgroundStyles = createUseStyles(() => ({
 export const useActionStyles = createUseStyles(() => ({
 	clickable: {
 		cursor: "pointer",
+
+		"&:disabled": {
+			cursor: "not-allowed",
+		},
 	},
 	clickableUnderline: {
 		textDecoration: "none",

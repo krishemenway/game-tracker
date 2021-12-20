@@ -18,7 +18,7 @@ export default (props: { statistics: Statistic[] }) => {
 				renderItem={(statistic) => <Statistic key={statistic.Label} statistic={statistic} />}
 				createKey={(statistic) => statistic.Label}
 				listClassName={clsx(background.default, text.center, layout.paddingVerticalHalf)}
-				listItemClassName={clsx(layout.marginBottom)}
+				listItemClassName={() => clsx(layout.marginBottom)}
 			/>
 		</div>
 	);

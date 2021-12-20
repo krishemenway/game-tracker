@@ -17,6 +17,15 @@ interface ControlPanelStatusResponse {
 	ProcessScanIntervalInSeconds: number;
 	StartsWithExclusions: string[];
 	ProcessNameExclusions: string[];
+
+	ExecutablePath: string;
+	ProcessSessionPath: string;
+	UserActivityPath: string;
+	BaseIconFolderPath: string;
+
+	AppMarkupPath: string;
+	AppJavascriptPath: string;
+	FaviconPath: string;
 }
 
 export interface ProcessSession {
@@ -40,16 +49,22 @@ export interface ObservedProcess {
 
 export class ModifiableObservedProcess {
 	constructor(process: ObservedProcess) {
+		this.Id = ModifiableObservedProcess.LastId++;
 		this.Ignore = new Observable<boolean>(process.Ignore);
 		this.ProcessPath = process.ProcessPath;
 	}
 
+	public Id: number;
 	public Ignore: Observable<boolean>;
 	public ProcessPath: string;
+
+	private static LastId = 0;
 }
 
 export class ControlPanelSettings {
 	constructor(response: ControlPanelStatusResponse) {
+		this.Current = response;
+
 		this.UserName = new EditableField("UserName", response.UserName);
 		this.Email = new EditableField("Email", response.Email);
 		this.WebPort = new EditableField("WebPort", response.WebPort.toString());
@@ -57,6 +72,8 @@ export class ControlPanelSettings {
 		this.ProcessScanIntervalInSeconds = new EditableField("ProcessScanIntervalInSeconds", response.ProcessScanIntervalInSeconds.toString());
 		this.AllObservedProcesses = new ObservableArray<ModifiableObservedProcess>(response.ObservedProcesses.sort((a, b) => a.ProcessPath < b.ProcessPath ? -1 : 1).map((p) => new ModifiableObservedProcess(p)));
 	}
+
+	public Current: ControlPanelStatusResponse;
 
 	public UserName: EditableField;
 	public Email: EditableField;

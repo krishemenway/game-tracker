@@ -12,7 +12,7 @@ const LoadingErrorMessages: React.FC<{ errorMessages: string[] }> = (props) => {
 			createKey={(message) => message}
 			renderItem={(message) => <>{message}</>}
 			listClassName={clsx(text.center, layout.marginTopDouble)}
-			listItemClassName={clsx(layout.marginBottom)}
+			listItemClassName={() => clsx(layout.marginBottom)}
 		/>
 	);
 };

@@ -50,7 +50,7 @@ function LoadedAllAwardsView(props: { userProfile: UserProfile }) {
 					createKey={(award) => award.GameAwardId}
 					renderItem={(award) => <div className={clsx(background.default, layout.paddingAll, layout.height100)}><GameAwardBadge gameAward={award} /></div>}
 					listClassName={clsx(layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}
-					listItemClassName={clsx(layout.width33, layout.marginBottom)}
+					listItemClassName={() => clsx(layout.width33, layout.marginBottom)}
 				/>
 			</section>
 		</>

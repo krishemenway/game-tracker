@@ -43,7 +43,7 @@ function LoadedUserProfile(props: { userProfile: UserProfile }) {
 					items={props.userProfile.RecentActivities}
 					createKey={(activity) => activity.UserActivityId}
 					listClassName={clsx(layout.flexRow, layout.flexWrap, layout.flexItemSpacing, layout.marginBottom)}
-					listItemClassName={clsx(layout.width50, layout.marginBottomHalf)}
+					listItemClassName={() => clsx(layout.width50, layout.marginBottomHalf)}
 					renderItem={(activity) => <UserActivityBadge activity={activity} />}
 				/>
 				<UserActivityCalendar userActivitiesByDate={props.userProfile.ActivitiesByDate} className={layout.marginBottom} />
@@ -63,7 +63,7 @@ function LoadedUserProfile(props: { userProfile: UserProfile }) {
 					showMoreLimit={10}
 					showMorePath={"/Games"}
 					listClassName={clsx(layout.flexRow, layout.flexWrap, layout.paddingAll, background.default, layout.marginBottom)}
-					listItemClassName={clsx(layout.width50, layout.marginBottomHalf)}
+					listItemClassName={() => clsx(layout.width50, layout.marginBottomHalf)}
 				/>
 			</section>
 
@@ -76,7 +76,7 @@ function LoadedUserProfile(props: { userProfile: UserProfile }) {
 					showMoreLimit={9}
 					showMorePath={"/Awards"}
 					listClassName={clsx(layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}
-					listItemClassName={clsx(layout.width33, layout.marginBottom)}
+					listItemClassName={() => clsx(layout.width33, layout.marginBottom)}
 				/>
 			</section>
 

@@ -60,7 +60,7 @@ const LoadedDayView: React.FC<{ dateKey: string; userActivityForDate: UserActivi
 				items={props.userActivityForDate.AllUserActivity}
 				createKey={(activity) => activity.UserActivityId}
 				listClassName={clsx(layout.flexRow, layout.flexWrap, layout.flexItemSpacing, layout.marginBottom)}
-				listItemClassName={clsx(layout.width50, layout.marginBottomHalf)}
+				listItemClassName={() => clsx(layout.width50, layout.marginBottomHalf)}
 				renderItem={(activity) => <UserActivityBadge activity={activity} />}
 			/>
 
