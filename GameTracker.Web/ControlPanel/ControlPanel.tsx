@@ -22,19 +22,11 @@ const LoadedControlPanel: React.FC<{ settings: ControlPanelSettings }> = ({ sett
 	return (
 		<>
 			<h1 className={clsx(text.font32, layout.marginBottom)}>Control Panel</h1>
-			<summary className={clsx(text.font20, layout.marginBottomDouble)}>Tool for managing all settings and checking on the status of your tracker service.</summary>
 			<hr className={clsx(layout.horzRule, layout.marginBottomDouble)} />
-
-			<div className={clsx(layout.paddingLeft)}>
-				<div className={clsx(layout.marginBottomDouble)}>
-					<div><Link className={clsx(action.clickable, action.clickableUnderline)} to={`/ControlPanel/ProcessManager`} title="Process Manager">Process Manager</Link></div>
-				</div>
-
-				<Section name="Settings" editUrl="/ControlPanel/EditSettings" keyValueDescriptions={GetEditableSettings(settings)} />
-				<Section name="Theme" editUrl="/ControlPanel/EditTheme" keyValueDescriptions={GetThemeSettings(settings)} />
-				<ProcessManager {...{ settings }} />
-				<Section name="Important Paths" keyValueDescriptions={GetFilePathsFromSettings(settings)} />
-			</div>
+			<Section name="Settings" editUrl="/ControlPanel/EditSettings" keyValueDescriptions={GetEditableSettings(settings)} />
+			<Section name="Theme" editUrl="/ControlPanel/EditTheme" keyValueDescriptions={GetThemeSettings(settings)} />
+			<ProcessManager {...{ settings }} />
+			<Section name="Important Paths" keyValueDescriptions={GetFilePathsFromSettings(settings)} />
 		</>
 	);
 };
@@ -71,7 +63,7 @@ export const SectionHeader: React.FC<{ headerText: string; actions?: JSX.Element
 	const [layout, text, action] = [useLayoutStyles(), useTextStyles(), useActionStyles()];
 	return (
 		<div className={clsx(layout.flexRow)}>
-			<h2 className={clsx(text.font20, text.primary, layout.marginBottom, layout.flexFillRemaining)}>{headerText}</h2>
+			<h2 className={clsx(text.font22, text.primary, layout.marginBottom, layout.flexFillRemaining)}>{headerText}</h2>
 			{actions}
 		</div>
 	);
@@ -83,18 +75,21 @@ const GetEditableSettings = (settings: ControlPanelSettings): NameValueDescripti
 		{ Name: "Email", Description: "Configured email address. Not sure why this is here. It might be deleted.", Value: settings.Current.Email },
 		{ Name: "Games Data API", Description: "Url that will be used for fetching the supported games list.", Value: settings.Current.GamesUrl },
 		{ Name: "Web Port", Description: "The local networking port that will be used for listening for web traffic. Default is 8090", Value: settings.Current.WebPort.toString() },
+		{ Name: "Process Scan Interval", Description: "How often the service will scan for processes, measured in seconds. The smaller the interval, the higher the precision of when processes are ended but at the cost consuming more CPU time.", Value: `${settings.Current.ProcessScanIntervalInSeconds.toString()} seconds` },
+		{ Name: "Starts With Exclusions", Description: "List of configurable filters for excluding processes that start with the configured value.", Value: settings.Current.StartsWithExclusions.join(", ") },
+		{ Name: "Process Name Exclusions", Description: "List of configurable filters for excluding processes that match the name exactly.", Value: settings.Current.ProcessNameExclusions.join(", ") },
 	];
 };
 
 const GetThemeSettings = (settings: ControlPanelSettings): NameValueDescription[] => {
 	return [
-		{ Name: "GraphPrimaryColor", Description: "GraphPrimaryColor.", Value: settings.Current.Theme.GraphPrimaryColor },
-		{ Name: "PageBackgroundColor", Description: "PageBackgroundColor.", Value: settings.Current.Theme.PageBackgroundColor },
-		{ Name: "PanelAlternatingBackgroundColor", Description: "PanelAlternatingBackgroundColor.", Value: settings.Current.Theme.PanelAlternatingBackgroundColor },
-		{ Name: "PanelBackgroundColor", Description: "PanelBackgroundColor.", Value: settings.Current.Theme.PanelBackgroundColor },
-		{ Name: "PanelBorderColor", Description: "PanelBorderColor.", Value: settings.Current.Theme.PanelBorderColor },
-		{ Name: "PrimaryTextColor", Description: "PrimaryTextColor.", Value: settings.Current.Theme.PrimaryTextColor },
-		{ Name: "SecondaryTextColor", Description: "SecondaryTextColor.", Value: settings.Current.Theme.SecondaryTextColor },
+		{ Name: "Page Background Color", Description: "Color that will be used for the background of the page.", Value: settings.Current.Theme.PageBackgroundColor },
+		{ Name: "Primary Text Color", Description: "Color that is used for all text that should be receiving the primary focus.", Value: settings.Current.Theme.PrimaryTextColor },
+		{ Name: "Secondary Text Color", Description: "Color that is used for all text that should be receiving the secondary focus.", Value: settings.Current.Theme.SecondaryTextColor },
+		{ Name: "Panel Background Color", Description: "Color used for the background of sections. Should contrast well with the page background color and text colors.", Value: settings.Current.Theme.PanelBackgroundColor },
+		{ Name: "Panel Alternating Background Color", Description: "Color used for the alternate background for tables and lists. Should contrast well with the the panel background color and text colors.", Value: settings.Current.Theme.PanelAlternatingBackgroundColor },
+		{ Name: "Panel Border Color", Description: "Color used for the outline of the panels. Should contrast well with the panel background color.", Value: settings.Current.Theme.PanelBorderColor },
+		{ Name: "Graph Primary Color", Description: "Color used for bars and pies and stuff on charts.", Value: settings.Current.Theme.GraphPrimaryColor },
 	];
 };
 
