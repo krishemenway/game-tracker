@@ -1,6 +1,6 @@
-﻿using IWshRuntimeLibrary;
-using System;
+﻿using System;
 using System.IO;
+using WindowsShortcutFactory;
 
 namespace GameTracker
 {
@@ -8,10 +8,13 @@ namespace GameTracker
 	{
 		public static void Execute()
 		{
-			var shortcut = (IWshShortcut)new WshShell().CreateShortcut(GameTrackerStartupLinkPath);
-			shortcut.Description = "Startup link for game tracker";
-			shortcut.TargetPath = Program.ExecutablePath;
-			shortcut.Save();
+			using var shortcut = new WindowsShortcut
+			{
+				Path = Program.ExecutablePath,
+				Description = "Startup link for game tracker"
+			};
+
+			shortcut.Save(GameTrackerStartupLinkPath);
 		}
 
 		public static string GameTrackerStartupLinkPath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "GameTracker.lnk");
