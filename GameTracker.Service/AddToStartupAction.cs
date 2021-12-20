@@ -6,6 +6,11 @@ namespace GameTracker
 {
 	public static class AddToStartupAction
 	{
+		public static bool ShortcutExists()
+		{
+			return File.Exists(GameTrackerStartupLinkPath);
+		}
+
 		public static void Execute()
 		{
 			using var shortcut = new WindowsShortcut

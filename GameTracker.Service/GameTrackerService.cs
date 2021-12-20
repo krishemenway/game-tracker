@@ -143,7 +143,12 @@ namespace GameTracker
 
 			notifyIcon.ContextMenuStrip.Items.Add("&Profile", null, (o, s) => { Process.Start(OpenProfile); });
 			notifyIcon.ContextMenuStrip.Items.Add("&Control Panel", null, (o, s) => { Process.Start(OpenControlPanel); });
-			notifyIcon.ContextMenuStrip.Items.Add("&Add to startup", null, (o, s) => { AddToStartupAction.Execute(); notifyIcon.ShowBalloonTip(5000, "Successly added to startup", $"A startup link was added here: {AddToStartupAction.GameTrackerStartupLinkPath}", ToolTipIcon.Info); });
+
+			if (!AddToStartupAction.ShortcutExists())
+			{
+				notifyIcon.ContextMenuStrip.Items.Add("&Add to startup", null, (o, s) => { AddToStartupAction.Execute(); notifyIcon.ShowBalloonTip(5000, "Successly added to startup", $"A startup link was added here: {AddToStartupAction.GameTrackerStartupLinkPath}", ToolTipIcon.Info); });
+			}
+
 			notifyIcon.ContextMenuStrip.Items.Add("&Exit", null, (o, s) => { Application.Exit(); Program.CloseServiceToken.Cancel(); });
 		}
 
