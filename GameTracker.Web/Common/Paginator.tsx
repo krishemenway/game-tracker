@@ -19,6 +19,8 @@ function Paginator<TItem>(props: Props<TItem>): JSX.Element {
 		return items.concat(RangeOfNumbers(props.pageSize - items.length).map((_) => props.emptyItem()));
 	}, [props.items, props.pageSize, currentPageNumber]);
 
+	React.useEffect(() => { if (currentPageNumber !== 1) { setCurrentPageNumber(1); } }, [props.items])
+
 	return (
 		<>
 			<ListOf
