@@ -1,5 +1,5 @@
 import { Computed, Observable } from "@residualeffect/reactor";
-import { Coalesce } from "Common/Strings";
+import { Coalesce, HasValue } from "Common/Strings";
 
 export class EditableField {
 	constructor(fieldId: string, defaultValue?: string, canMakeRequestFunc?: () => string, beforeChange?: (newValue: string) => string) {
@@ -9,10 +9,14 @@ export class EditableField {
 
 		this.Saved = new Observable<string>(defaultValue ?? "");
 		this.Current = new Observable<string>(this.Saved.Value);
-		this.HasChanged = new Computed(() => this.Current !== this.Saved);
+		this.HasChanged = new Computed(() => this.Current.Value !== this.Saved.Value);
 		this.ServerErrorMessage = new Observable<string>("");
 
 		this.ErrorMessage = new Computed<string>(() => Coalesce([this.CanMakeRequestFunc(), this.ServerErrorMessage.Value]));
+	}
+
+	public CanMakeRequest(): boolean {
+		return !HasValue(this.CanMakeRequestFunc());
 	}
 
 	public OnChange(newValue: string) {
@@ -23,8 +27,12 @@ export class EditableField {
 		this.Saved.Value = this.Current.Value;
 	}
 
+	public SetSaved(value: string) {
+		this.Saved.Value = value;
+		this.Current.Value = value;
+	}
+
 	public FieldId: string;
-	public CanMakeRequestFunc: () => string;
 	public BeforeChange: (newValue: string) => string;
 
 	public Current: Observable<string>;
@@ -33,4 +41,6 @@ export class EditableField {
 	public ServerErrorMessage: Observable<string>;
 
 	public ErrorMessage: Computed<string>;
+
+	private CanMakeRequestFunc: () => string;
 }

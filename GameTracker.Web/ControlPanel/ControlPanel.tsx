@@ -1,15 +1,12 @@
 import * as React from "react";
 import clsx from "clsx";
-import { useLayoutStyles, useTextStyles, useBackgroundStyles, useActionStyles } from "AppStyles";
+import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { ControlPanelService, ControlPanelSettings } from "ControlPanel/ControlPanelService";
 import Loading from "Common/Loading";
 import ListOf from "Common/ListOf";
 import ProcessManager from "ControlPanel/ProcessManager";
 import ToggleTextField from "Common/ToggleTextField";
-import { useObservable } from "Common/useObservable";
 import { EditableField } from "Common/EditableField";
-import SaveIcon from "Icons/SaveIcon";
-import UserProfileThemeStore from "UserProfile/UserProfileTheme";
 
 
 interface NameValueDescription {
@@ -19,7 +16,7 @@ interface NameValueDescription {
 }
 
 const LoadedControlPanel: React.FC<{ settings: ControlPanelSettings }> = ({ settings }) => {
-	const [layout, text, action] = [useLayoutStyles(), useTextStyles(), useActionStyles()];
+	const [layout, text] = [useLayoutStyles(), useTextStyles()];
 
 	return (
 		<>
@@ -34,7 +31,7 @@ const LoadedControlPanel: React.FC<{ settings: ControlPanelSettings }> = ({ sett
 };
 
 const Section: React.FC<{ name: string; keyValueDescriptions: NameValueDescription[] }> = ({ name, keyValueDescriptions }) => {
-	const [layout, text, background, action] = [useLayoutStyles(), useTextStyles(), useBackgroundStyles(), useActionStyles()];
+	const [layout, text, background] = [useLayoutStyles(), useTextStyles(), useBackgroundStyles()];
 
 	return (
 		<div className={clsx(layout.marginBottomDouble, background.default, layout.paddingAll)}>

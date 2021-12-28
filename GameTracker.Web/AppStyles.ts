@@ -21,6 +21,9 @@ export const useGlobalStyles = createUseStyles(() => ({
 			background: "transparent",
 			textDecoration: "none",
 		},
+		"input": {
+			boxSizing: "content-box",
+		},
 		"html": {
 			lineHeight: 1,
 			background: ThemeStore.CurrentTheme.PageBackgroundColor,

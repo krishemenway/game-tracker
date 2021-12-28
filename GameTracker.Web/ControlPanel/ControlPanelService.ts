@@ -113,8 +113,10 @@ export class ControlPanelService {
 	}
 
 	public UpdateSetting(field: EditableField, onComplete: () => void): void {
-		if (field.HasChanged.Value && field.CanMakeRequestFunc()) {
-			Http.post("/WebAPI/ControlPanel/SaveSetting", { Field: field.FieldId, Value: field.Current.Value }, this.Update).then(() => onComplete());
+		if (field.HasChanged.Value && field.CanMakeRequest()) {
+			Http.post("/WebAPI/ControlPanel/SaveSetting", { Field: field.FieldId, Value: field.Current.Value }, this.Update).then(() => { field.OnSaved(); onComplete(); });
+		} else {
+			onComplete();
 		}
 	}
 

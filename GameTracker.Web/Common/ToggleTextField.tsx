@@ -1,6 +1,6 @@
 import * as React from "react";
 import clsx from "clsx";
-import { useLayoutStyles, createStyles } from "AppStyles";
+import { useLayoutStyles, createStyles, useActionStyles } from "AppStyles";
 import UserProfileThemeStore from "UserProfile/UserProfileTheme";
 import { EditableField } from "Common/EditableField";
 import { useObservable } from "./useObservable";
@@ -51,26 +51,26 @@ interface TextFieldProps {
 }
 
 const TextField: React.FC<TextFieldProps> = ({ className, minWidth, value, field, setIsEditing, loadableData, onSave }) => {
-	const [toggleTextFieldStyles] = [createToggleTextFieldStyles()];
+	const [toggleTextFieldStyles, layout, action] = [createToggleTextFieldStyles(), useLayoutStyles(), useActionStyles()];
 	return (
-		<>
+		<div className={clsx(layout.relative)}>
 			<input
 				type="text"
 				className={clsx(className, toggleTextFieldStyles.input)}
 				value={value}
-				onBlur={() => {  onSave(() => setIsEditing(false)); }}
+				onBlur={() => { onSave(() => setIsEditing(false)); }}
 				onChange={(evt) => { field.OnChange(evt.currentTarget.value); }}
 				style={{ minWidth: minWidth }}
 				autoFocus={true}
 				disabled={loadableData.State === LoadState.Loading}
 			/>
 
-			<button type="button">
+			<button type="button" className={clsx(layout.absolute, layout.marginLeftHalf, action.clickable)} style={{ marginTop: "-12px", top: "50%" }}>
 				{loadableData.State === LoadState.Loading
 				? <AnimatedLoadingIcon size="24px" color={UserProfileThemeStore.CurrentTheme.SecondaryTextColor} />
 				: <SaveIcon size="24px" color={UserProfileThemeStore.CurrentTheme.SecondaryTextColor} />}
 			</button>
-		</>
+		</div>
 	);
 };
 
