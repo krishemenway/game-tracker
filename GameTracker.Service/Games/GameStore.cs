@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace GameTracker.Games
@@ -55,14 +56,44 @@ namespace GameTracker.Games
 			if (response.StatusCode != HttpStatusCode.OK)
 			{
 				Log.Error("Failed to update games data. Received response {Message} with Status {Status}", response.ReasonPhrase, response.StatusCode);
+				SystemTrayForm.ShowBalloonError($"Failed to update games data. Received response {response.ReasonPhrase} with Status {response.StatusCode}");
 			}
 
 			response.Content.ReadAsStringAsync().ContinueWith(contentTask =>
 			{
 				Log.Information("Updating {GamesJsonPath} with new game information", GamesFilePath);
 
-				return File.WriteAllTextAsync(GamesFilePath, contentTask.Result).ContinueWith((t) => { SystemTrayForm.ShowBalloonInfo($"Updated {GamesFileName} with new game information"); });
+				try
+				{
+					var json = contentTask.Result;
+					var newGamesMetadata = JsonSerializer.Deserialize<GamesConfigurationFile>(json, GameTrackerService.JsonOptions);
+
+					if (newGamesMetadata?.Games == null)
+					{
+						throw new Exception("Downloaded json but was not a valid format.");
+					}
+
+					var overview = GetOverviewOfGameUpdates(newGamesMetadata);
+
+					return File.WriteAllTextAsync(GamesFilePath, json).ContinueWith((t) => { SystemTrayForm.ShowBalloonInfo(overview); });
+				}
+				catch (Exception e)
+				{
+					Log.Error("Failed to update games data. Threw exception {Exception}", e.ToString());
+					SystemTrayForm.ShowBalloonError($"Failed to update games data. Threw exception {e}");
+
+					return Task.CompletedTask;
+				}
 			});
+		}
+
+		private static string GetOverviewOfGameUpdates(GamesConfigurationFile newFile)
+		{
+			var overview = $"Reloaded {GamesFileName}. ";
+			var newGames = newFile.Games.Except(AllGames).Count();
+			var updatedGames = AllGames.Count(existingGame => existingGame.Matches(newFile.Games.SingleOrDefault(x => x.GameId == existingGame.GameId)));
+
+			return $"Reloaded {GamesFileName}. Updated {newGames + updatedGames} games.";
 		}
 
 		public static string GamesFilePath { get; } = Path.Combine(Program.ExecutableFolderPath, GamesFileName);

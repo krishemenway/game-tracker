@@ -22,5 +22,25 @@ namespace GameMetadata
 		public long? SteamId { get; set; }
 		public Glob Pattern { get; set; }
 		public string IconUri { get; set; }
+
+		public bool Matches(Game game)
+		{
+			return GameId == game.GameId
+				&& Name == game.Name
+				&& ReleaseDate == game.ReleaseDate
+				&& SteamId == game.SteamId
+				&& Pattern == game.Pattern
+				&& IconUri == game.IconUri;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return obj is Game game && GameId == game.GameId;
+		}
+
+		public override int GetHashCode()
+		{
+			return GameId.GetHashCode();
+		}
 	}
 }

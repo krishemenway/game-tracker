@@ -77,7 +77,7 @@ namespace GameTracker.ObservedProcesses
 		{
 			using (var streamWriter = new StreamWriter(File.Open(DataFilePath, FileMode.Truncate)))
 			{
-				streamWriter.Write(JsonSerializer.Serialize(_observedRunningProcessesByFilePath));
+				streamWriter.Write(JsonSerializer.Serialize(_observedRunningProcessesByFilePath, GameTrackerService.JsonOptions));
 			}
 		}
 
@@ -88,7 +88,7 @@ namespace GameTracker.ObservedProcesses
 				var serializedObservedRunningProcesses = streamReader.ReadToEnd();
 				serializedObservedRunningProcesses = !string.IsNullOrEmpty(serializedObservedRunningProcesses) ? serializedObservedRunningProcesses : "{}";
 
-				var observedRunningProcessesFromFile = JsonSerializer.Deserialize<Dictionary<string, ObservedProcess>>(serializedObservedRunningProcesses);
+				var observedRunningProcessesFromFile = JsonSerializer.Deserialize<Dictionary<string, ObservedProcess>>(serializedObservedRunningProcesses, GameTrackerService.JsonOptions);
 
 				foreach(var (filePath, observedRunningProcess) in observedRunningProcessesFromFile)
 				{

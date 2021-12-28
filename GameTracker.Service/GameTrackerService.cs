@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Caching;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,6 +23,18 @@ namespace GameTracker
 {
 	public class GameTrackerService : IHostedService
 	{
+		static GameTrackerService()
+		{
+			JsonOptions = new JsonSerializerOptions
+				{
+					WriteIndented = true,
+					PropertyNamingPolicy = null,
+					AllowTrailingCommas = true,
+				};
+
+			JsonOptions.Converters.Add(new GlobJsonConverter());
+		}
+
 		public GameTrackerService()
 		{
 			TypeDescriptor.AddAttributes(typeof(Glob), new TypeConverterAttribute(typeof(GlobTypeConverter)));
@@ -92,7 +105,7 @@ namespace GameTracker
 			// This method gets called by the runtime. Use this method to add services to the container.
 			public void ConfigureServices(IServiceCollection services)
 			{
-				services.AddMvcCore().AddJsonOptions(FixJsonCamelCasing);
+				services.AddMvcCore().AddJsonOptions(UpdateJsonOptions);
 				services.AddMemoryCache();
 				services.AddHttpClient();
 			}
@@ -105,12 +118,19 @@ namespace GameTracker
 				app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 			}
 
-			private void FixJsonCamelCasing(JsonOptions options)
+			private void UpdateJsonOptions(JsonOptions options)
 			{
-				// this unsets the default behavior (camelCase); "what you see is what you get" is now default
-				options.JsonSerializerOptions.PropertyNamingPolicy = null;
+				options.JsonSerializerOptions.AllowTrailingCommas = JsonOptions.AllowTrailingCommas;
+				options.JsonSerializerOptions.PropertyNamingPolicy = JsonOptions.PropertyNamingPolicy;
+
+				foreach(var converter in JsonOptions.Converters)
+				{
+					options.JsonSerializerOptions.Converters.Add(converter);
+				}
 			}
 		}
+
+		public static JsonSerializerOptions JsonOptions { get; }
 
 		public static string WebHostListenAddress => $"http://*:{AppSettings.Instance.WebPort}";
 		public static readonly HttpClient HttpClient = new();

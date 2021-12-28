@@ -54,16 +54,9 @@ namespace GameTracker
 		{
 			using (var writer = new StreamWriter(AppSettingsFilePath))
 			{
-				await writer.WriteAsync(JsonSerializer.Serialize(settings, JsonOptions));
+				await writer.WriteAsync(JsonSerializer.Serialize(settings, GameTrackerService.JsonOptions));
 			}
 		}
-
-		public static JsonSerializerOptions JsonOptions = new JsonSerializerOptions
-			{
-				WriteIndented = true,
-				PropertyNamingPolicy = null,
-				AllowTrailingCommas = true,
-			};
 
 		private static readonly Lazy<IConfigurationRoot> LazyConfiguration;
 	}
