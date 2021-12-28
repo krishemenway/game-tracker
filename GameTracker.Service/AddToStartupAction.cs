@@ -20,6 +20,7 @@ namespace GameTracker
 			};
 
 			shortcut.Save(GameTrackerStartupLinkPath);
+			SystemTrayForm.ShowBalloonInfo($"Startup link was added: {GameTrackerStartupLinkPath}");
 		}
 
 		public static string GameTrackerStartupLinkPath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "GameTracker.lnk");

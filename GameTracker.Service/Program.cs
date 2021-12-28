@@ -32,6 +32,8 @@ namespace GameTracker
 				return;
 			}
 
+			await AppSettings.EnsureExists();
+
 			if (args.Contains(StartedWindowlessArg))
 			{
 				Log.Logger = new LoggerConfiguration()

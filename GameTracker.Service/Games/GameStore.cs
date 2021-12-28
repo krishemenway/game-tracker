@@ -60,12 +60,14 @@ namespace GameTracker.Games
 			response.Content.ReadAsStringAsync().ContinueWith(contentTask =>
 			{
 				Log.Information("Updating {GamesJsonPath} with new game information", GamesFilePath);
-				File.WriteAllText(GamesFilePath, contentTask.Result);
+
+				return File.WriteAllTextAsync(GamesFilePath, contentTask.Result).ContinueWith((t) => { SystemTrayForm.ShowBalloonInfo($"Updated {GamesFileName} with new game information"); });
 			});
 		}
 
-		public static string GamesFilePath { get; } = Path.Combine(Program.ExecutableFolderPath, "games.json");
+		public static string GamesFilePath { get; } = Path.Combine(Program.ExecutableFolderPath, GamesFileName);
 		private static IReadOnlyList<Game> AllGames => LazyGamesConfiguration.Value.Get<GamesConfigurationFile>().Games;
+		private const string GamesFileName = "games.json";
 
 		private static readonly Lazy<IConfigurationRoot> LazyGamesConfiguration
 			= new(() => new ConfigurationBuilder().SetBasePath(Program.ExecutableFolderPath).AddJsonFile("games.json", optional: false, reloadOnChange: true).Build());

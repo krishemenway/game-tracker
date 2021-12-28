@@ -11,7 +11,6 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Caching;
@@ -66,10 +65,10 @@ namespace GameTracker
 			UserActivityBackfillerTimer.Start();
 			GamesDataUpdateTimer.Start();
 
-			Task.Run(() => { return new GameStore().ReloadGamesFromCentralRepository(); });
+			Task.Delay(1000).ContinueWith(x => new GameStore().ReloadGamesFromCentralRepository());
 
 			WebHost.StartAsync(cancellationToken).ContinueWith((func) => PrefetchUserProfile());
-			Application.Run(new NotifiyIconForm());
+			Application.Run(new SystemTrayForm());
 			return Task.CompletedTask;
 		}
 
@@ -122,51 +121,5 @@ namespace GameTracker
 		private System.Timers.Timer ProcessScannerTimer { get; set; }
 		private System.Timers.Timer UserActivityBackfillerTimer { get; set; }
 		private IWebHost WebHost { get; set; }
-	}
-
-	public partial class NotifiyIconForm : Form
-	{
-		public NotifiyIconForm()
-		{
-			CreateNotifyIcon();
-		}
-
-		private void CreateNotifyIcon()
-		{
-			var notifyIcon = new NotifyIcon
-			{
-				Icon = WebAssetsController.DefaultAppIcon,
-				Text = "Game Tracker",
-				Visible = true,
-				ContextMenuStrip = new ContextMenuStrip(),
-			};
-
-			notifyIcon.ContextMenuStrip.Items.Add("&Profile", null, (o, s) => { Process.Start(OpenProfile); });
-			notifyIcon.ContextMenuStrip.Items.Add("&Control Panel", null, (o, s) => { Process.Start(OpenControlPanel); });
-
-			if (!AddToStartupAction.ShortcutExists())
-			{
-				notifyIcon.ContextMenuStrip.Items.Add("&Add to startup", null, (o, s) => { AddToStartupAction.Execute(); notifyIcon.ShowBalloonTip(5000, "Successly added to startup", $"A startup link was added here: {AddToStartupAction.GameTrackerStartupLinkPath}", ToolTipIcon.Info); });
-			}
-
-			notifyIcon.ContextMenuStrip.Items.Add("&Exit", null, (o, s) => { Application.Exit(); Program.CloseServiceToken.Cancel(); });
-		}
-
-		protected override void SetVisibleCore(bool value)
-		{
-			base.SetVisibleCore(false); // This keeps this fake form thing invisible
-		}
-
-		private static ProcessStartInfo OpenProfile { get; } = new ProcessStartInfo($"http://127.0.0.1:{AppSettings.Instance.WebPort}/")
-			{
-				UseShellExecute = true,
-				Verb = "open"
-			};
-
-		private static ProcessStartInfo OpenControlPanel { get; } = new ProcessStartInfo($"http://127.0.0.1:{AppSettings.Instance.WebPort}/ControlPanel")
-			{
-				UseShellExecute = true,
-				Verb = "open"
-			};
 	}
 }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GameTracker.ControlPanel
 {
-	[Route("WebAPI")]
+	[Route("WebAPI/ControlPanel")]
 	[RestrictToLocalhost]
 	public class IgnoreProcessController : ControllerBase
 	{
