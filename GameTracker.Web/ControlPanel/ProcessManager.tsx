@@ -3,7 +3,8 @@ import clsx from "clsx";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { ControlPanelService, ControlPanelSettings, ModifiableObservedProcess } from "ControlPanel/ControlPanelService";
 import { useObservable } from "Common/useObservable";
-import { SectionHeader } from "./ControlPanel";
+import { SectionHeader } from "ControlPanel/ControlPanel";
+import SearchIcon from "Icons/SearchIcon";
 import Paginator from "Common/Paginator";
 import { HasValue } from "Common/Strings";
 import UserProfileThemeStore from "UserProfile/UserProfileTheme";
@@ -20,8 +21,8 @@ const ProcessManager: React.FC<{ settings: ControlPanelSettings }> = (props) => 
 			<SectionHeader headerText="Observed Processes" />
 			<hr className={clsx(layout.horzRule, layout.marginBottomDouble)} />
 
-			<div className={clsx(layout.flexRow, layout.marginBottomHalf)}>
-				<div className={clsx(layout.width85, text.font16)}>
+			<div className={clsx(layout.flexRow, layout.marginBottomHalf, text.font16)}>
+				<div className={clsx(layout.width85)}>
 					<div className={layout.relative}>
 						<span className={clsx(layout.absolute)} style={{ top: "3px", right: "8px" }}><SearchIcon size="24px" color={UserProfileThemeStore.CurrentTheme.SecondaryTextColor} /></span>
 
@@ -31,11 +32,11 @@ const ProcessManager: React.FC<{ settings: ControlPanelSettings }> = (props) => 
 							style={{ padding: "4px 8px" }}
 							placeholder="Search ..."
 							onChange={(evt) => setSearchFilter(evt.currentTarget.value)}
-							className={clsx(text.font16, background.transparent, layout.width100, background.borderBottom, layout.marginBottomHalf, text.primary)}
+							className={clsx(layout.width100, background.borderBottom, layout.marginBottomHalf, text.primary)}
 						/>
 					</div>
 				</div>
-				<div className={clsx(layout.width15, text.font16, layout.flexColumn, layout.flexCenter)} style={{ alignSelf: "center" }}>
+				<div className={clsx(layout.width15, layout.flexColumn, layout.flexCenter)} style={{ alignSelf: "center" }}>
 					<div>Should Ignore</div>
 				</div>
 			</div>
@@ -72,9 +73,5 @@ const ProcessListItem: React.FC<{ process: ModifiableObservedProcess }> = (props
 		</>
 	);
 };
-
-const SearchIcon: React.FC<{ size: string; color: string }> = ({ size, color }) => (
-	<svg xmlns="http://www.w3.org/2000/svg" height={size} viewBox="0 0 24 24" width={size} fill={color}><path d="M0 0h24v24H0z" fill="none"/><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-);
 
 export default ProcessManager;

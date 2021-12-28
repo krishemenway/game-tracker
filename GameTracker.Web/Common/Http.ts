@@ -34,11 +34,18 @@ export class Http {
 	/**
 	 * @param url Url path for get request
 	 * @param request Request for the post body
+	 * @param loadable Loadable to track progress of request
 	 * @template TRequest Describes the type for the json request
 	 * @template TResponse Describes the type for the json response
 	 */
-	public static post<TRequest, TResponse>(url: string, request: TRequest): Promise<TResponse> {
+	public static post<TRequest, TResponse>(url: string, request: TRequest, loadable: Loadable<TResponse>): Promise<TResponse> {
 		return new Promise<TResponse>((onFulfilled, onRejected) => {
+			if (!loadable.CanMakeRequest()) {
+				return;
+			}
+
+			loadable.StartLoading();
+
 			fetch(url, { 
 				body: JSON.stringify(request),
 				method: "post",
@@ -52,8 +59,10 @@ export class Http {
 				return response.json();
 			})
 			.then((jsonResponse) => {
+				loadable.SucceededLoading(jsonResponse);
 				onFulfilled(jsonResponse as TResponse);
 			}, (reason) => {
+				loadable.FailedLoading(reason);
 				onRejected(reason);
 			});
 		});

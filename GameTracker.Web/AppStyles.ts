@@ -1,12 +1,14 @@
 import { createUseStyles } from "react-jss";
 import ThemeStore from "UserProfile/UserProfileTheme";
 
+export const createStyles = createUseStyles;
+
 export const useGlobalStyles = createUseStyles(() => ({
 	"@global": {
 		[`html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del,
 		dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label,
 		legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed,  figure, figcaption, footer, header, hgroup,
-		menu, nav, output, ruby, section, summary, time, mark, audio, video, button, text, tspan`]: {
+		menu, nav, output, ruby, section, summary, time, mark, audio, video, button, text, tspan, input`]: {
 			color: ThemeStore.CurrentTheme.PrimaryTextColor,
 			margin: "0",
 			padding: "0",
@@ -78,7 +80,7 @@ export const useActionStyles = createUseStyles(() => ({
 		"&:hover": {
 			borderColor: ThemeStore.CurrentTheme.PanelBackgroundColor,
 		},
-	}
+	},
 }));
 
 export const useLayoutStyles = createUseStyles(() => ({

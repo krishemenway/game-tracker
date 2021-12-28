@@ -67,9 +67,18 @@ export class ControlPanelSettings {
 
 		this.UserName = new EditableField("UserName", response.UserName);
 		this.Email = new EditableField("Email", response.Email);
-		this.WebPort = new EditableField("WebPort", response.WebPort.toString());
+		this.WebPort = new EditableField("WebPort", response.WebPort.toString(), undefined, (v) => parseInt(v, 10).toString());
 		this.GamesUrl = new EditableField("GamesUrl", response.GamesUrl);
-		this.ProcessScanIntervalInSeconds = new EditableField("ProcessScanIntervalInSeconds", response.ProcessScanIntervalInSeconds.toString());
+
+		this.PanelBackgroundColor = new EditableField("PanelBackgroundColor", response.Theme.PanelBackgroundColor);
+		this.PanelAlternatingBackgroundColor = new EditableField("PanelAlternatingBackgroundColor", response.Theme.PanelAlternatingBackgroundColor);
+		this.PanelBorderColor = new EditableField("PanelBorderColor", response.Theme.PanelBorderColor);
+		this.PageBackgroundColor = new EditableField("PageBackgroundColor", response.Theme.PageBackgroundColor);
+		this.GraphPrimaryColor = new EditableField("GraphPrimaryColor", response.Theme.GraphPrimaryColor);
+		this.PrimaryTextColor = new EditableField("PrimaryTextColor", response.Theme.PrimaryTextColor);
+		this.SecondaryTextColor = new EditableField("SecondaryTextColor", response.Theme.SecondaryTextColor);
+
+		this.ProcessScanIntervalInSeconds = new EditableField("ProcessScanIntervalInSeconds", response.ProcessScanIntervalInSeconds.toString(), undefined, (v) => parseInt(v, 10).toString());
 		this.AllObservedProcesses = new ObservableArray<ModifiableObservedProcess>(response.ObservedProcesses.sort((a, b) => a.ProcessPath < b.ProcessPath ? -1 : 1).map((p) => new ModifiableObservedProcess(p)));
 	}
 
@@ -79,28 +88,43 @@ export class ControlPanelSettings {
 	public Email: EditableField;
 	public WebPort: EditableField;
 	public GamesUrl: EditableField;
+
+	public PanelBackgroundColor: EditableField;
+	public PanelAlternatingBackgroundColor: EditableField;
+	public PanelBorderColor: EditableField;
+	public PageBackgroundColor: EditableField;
+	public GraphPrimaryColor: EditableField;
+	public PrimaryTextColor: EditableField;
+	public SecondaryTextColor: EditableField;
+
 	public ProcessScanIntervalInSeconds: EditableField;
 	public AllObservedProcesses: ObservableArray<ModifiableObservedProcess>;
 }
 
 export class ControlPanelService {
 	constructor() {
+		this.Update = new Loadable<any>();
+		this.Toggle = new Loadable<any>();
 		this.Status = new Loadable<ControlPanelSettings>("Something went wrong loading observed processes from the server. Can only view this tool on the device running the service.");
-		this.ToggleIgnoredErrorMessage = new Observable(null);
 	}
 
 	public LoadStatus(): void {
 		Http.get<ControlPanelStatusResponse, ControlPanelSettings>("/WebAPI/ControlPanel/Status", this.Status, (r) => new ControlPanelSettings(r));
 	}
 
+	public UpdateSetting(field: EditableField, onComplete: () => void): void {
+		if (field.HasChanged.Value && field.CanMakeRequestFunc()) {
+			Http.post("/WebAPI/ControlPanel/SaveSetting", { Field: field.FieldId, Value: field.Current.Value }, this.Update).then(() => onComplete());
+		}
+	}
+
 	public OnToggleIgnored(observableProcess: ModifiableObservedProcess, ignore: boolean): void {
-		Http.post("/WebAPI/ToggleIgnorePath", { FilePath: observableProcess.ProcessPath, Ignore: ignore })
-			.then((_) => { observableProcess.Ignore.Value = ignore; })
-			.catch((_) => { this.ToggleIgnoredErrorMessage.Value = `Failed to toggle ignore status for: ${observableProcess.ProcessPath}`; });
+		Http.post("/WebAPI/ControlPanel/ToggleIgnorePath", { FilePath: observableProcess.ProcessPath, Ignore: ignore }, this.Toggle).then((_) => { observableProcess.Ignore.Value = ignore; });
 	}
 
 	public Status: Loadable<ControlPanelSettings>;
-	public ToggleIgnoredErrorMessage: Observable<string|null>
+	public Update: Loadable<any>;
+	public Toggle: Loadable<any>;
 
 	static get Instance(): ControlPanelService {
 		if (this._instance === undefined) {
