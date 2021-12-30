@@ -43,6 +43,7 @@ namespace GameTracker.UserActivities
 
 			userActivity = _userActivityFactory.Create(processSession, matchedGame);
 			Log.Debug("Created user activity for game {GameId}.", matchedGame.GameId);
+			SystemTrayForm.ShowBalloonInfo($"Played {matchedGame.Name} for {(processSession.EndTime - processSession.StartTime).HumanReadable()}.");
 			return true;
 		}
 
