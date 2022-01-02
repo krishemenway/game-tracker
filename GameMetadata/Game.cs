@@ -29,7 +29,7 @@ namespace GameMetadata
 				&& Name == game.Name
 				&& ReleaseDate == game.ReleaseDate
 				&& SteamId == game.SteamId
-				&& Pattern == game.Pattern
+				&& Pattern.Pattern == game.Pattern.Pattern
 				&& IconUri == game.IconUri;
 		}
 
