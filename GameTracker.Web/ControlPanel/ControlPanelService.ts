@@ -21,11 +21,15 @@ interface ControlPanelStatusResponse {
 	ExecutablePath: string;
 	ProcessSessionPath: string;
 	UserActivityPath: string;
+	ObservedProcessesPath: string;
 	BaseIconFolderPath: string;
+	GamesPath: string;
 
 	AppMarkupPath: string;
 	AppJavascriptPath: string;
 	FaviconPath: string;
+
+	LastUserActivityBackfillTime: string;
 }
 
 export interface ProcessSession {

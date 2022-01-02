@@ -98,9 +98,11 @@ const GetFilePathsFromSettings = (settings: ControlPanelSettings): NameValueDesc
 		{ Name: "App Javascript Path", Description: "File location of the javascript that will be served up as app.js. This should start up the application presenting and request data from the service.", Value: settings.Current.AppJavascriptPath },
 		{ Name: "App Icon Path", Description: "File location of the app icon. Used as the favicon for the site and system tray icon.", Value: settings.Current.FaviconPath },
 		{ Name: "Program Executable Path", Description: "File location of the app executable. Just in case you lost track of where you were running this from.", Value: settings.Current.ExecutablePath },
+		{ Name: "Games Path", Description: "File location of the games.json file. Contains all of the games that this service try to match against. This file is updated everytime the service starts by downloading from the Games URI to keep it current.", Value: settings.Current.GamesPath },
 		{ Name: "Temporary Game Icon Path", Description: "Folder where game icons are downloaded to and served up from for the Profile.", Value: settings.Current.BaseIconFolderPath },
 		{ Name: "Process Session File Path", Description: "File location of the process session file. This file contains the raw process data that was tracked regardless of whether it was mapped to a game or not. This allows for the system to catch sessions that might have happened before the game was added. It can be deleted without any negative consequences.", Value: settings.Current.ProcessSessionPath },
 		{ Name: "User Activity File Path", Description: "File location of the user activity file. This file contains the mapped process sessions that were successfully mapped to games. Try to setup a file backup strategy for this file if possible!", Value: settings.Current.UserActivityPath },
+		{ Name: "Observed Sessions File Path", Description: "File location of the observed sessions file. This file contains all of the processes the service has ever seen and a flag for whether to ignore it or not. This file is modified when using the process manager.", Value: settings.Current.ObservedProcessesPath },
 	];
 };
 
