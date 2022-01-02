@@ -29,7 +29,7 @@ const ProcessManager: React.FC<{ settings: ControlPanelSettings }> = (props) => 
 						<input
 							type="text"
 							value={searchFilter}
-							style={{ padding: "4px 8px" }}
+							style={{ padding: "4px 0" }}
 							placeholder="Search ..."
 							onChange={(evt) => setSearchFilter(evt.currentTarget.value)}
 							className={clsx(layout.width100, background.borderBottom, layout.marginBottomHalf, text.primary)}
