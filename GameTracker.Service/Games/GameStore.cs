@@ -91,7 +91,7 @@ namespace GameTracker.Games
 		{
 			var overview = $"Reloaded {GamesFileName}. ";
 			var newGames = newFile.Games.Except(AllGames).Count();
-			var updatedGames = AllGames.Count(existingGame => existingGame.Matches(newFile.Games.SingleOrDefault(x => x.GameId == existingGame.GameId)));
+			var updatedGames = AllGames.Count(existingGame => !existingGame.Matches(newFile.Games.SingleOrDefault(x => x.GameId == existingGame.GameId)));
 
 			return $"Reloaded {GamesFileName}. Updated {newGames + updatedGames} games.";
 		}
