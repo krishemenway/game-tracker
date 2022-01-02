@@ -3,7 +3,6 @@ using GameTracker.Games;
 using GameTracker.UserActivities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 
