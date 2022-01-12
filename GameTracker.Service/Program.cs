@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Core;
@@ -37,7 +37,7 @@ namespace GameTracker
 			if (args.Contains(StartedWindowlessArg))
 			{
 				Log.Logger = new LoggerConfiguration()
-					.ReadFrom.Configuration(AppSettings.Configuration)
+					.ReadFrom.Configuration(AppSettings.Instance.Configuration)
 					.MinimumLevel.ControlledBy(LoggingLevelSwitch)
 					.WriteTo.Console()
 					.WriteTo.File(Path.Combine(ExecutableFolderPath, "GameTracker.Service.log"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 5)

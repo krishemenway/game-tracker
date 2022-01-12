@@ -1,4 +1,4 @@
-﻿using GameTracker.Games;
+using GameTracker.Games;
 using GameTracker.ObservedProcesses;
 using GameTracker.ProcessSessions;
 using GameTracker.UserActivities;
@@ -48,7 +48,7 @@ namespace GameTracker
 			WebHost = new WebHostBuilder()
 				.UseKestrel()
 				.UseStartup<WebHostConfiguration>()
-				.UseConfiguration(AppSettings.Configuration)
+				.UseConfiguration(AppSettings.Instance.Configuration)
 				.UseSerilog()
 				.UseUrls(WebHostListenAddress)
 				.Build();
