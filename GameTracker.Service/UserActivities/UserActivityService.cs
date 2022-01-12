@@ -1,5 +1,4 @@
-﻿using GameTracker.GameMatching;
-using GameTracker.Games;
+﻿using GameTracker.Games;
 using GameTracker.ProcessSessions;
 using Serilog;
 using System.Linq;

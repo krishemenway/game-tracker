@@ -68,7 +68,6 @@ namespace GameTracker.ControlPanel
 		public string FaviconPath => WebAssets.FaviconPath;
 
 		public string WebHostListenAddress => GameTrackerService.WebHostListenAddress;
-		public DateTimeOffset? LastUserActivityBackfillTime => UserActivityBackfiller.LastExecutionTime;
 
 		public AppSettings _appSettings;
 	}

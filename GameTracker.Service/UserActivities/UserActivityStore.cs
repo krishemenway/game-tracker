@@ -27,8 +27,6 @@ namespace GameTracker.UserActivities
 
 		public IReadOnlyList<UserActivity> FindAllUserActivity()
 		{
-			Log.Debug("Loading UserActivity from File!");
-
 			lock (FileLock)
 			{
 				using var stream = File.Open(DataFilePath, FileMode.OpenOrCreate);
@@ -43,8 +41,6 @@ namespace GameTracker.UserActivities
 
 		public void SaveActivity(params UserActivity[] userActivities)
 		{
-			Log.Debug("Saving UserActivity to File!");
-
 			lock (FileLock)
 			{
 				using var stream = File.Open(DataFilePath, FileMode.Append);
@@ -55,6 +51,9 @@ namespace GameTracker.UserActivities
 
 				csv.WriteRecords(userActivities);
 			}
+
+			Log.Information("Recorded {UserActivityCount} activities.", userActivities.Length);
+			SystemTrayForm.ShowBalloonInfo($"Recorded {userActivities.Length} activities.");
 		}
 
 		public static string DataFilePath => Program.FilePathInAppData("UserActivity.csv");

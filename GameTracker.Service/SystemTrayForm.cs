@@ -9,7 +9,7 @@ namespace GameTracker
 			NotifyIcon = CreateNotifyIcon();
 		}
 
-		private NotifyIcon CreateNotifyIcon()
+		private static NotifyIcon CreateNotifyIcon()
 		{
 			var notifyIcon = new NotifyIcon
 			{

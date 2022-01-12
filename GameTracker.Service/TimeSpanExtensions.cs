@@ -10,6 +10,11 @@ namespace GameTracker
 				return "0 seconds";
 			}
 
+			if (timeSpan.TotalSeconds < 2)
+			{
+				return "1 second";
+			}
+
 			if (timeSpan.TotalSeconds < MaximumSecondsValue) {
 				return $"{timeSpan.TotalSeconds} seconds";
 			}
@@ -25,8 +30,8 @@ namespace GameTracker
 			return $"{timeSpan.TotalDays} days";
 		}
 
-		private readonly static int MaximumSecondsValue = 99;
-		private readonly static int MaximumMinutesValue = 99 * 60;
-		private readonly static int MaximumHoursValue = 99 * 60 * 60;
+		public readonly static int MaximumSecondsValue = 99;
+		public readonly static int MaximumMinutesValue = 99 * 60;
+		public readonly static int MaximumHoursValue = 99 * 60 * 60;
 	}
 }

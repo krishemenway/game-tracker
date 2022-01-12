@@ -2,7 +2,6 @@
 using GameTracker.ObservedProcesses;
 using GameTracker.ProcessSessions;
 using GameTracker.UserActivities;
-using GlobExpressions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Caching;
@@ -31,22 +29,15 @@ namespace GameTracker
 					PropertyNamingPolicy = null,
 					AllowTrailingCommas = true,
 				};
-
-			JsonOptions.Converters.Add(new GlobJsonConverter());
 		}
 
 		public GameTrackerService()
 		{
-			TypeDescriptor.AddAttributes(typeof(Glob), new TypeConverterAttribute(typeof(GlobTypeConverter)));
-
 			GamesDataUpdateTimer = new System.Timers.Timer(TimeSpan.FromDays(1).TotalMilliseconds) { AutoReset = true };
-			GamesDataUpdateTimer.Elapsed += (sender, args) => new GameStore().ReloadGamesFromCentralRepository();
+			GamesDataUpdateTimer.Elapsed += (sender, args) => GameStore.ReloadGamesFromCentralRepository();
 
 			ProcessScannerTimer = new System.Timers.Timer(AppSettings.Instance.ProcessScanIntervalInSeconds * 1000) { AutoReset = true };
 			ProcessScannerTimer.Elapsed += (sender, args) => { new ProcessScanner().ScanProcesses(ProcessScannerTimer); };
-
-			UserActivityBackfillerTimer = new System.Timers.Timer(TimeSpan.FromHours(1).TotalMilliseconds) { AutoReset = true };
-			UserActivityBackfillerTimer.Elapsed += (sender, args) => new UserActivityBackfiller().Backfill();
 
 			UserActivityFileMonitor = new HostFileChangeMonitor(new[] { UserActivityStore.DataFilePath }.ToList());
 			UserActivityFileMonitor.NotifyOnChanged((_) => { AllUserActivityCache.CancellationTokenSource.Cancel(); });
@@ -57,7 +48,7 @@ namespace GameTracker
 			WebHost = new WebHostBuilder()
 				.UseKestrel()
 				.UseStartup<WebHostConfiguration>()
-				.UseConfiguration(AppSettings.Instance.Configuration)
+				.UseConfiguration(AppSettings.Configuration)
 				.UseSerilog()
 				.UseUrls(WebHostListenAddress)
 				.Build();
@@ -75,10 +66,9 @@ namespace GameTracker
 		{
 			LogUsefulInformation();
 			ProcessScannerTimer.Start();
-			UserActivityBackfillerTimer.Start();
 			GamesDataUpdateTimer.Start();
 
-			Task.Delay(1000).ContinueWith(x => new GameStore().ReloadGamesFromCentralRepository());
+			Task.Delay(1000).ContinueWith(x => GameStore.ReloadGamesFromCentralRepository());
 
 			WebHost.StartAsync(cancellationToken).ContinueWith((func) => PrefetchUserProfile());
 			Application.Run(new SystemTrayForm());
@@ -89,12 +79,11 @@ namespace GameTracker
 		{
 			UserActivityFileMonitor?.Dispose();
 			ProcessScannerTimer?.Stop();
-			UserActivityBackfillerTimer?.Stop();
 			GamesDataUpdateTimer?.Stop();
 			return WebHost.StopAsync();
 		}
 
-		private Task PrefetchUserProfile()
+		private static Task PrefetchUserProfile()
 		{
 			Log.Information("Prefetching User Profile");
 			return HttpClient.GetAsync($"http://localhost:{AppSettings.Instance.WebPort}/WebAPI/UserProfile");
@@ -139,7 +128,6 @@ namespace GameTracker
 		private HostFileChangeMonitor WebAssetsFileMonitor { get; }
 		private System.Timers.Timer GamesDataUpdateTimer { get; set; }
 		private System.Timers.Timer ProcessScannerTimer { get; set; }
-		private System.Timers.Timer UserActivityBackfillerTimer { get; set; }
 		private IWebHost WebHost { get; set; }
 	}
 }

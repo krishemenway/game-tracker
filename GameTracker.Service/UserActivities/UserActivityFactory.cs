@@ -1,5 +1,4 @@
-﻿using GameMetadata;
-using GameTracker.ProcessSessions;
+﻿using GameTracker.ProcessSessions;
 using Guid = StronglyTyped.GuidIds;
 
 namespace GameTracker.UserActivities

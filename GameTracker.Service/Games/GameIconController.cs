@@ -1,5 +1,4 @@
-﻿using GameMetadata;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using StronglyTyped.StringIds;
 using System;

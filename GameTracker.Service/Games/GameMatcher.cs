@@ -1,8 +1,9 @@
-﻿using GameMetadata;
+﻿using GlobExpressions;
 using StronglyTyped.StringIds;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace GameTracker.GameMatching
+namespace GameTracker.Games
 {
 	public interface IGameMatcher
 	{
@@ -20,7 +21,7 @@ namespace GameTracker.GameMatching
 		{
 			foreach(var (gameId, game) in _findAllGamesFunc())
 			{
-				if (game.Pattern.IsMatch(filePath))
+				if (game.MatchExecutablePatterns.Any(pattern => new Glob(pattern).IsMatch(filePath)))
 				{
 					gameOrNull = game;
 					return true;

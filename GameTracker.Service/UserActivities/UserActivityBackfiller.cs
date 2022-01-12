@@ -17,18 +17,10 @@ namespace GameTracker.UserActivities
 			_userActivityService = userActivityService ?? new UserActivityService();
 		}
 
-		public void Backfill(bool forceExecute = false)
+		public void Backfill()
 		{
-			Log.Debug("Trying to run UserActivityBackfiller");
+			Log.Information("Started running user activity backfiller");
 
-			if (HasAlreadyExecutedToday() && !forceExecute)
-			{
-				return;
-			}
-
-			Log.Information("Running UserActivityBackfiller");
-
-			var executionTime = DateTimeOffset.Now;
 			var allUserActivityByProcessSessionId = _userActivityStore.FindAllUserActivity().ToDictionary(x => x.ProcessSessionId, x => x);
 
 			var unmatchedProcessSessions = _processSessionStore.FindAll()
@@ -40,15 +32,8 @@ namespace GameTracker.UserActivities
 				_userActivityStore.SaveActivity(userActivities);
 			}
 
-			LastExecutionTime = executionTime;
+			Log.Information("Finished running user activity backfiller");
 		}
-
-		private bool HasAlreadyExecutedToday()
-		{
-			return LastExecutionTime.HasValue && LastExecutionTime.Value.Date == DateTimeOffset.Now.Date;
-		}
-
-		public static DateTimeOffset? LastExecutionTime { get; set; } = null;
 
 		private readonly IProcessSessionStore _processSessionStore;
 		private readonly IUserActivityStore _userActivityStore;

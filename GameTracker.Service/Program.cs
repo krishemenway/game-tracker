@@ -37,7 +37,7 @@ namespace GameTracker
 			if (args.Contains(StartedWindowlessArg))
 			{
 				Log.Logger = new LoggerConfiguration()
-					.ReadFrom.Configuration(AppSettings.Instance.Configuration)
+					.ReadFrom.Configuration(AppSettings.Configuration)
 					.MinimumLevel.ControlledBy(LoggingLevelSwitch)
 					.WriteTo.Console()
 					.WriteTo.File(Path.Combine(ExecutableFolderPath, "GameTracker.Service.log"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 5)

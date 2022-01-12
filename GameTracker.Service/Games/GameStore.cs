@@ -1,5 +1,4 @@
-﻿using GameMetadata;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Serilog;
 using StronglyTyped.StringIds;
 using System;
@@ -42,7 +41,7 @@ namespace GameTracker.Games
 				.ToDictionary(game => game.GameId, game => game);
 		}
 
-		public Task ReloadGamesFromCentralRepository()
+		public static Task ReloadGamesFromCentralRepository()
 		{
 			Log.Information("Starting request for updated game information: {Uri}", AppSettings.Instance.GamesUrl);
 

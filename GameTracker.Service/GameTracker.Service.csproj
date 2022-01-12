@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<Version>0.0.1</Version>
@@ -28,10 +28,6 @@
 		<PackageReference Include="StronglyTyped.StringIds" Version="3.0.1" />
 		<PackageReference Include="System.Runtime.Caching" Version="6.0.0" />
 		<PackageReference Include="WindowsShortcutFactory" Version="1.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\GameMetadata\GameMetadata.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

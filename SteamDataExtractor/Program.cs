@@ -1,11 +1,7 @@
-﻿using GameMetadata;
-using GameTracker;
-using GlobExpressions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -35,7 +31,6 @@ namespace SteamDataExtractor
 
 		public static void Start(FileInfo gamesJsonFile, FileInfo steamCMDFile)
 		{
-			TypeDescriptor.AddAttributes(typeof(Glob), new TypeConverterAttribute(typeof(GlobTypeConverter)));
 			JsonOptions.Converters.Add(new TypeConverterJsonAdapter());
 
 			var games = FindAllGames(gamesJsonFile);
@@ -65,7 +60,7 @@ namespace SteamDataExtractor
 				}
 			}
 
-			games.Games = games.Games.OrderBy(x => x.GameId).ToList();
+			games.Games = games.Games.OrderBy(x => x.GameId).ToArray();
 			WriteNewGames(gamesJsonFile, games);
 		}
 
@@ -108,7 +103,7 @@ namespace SteamDataExtractor
 		{
 			Console.WriteLine($"Fetching AppIds: {string.Join(",", appIds)}!");
 
-			using (Process process = new Process())
+			using (var process = new Process())
 			{
 				process.StartInfo.FileName = steamCMD.FullName;
 				process.StartInfo.Arguments = $" +login anonymous {string.Join(" ", appIds.Select(appId => $"+app_info_print {appId}"))}";
@@ -131,7 +126,7 @@ namespace SteamDataExtractor
 
 			if (!missingAppIdsResult.Any())
 			{
-				return new long[0];
+				return Array.Empty<long>();
 			}
 
 			return missingAppIdsResult.Select(x => long.Parse(x.Groups[1].ToString())).ToArray();

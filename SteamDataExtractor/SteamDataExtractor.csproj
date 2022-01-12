@@ -12,8 +12,4 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.2" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20574.7" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GameMetadata\GameMetadata.csproj" />
-  </ItemGroup>
 </Project>

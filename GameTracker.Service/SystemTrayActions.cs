@@ -1,4 +1,5 @@
 ﻿using GameTracker.Games;
+using GameTracker.UserActivities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,7 +15,8 @@ namespace GameTracker
 			{
 				new SystemTrayAction { Name = "Profile",  Action = () => { Process.Start(OpenProfile); }},
 				new SystemTrayAction { Name = "Control Panel", Action = () => { Process.Start(OpenControlPanel); }},
-				new SystemTrayAction { Name = "Refresh Games", Action = () => { new GameStore().ReloadGamesFromCentralRepository(); }},
+				new SystemTrayAction { Name = "Refresh Games", Action = () => { GameStore.ReloadGamesFromCentralRepository(); }},
+				new SystemTrayAction { Name = "Rematch Process Sessions", Action = () => { new UserActivityBackfiller().Backfill(); }},
 			};
 
 			if (!AddToStartupAction.ShortcutExists())

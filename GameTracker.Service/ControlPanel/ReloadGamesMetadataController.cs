@@ -11,7 +11,7 @@ namespace GameTracker.ControlPanel
 		[HttpPost(nameof(ReloadGames))]
 		public async Task<ActionResult<ReloadGamesMetadataResponse>> ReloadGames()
 		{
-			await new GameStore().ReloadGamesFromCentralRepository();
+			await GameStore.ReloadGamesFromCentralRepository();
 			return new ReloadGamesMetadataResponse { Success = true };
 		}
 	}
