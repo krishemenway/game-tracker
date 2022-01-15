@@ -34,7 +34,7 @@ namespace GameTracker
 				&& Name == game.Name
 				&& ReleaseDate == game.ReleaseDate
 				&& SteamId == game.SteamId
-				&& MatchExecutablePatterns.SequenceEqual(game.MatchExecutablePatterns)
+				&& MatchExecutablePatterns != null && MatchExecutablePatterns.SequenceEqual(game.MatchExecutablePatterns)
 				&& IconUri == game.IconUri;
 		}
 
