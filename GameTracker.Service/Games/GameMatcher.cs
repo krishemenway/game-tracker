@@ -19,9 +19,9 @@ namespace GameTracker.Games
 
 		public bool TryMatch(string filePath, out IGame gameOrNull)
 		{
-			foreach(var (gameId, game) in _findAllGamesFunc())
+			foreach (var (gameId, game) in _findAllGamesFunc())
 			{
-				if (game.MatchExecutablePatterns.Any(pattern => new Glob(pattern).IsMatch(filePath)))
+				if (game.MatchExecutablePatterns.Any(pattern => new Glob(pattern, GlobOptions.CaseInsensitive).IsMatch(filePath)))
 				{
 					gameOrNull = game;
 					return true;
