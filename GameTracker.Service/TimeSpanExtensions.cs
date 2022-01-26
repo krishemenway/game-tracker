@@ -6,7 +6,8 @@ namespace GameTracker
 	{
 		public static string HumanReadable(this TimeSpan timeSpan)
 		{
-			if (timeSpan.TotalSeconds < 1) {
+			if (timeSpan.TotalSeconds < 1)
+			{
 				return "0 seconds";
 			}
 
@@ -17,20 +18,26 @@ namespace GameTracker
 
 			if (timeSpan.TotalSeconds < MaximumUnitSize)
 			{
-				return $"{timeSpan.TotalSeconds:N2} seconds";
+				return $"{RenderNumberTrimmed(timeSpan.TotalSeconds)} seconds";
 			}
 
 			if (timeSpan.TotalMinutes < MaximumUnitSize)
 			{
-				return $"{timeSpan.TotalMinutes:N2} minutes";
+				return $"{RenderNumberTrimmed(timeSpan.TotalMinutes)} minutes";
 			}
 
 			if (timeSpan.TotalHours < MaximumUnitSize)
 			{
-				return $"{timeSpan.TotalHours:N2} hours";
+				return $"{RenderNumberTrimmed(timeSpan.TotalHours)} hours";
 			}
 
-			return $"{timeSpan.TotalDays:N2} days";
+			return $"{RenderNumberTrimmed(timeSpan.TotalDays)} days";
+		}
+
+		private static string RenderNumberTrimmed(double value)
+		{
+			var valueAsString = value.ToString("N2");
+			return valueAsString.EndsWith(".00") || valueAsString.EndsWith(",00") ? valueAsString.Split(',', '.')[0] : valueAsString;
 		}
 
 		public readonly static int MaximumUnitSize = 100;
