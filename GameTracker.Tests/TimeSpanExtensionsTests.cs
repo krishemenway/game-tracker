@@ -18,10 +18,19 @@ namespace GameTracker.Tests
 		public void ShouldReturnTimeSpanInSecondsWhenLessThanMaximumSecondsValue()
 		{
 			TimeSpan.FromSeconds(1).HumanReadable().Should().Be("1 second");
-			TimeSpan.FromMilliseconds(1500).HumanReadable().Should().Be("1 second");
+			TimeSpan.FromSeconds(1.5).HumanReadable().Should().Be("1 second");
 
 			TimeSpan.FromSeconds(25).HumanReadable().Should().Be("25 seconds");
-			TimeSpan.FromSeconds(TimeSpanExtensions.MaximumSecondsValue - 1).HumanReadable().Should().Be($"{TimeSpanExtensions.MaximumSecondsValue - 1} seconds");
+			TimeSpan.FromSeconds(25.1556).HumanReadable().Should().Be("25.16 seconds");
+			TimeSpan.FromSeconds(99.99).HumanReadable().Should().Be("99.99 seconds");
+		}
+
+		[Test]
+		public void ShouldReturnTimeSpanInMinutesWhenLessThanMaximumMinutesValue()
+		{
+			TimeSpan.FromSeconds(100).HumanReadable().Should().Be("1.67 minutes");
+			TimeSpan.FromMinutes(20.54).HumanReadable().Should().Be("20.54 minutes");
+			TimeSpan.FromMinutes(99.99).HumanReadable().Should().Be("99.99 minutes");
 		}
 	}
 }
