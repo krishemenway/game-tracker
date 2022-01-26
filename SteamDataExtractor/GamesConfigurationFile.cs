@@ -14,7 +14,7 @@ namespace SteamDataExtractor
 		string Name { get; }
 		DateTime? ReleaseDate { get; }
 		long? SteamId { get; }
-		string[] ExecutableMatchPatterns { get; }
+		string[] MatchExecutablePatterns { get; }
 		string IconUri { get; }
 	}
 
@@ -24,7 +24,7 @@ namespace SteamDataExtractor
 		public string Name { get; set; }
 		public DateTime? ReleaseDate { get; set; }
 		public long? SteamId { get; set; }
-		public string[] ExecutableMatchPatterns { get; set; }
+		public string[] MatchExecutablePatterns { get; set; }
 		public string IconUri { get; set; }
 
 		public bool Matches(Game game)
@@ -33,7 +33,7 @@ namespace SteamDataExtractor
 				&& Name == game.Name
 				&& ReleaseDate == game.ReleaseDate
 				&& SteamId == game.SteamId
-				&& ExecutableMatchPatterns.SequenceEqual(game.ExecutableMatchPatterns)
+				&& MatchExecutablePatterns != null && MatchExecutablePatterns.SequenceEqual(game.MatchExecutablePatterns)
 				&& IconUri == game.IconUri;
 		}
 
