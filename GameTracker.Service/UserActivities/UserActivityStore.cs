@@ -53,7 +53,6 @@ namespace GameTracker.UserActivities
 			}
 
 			Log.Information("Recorded {UserActivityCount} activities.", userActivities.Length);
-			SystemTrayForm.ShowBalloonInfo($"Recorded {userActivities.Length} activities.");
 		}
 
 		public static string DataFilePath => Program.FilePathInAppData("UserActivity.csv");
