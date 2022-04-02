@@ -1,6 +1,6 @@
 import { Observable, ObservableArray } from "@residualeffect/reactor";
 import { Http } from "Common/Http";
-import { Loadable } from "Common/Loadable";
+import { Receiver } from "Common/Loading";
 import { EditableField } from "Common/EditableField";
 import { UserProfileTheme } from "UserProfile/UserProfileTheme";
 
@@ -107,30 +107,30 @@ export class ControlPanelSettings {
 
 export class ControlPanelService {
 	constructor() {
-		this.Update = new Loadable<any>();
-		this.Toggle = new Loadable<any>();
-		this.Status = new Loadable<ControlPanelSettings>("Something went wrong loading observed processes from the server. Can only view this tool on the device running the service.");
+		this.Update = new Receiver<any>("Failed to update.");
+		this.Toggle = new Receiver<any>("Failed to toggle.");
+		this.Status = new Receiver<ControlPanelSettings>("Something went wrong loading observed processes from the server. Can only view this tool on the device running the service.");
 	}
 
 	public LoadStatus(): void {
-		Http.get<ControlPanelStatusResponse, ControlPanelSettings>("/WebAPI/ControlPanel/Status", this.Status, (r) => new ControlPanelSettings(r));
+		this.Status.Start(Http.get<ControlPanelStatusResponse, ControlPanelSettings>("/WebAPI/ControlPanel/Status", (r) => new ControlPanelSettings(r)));
 	}
 
 	public UpdateSetting(field: EditableField, onComplete: () => void): void {
 		if (field.HasChanged.Value && field.CanMakeRequest()) {
-			Http.post("/WebAPI/ControlPanel/SaveSetting", { Field: field.FieldId, Value: field.Current.Value }, this.Update).then(() => { field.OnSaved(); onComplete(); });
+			this.Update.Start(Http.post("/WebAPI/ControlPanel/SaveSetting", { Field: field.FieldId, Value: field.Current.Value }).then(() => { field.OnSaved(); onComplete(); }));
 		} else {
 			onComplete();
 		}
 	}
 
 	public OnToggleIgnored(observableProcess: ModifiableObservedProcess, ignore: boolean): void {
-		Http.post("/WebAPI/ControlPanel/ToggleIgnorePath", { FilePath: observableProcess.ProcessPath, Ignore: ignore }, this.Toggle).then((_) => { observableProcess.Ignore.Value = ignore; });
+		this.Toggle.Start(Http.post("/WebAPI/ControlPanel/ToggleIgnorePath", { FilePath: observableProcess.ProcessPath, Ignore: ignore }).then((_) => { observableProcess.Ignore.Value = ignore; }));
 	}
 
-	public Status: Loadable<ControlPanelSettings>;
-	public Update: Loadable<any>;
-	public Toggle: Loadable<any>;
+	public Status: Receiver<ControlPanelSettings>;
+	public Update: Receiver<any>;
+	public Toggle: Receiver<any>;
 
 	static get Instance(): ControlPanelService {
 		if (this._instance === undefined) {

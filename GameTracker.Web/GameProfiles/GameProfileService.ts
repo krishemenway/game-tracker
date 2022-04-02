@@ -1,6 +1,6 @@
 import { GameProfile } from "GameProfiles/GameProfile";
 import { Http } from "Common/Http";
-import { Loadable } from "Common/Loadable";
+import { Receiver } from "Common/Loading";
 import { GameStore } from "Games/GameStore";
 
 export interface GameProfileResponse {
@@ -13,20 +13,24 @@ export class GameProfileService {
 		this.GameProfilesByGameId = {};
 	}
 
-	public FindOrCreateProfile(gameId: string): Loadable<GameProfile> {
+	public FindOrCreateProfile(gameId: string): Receiver<GameProfile> {
 		if (this.GameProfilesByGameId[gameId] === undefined) {
-			this.GameProfilesByGameId[gameId] = new Loadable<GameProfile>("Failed to load game profile.");
+			this.GameProfilesByGameId[gameId] = new Receiver<GameProfile>("Failed to load game profile.");
 		}
 
 		return this.GameProfilesByGameId[gameId];
 	}
 
 	public LoadProfile(gameId: string): void {
-		Http.get<GameProfileResponse, GameProfile>(`/WebAPI/GameProfile/${gameId}`, this.FindOrCreateProfile(gameId), (response) => response.GameProfile)
-			.then((response) => { GameStore.Instance.LoadGames({ [response.GameProfile.Game.GameId]: response.GameProfile.Game }); });
+		const profile = Http.get<GameProfileResponse, GameProfile>(`/WebAPI/GameProfile/${gameId}`, (response) => {
+			GameStore.Instance.LoadGames({ [response.GameProfile.Game.GameId]: response.GameProfile.Game });
+			return response.GameProfile
+		});
+
+		this.FindOrCreateProfile(gameId).Start(profile);
 	}
 
-	public GameProfilesByGameId: Dictionary<Loadable<GameProfile>>;
+	public GameProfilesByGameId: Dictionary<Receiver<GameProfile>>;
 
 	static get Instance(): GameProfileService {
 		if (this._instance === undefined) {

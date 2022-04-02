@@ -6,7 +6,10 @@ import Loading from "Common/Loading";
 import ListOf from "Common/ListOf";
 import ProcessManager from "ControlPanel/ProcessManager";
 import ToggleTextField from "Common/ToggleTextField";
+import ToggleColorPicker from "Common/ToggleColorPicker";
 import { EditableField } from "Common/EditableField";
+import LoadingSpinner from "Common/LoadingSpinner";
+import LoadingErrorMessages from "Common/LoadingErrorMessages";
 
 
 interface NameValueDescription {
@@ -65,8 +68,12 @@ export const SectionHeader: React.FC<{ headerText: string }> = ({ headerText }) 
 };
 
 const ControlPanelTextField: React.FC<{ field: EditableField, minWidth: string }> = ({ field, minWidth }) => {
-	return <ToggleTextField {...{ field, minWidth, loadable: ControlPanelService.Instance.Update }} onSave={(onComplete) => ControlPanelService.Instance.UpdateSetting(field, onComplete)} />;
-}
+	return <ToggleTextField {...{ field, minWidth, receiver: ControlPanelService.Instance.Update }} onSave={(onComplete) => ControlPanelService.Instance.UpdateSetting(field, onComplete)} />;
+};
+
+const ControlPanelColorPicker: React.FC<{ field: EditableField }> = ({ field }) => {
+	return <ToggleColorPicker {...{ field, receiver: ControlPanelService.Instance.Update }} onSave={(onComplete) => ControlPanelService.Instance.UpdateSetting(field, onComplete)} />;
+};
 
 const GetEditableSettings = (settings: ControlPanelSettings): NameValueDescription[] => {
 	return [
@@ -82,13 +89,13 @@ const GetEditableSettings = (settings: ControlPanelSettings): NameValueDescripti
 
 const GetThemeSettings = (settings: ControlPanelSettings): NameValueDescription[] => {
 	return [
-		{ Name: "Page Background Color", Description: "Color that will be used for the background of the page.", Value: <ControlPanelTextField field={settings.PageBackgroundColor} minWidth="200px" /> },
-		{ Name: "Primary Text Color", Description: "Color that is used for all text that should be receiving the primary focus.", Value: <ControlPanelTextField field={settings.PrimaryTextColor} minWidth="200px" /> },
-		{ Name: "Secondary Text Color", Description: "Color that is used for all text that should be receiving the secondary focus.", Value: <ControlPanelTextField field={settings.SecondaryTextColor} minWidth="200px" /> },
-		{ Name: "Panel Background Color", Description: "Color used for the background of sections. Should contrast well with the page background color and text colors.", Value: <ControlPanelTextField field={settings.PanelBackgroundColor} minWidth="200px" /> },
-		{ Name: "Panel Alternating Background Color", Description: "Color used for the alternate background for tables and lists. Should contrast well with the the panel background color and text colors.", Value: <ControlPanelTextField field={settings.PanelAlternatingBackgroundColor} minWidth="200px" /> },
-		{ Name: "Panel Border Color", Description: "Color used for the outline of the panels. Should contrast well with the panel background color.", Value: <ControlPanelTextField field={settings.PanelBorderColor} minWidth="200px" /> },
-		{ Name: "Graph Primary Color", Description: "Color used for bars and pies and stuff on charts.", Value: <ControlPanelTextField field={settings.GraphPrimaryColor} minWidth="200px" /> },
+		{ Name: "Page Background Color", Description: "Color that will be used for the background of the page.", Value: <ControlPanelColorPicker field={settings.PageBackgroundColor} /> },
+		{ Name: "Primary Text Color", Description: "Color that is used for all text that should be receiving the primary focus.", Value: <ControlPanelColorPicker field={settings.PrimaryTextColor} /> },
+		{ Name: "Secondary Text Color", Description: "Color that is used for all text that should be receiving the secondary focus.", Value: <ControlPanelColorPicker field={settings.SecondaryTextColor} /> },
+		{ Name: "Panel Background Color", Description: "Color used for the background of sections. Should contrast well with the page background color and text colors.", Value: <ControlPanelColorPicker field={settings.PanelBackgroundColor} /> },
+		{ Name: "Panel Alternating Background Color", Description: "Color used for the alternate background for tables and lists. Should contrast well with the the panel background color and text colors.", Value: <ControlPanelColorPicker field={settings.PanelAlternatingBackgroundColor} /> },
+		{ Name: "Panel Border Color", Description: "Color used for the outline of the panels. Should contrast well with the panel background color.", Value: <ControlPanelColorPicker field={settings.PanelBorderColor} /> },
+		{ Name: "Graph Primary Color", Description: "Color used for bars and pies and stuff on charts.", Value: <ControlPanelColorPicker field={settings.GraphPrimaryColor} /> },
 	];
 };
 
@@ -113,8 +120,11 @@ export default () => {
 	return (
 		<div className={clsx(layout.centerLayout1000, layout.paddingTop, layout.paddingHorizontal)} style={{minHeight: "100%"}}>
 			<Loading
-				loadables={[ControlPanelService.Instance.Status]}
+				receivers={[ControlPanelService.Instance.Status]}
 				successComponent={(status) => <LoadedControlPanel {...{ settings: status }} />}
+				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				pendingComponent={<LoadingSpinner />}
+				notStartedComponent={<LoadingSpinner />}
 			/>
 		</div>
 	);

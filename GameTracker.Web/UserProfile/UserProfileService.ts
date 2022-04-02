@@ -1,6 +1,6 @@
 import { UserActivity } from "UserActivities/UserActivity";
 import { Http } from "Common/Http";
-import { Loadable } from "Common/Loadable";
+import { Receiver } from "Common/Loading";
 import { Game, GameStore } from "Games/GameStore";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import { UserActivityService } from "UserActivities/UserActivityService";
@@ -20,18 +20,18 @@ export interface UserProfile {
 
 export class UserProfileService {
 	constructor() {
-		this.LoadingUserProfile = new Loadable<UserProfile>("Failed to load the user profile.");
+		this.UserProfile = new Receiver<UserProfile>("Failed to load the user profile.");
 	}
 
 	public LoadProfile(): void {
-		Http.get<UserProfile>("/WebAPI/UserProfile", this.LoadingUserProfile)
-			.then((response) => {
-				GameStore.Instance.LoadGames(response.GamesByGameId);
-				UserActivityService.Instance.AddLoadedActivities(response.ActivitiesByDate);
-			});
+		this.UserProfile.Start(Http.get<UserProfile>("/WebAPI/UserProfile").then((response) => {
+			GameStore.Instance.LoadGames(response.GamesByGameId);
+			UserActivityService.Instance.AddLoadedActivities(response.ActivitiesByDate);
+			return response;
+		}));
 	}
 
-	public LoadingUserProfile: Loadable<UserProfile>;
+	public UserProfile: Receiver<UserProfile>;
 
 	static get Instance(): UserProfileService {
 		if (this._instance === undefined) {

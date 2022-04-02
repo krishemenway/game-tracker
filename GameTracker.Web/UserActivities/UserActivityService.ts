@@ -1,5 +1,5 @@
 import * as moment from "moment";
-import { Loadable } from "Common/Loadable";
+import { Receiver } from "Common/Loading";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import { Http } from "Common/Http";
 import { Game, GameStore } from "Games/GameStore";
@@ -17,8 +17,12 @@ export class UserActivityService {
 	}
 
 	public LoadForMonth(year: number, month: number): void {
-		Http.get<UserActivityForMonthResponse>(`/WebAPI/UserActivityForMonth?year=${year}&month=${month}`, this.FindOrCreateUserActivityForMonth(`${year}-${month}`))
-			.then((response) => { GameStore.Instance.LoadGames(response.GamesByGameId); });
+		const promise = Http.get<UserActivityForMonthResponse>(`/WebAPI/UserActivityForMonth?year=${year}&month=${month}`, (response) => {
+			GameStore.Instance.LoadGames(response.GamesByGameId);
+			return response;
+		});
+
+		this.FindOrCreateUserActivityForMonth(`${year}-${month}`).Start(promise);
 	}
 
 	public LoadForDate(dateKey: string): void {
@@ -26,21 +30,25 @@ export class UserActivityService {
 		const endTime = startTime.clone().add(1, "day");
 		const url = `/WebAPI/UserActivityPerDay?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
-		Http.get<UserActivityPerDayResponse, UserActivityForDate>(url, this.FindOrCreateUserActivityForDate(dateKey), (response) => response.UserActivityPerDay[dateKey])
-			.then((response) => { GameStore.Instance.LoadGames(response.GamesByGameId); })
+		const promise = Http.get<UserActivityPerDayResponse, UserActivityForDate>(url, (response) => {
+			GameStore.Instance.LoadGames(response.GamesByGameId);
+			return response.UserActivityPerDay[dateKey];
+		});
+
+		this.FindOrCreateUserActivityForDate(dateKey).Start(promise);
 	}
 
-	public FindOrCreateUserActivityForDate(dayKey: string): Loadable<UserActivityForDate> {
+	public FindOrCreateUserActivityForDate(dayKey: string): Receiver<UserActivityForDate> {
 		if (this.UserActivityByDate[dayKey] === undefined) {
-			this.UserActivityByDate[dayKey] = new Loadable<UserActivityForDate>(`Failed to load activity for date ${dayKey}!`);
+			this.UserActivityByDate[dayKey] = new Receiver<UserActivityForDate>(`Failed to load activity for date ${dayKey}!`);
 		}
 
 		return this.UserActivityByDate[dayKey];
 	}
 
-	public FindOrCreateUserActivityForMonth(monthKey: string): Loadable<UserActivityForMonthResponse> {
+	public FindOrCreateUserActivityForMonth(monthKey: string): Receiver<UserActivityForMonthResponse> {
 		if (this.UserActivityForMonth[monthKey] === undefined) {
-			this.UserActivityForMonth[monthKey] = new Loadable<UserActivityForMonthResponse>(`Failed to load activity for Month ${monthKey}!`);
+			this.UserActivityForMonth[monthKey] = new Receiver<UserActivityForMonthResponse>(`Failed to load activity for Month ${monthKey}!`);
 		}
 
 		return this.UserActivityForMonth[monthKey];
@@ -48,12 +56,12 @@ export class UserActivityService {
 
 	public AddLoadedActivities(loadedUserActivities: Dictionary<UserActivityForDate>): void {
 		Object.keys(loadedUserActivities).forEach((dateKey) => {
-			this.FindOrCreateUserActivityForDate(dateKey).SucceededLoading(loadedUserActivities[dateKey]);
+			this.FindOrCreateUserActivityForDate(dateKey).Succeeded(loadedUserActivities[dateKey]);
 		});
 	}
 
-	public UserActivityForMonth: Dictionary<Loadable<UserActivityForMonthResponse>>;
-	public UserActivityByDate: Dictionary<Loadable<UserActivityForDate>>
+	public UserActivityForMonth: Dictionary<Receiver<UserActivityForMonthResponse>>;
+	public UserActivityByDate: Dictionary<Receiver<UserActivityForDate>>
 
 	static get Instance(): UserActivityService {
 		if (this._instance === undefined) {

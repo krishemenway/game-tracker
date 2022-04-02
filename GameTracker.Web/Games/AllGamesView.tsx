@@ -9,6 +9,8 @@ import ListOf from "Common/ListOf";
 import GameLink from "Games/GameLink";
 import GameIcon from "Games/GameIcon";
 import { SortGamesByName } from "Games/SortGamesByName";
+import LoadingErrorMessages from "Common/LoadingErrorMessages";
+import LoadingSpinner from "Common/LoadingSpinner";
 
 export default () => {
 	const layout = useLayoutStyles();
@@ -18,8 +20,11 @@ export default () => {
 	return (
 		<div className={layout.centerLayout1000}>
 			<Loading
-				loadables={[UserProfileService.Instance.LoadingUserProfile]}
+				receivers={[UserProfileService.Instance.UserProfile]}
 				successComponent={(profile) => <LoadedAllGamesView userProfile={profile} />}
+				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				pendingComponent={<LoadingSpinner />}
+				notStartedComponent={<LoadingSpinner />}
 			/>
 		</div>
 	);

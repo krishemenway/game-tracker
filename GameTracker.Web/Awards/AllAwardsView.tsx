@@ -7,6 +7,8 @@ import StatisticsSection from "Common/StatisticsSection";
 import PageHeader from "Common/PageHeader";
 import GameAwardBadge from "Awards/GameAwardBadge";
 import ListOf from "Common/ListOf";
+import LoadingErrorMessages from "Common/LoadingErrorMessages";
+import LoadingSpinner from "Common/LoadingSpinner";
 
 export default () => {
 	const layout = useLayoutStyles();
@@ -16,8 +18,11 @@ export default () => {
 	return (
 		<div className={layout.centerLayout1000}>
 			<Loading
-				loadables={[UserProfileService.Instance.LoadingUserProfile]}
+				receivers={[UserProfileService.Instance.UserProfile]}
 				successComponent={(profile) => <LoadedAllAwardsView userProfile={profile} />}
+				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				pendingComponent={<LoadingSpinner />}
+				notStartedComponent={<LoadingSpinner />}
 			/>
 		</div>
 	);

@@ -1,8 +1,7 @@
 import { Game } from "Games/GameStore";
 import { UserActivity } from "UserActivities/UserActivity";
 
-export interface UserActivityForMonthResponse
-{
+export interface UserActivityForMonthResponse {
 	AllUserActivity: UserActivity[];
 	TimeSpentInSecondsByHour: Dictionary<number>;
 	TimeSpentInSecondsByGameId: Dictionary<number>;

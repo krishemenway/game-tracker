@@ -14,6 +14,8 @@ import TimeSpentByHourChart from "Common/TimeSpentByHourChart";
 import GameAwardBadge from "Awards/GameAwardBadge";
 import ListOf from "Common/ListOf";
 import ListWithShowMore from "Common/ListWithShowMore";
+import LoadingErrorMessages from "Common/LoadingErrorMessages";
+import LoadingSpinner from "Common/LoadingSpinner";
 
 interface GameProfileProps {
 	gameId: string;
@@ -28,8 +30,11 @@ export default (props: GameProfileProps) => {
 	return (
 		<div className={clsx(layout.centerLayout1000)}>
 			<Loading
-				loadables={[GameProfileService.Instance.FindOrCreateProfile(props.gameId), UserProfileService.Instance.LoadingUserProfile]}
+				receivers={[GameProfileService.Instance.FindOrCreateProfile(props.gameId), UserProfileService.Instance.UserProfile]}
 				successComponent={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userProfile={userProfile} />}
+				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				pendingComponent={<LoadingSpinner />}
+				notStartedComponent={<LoadingSpinner />}
 			/>
 		</div>
 	);

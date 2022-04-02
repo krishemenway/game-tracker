@@ -15,6 +15,8 @@ import TimeSpentByHourChart from "Common/TimeSpentByHourChart";
 import DayLink from "UserActivities/DayLink";
 import GameLink from "Games/GameLink";
 import ThemeStore from "UserProfile/UserProfileTheme";
+import LoadingErrorMessages from "Common/LoadingErrorMessages";
+import LoadingSpinner from "Common/LoadingSpinner";
 
 const MonthView: React.FC<{ year: string; month: string; className?: string }> = (props) => {
 	const layout = useLayoutStyles();
@@ -27,8 +29,11 @@ const MonthView: React.FC<{ year: string; month: string; className?: string }> =
 	return (
 		<div className={layout.centerLayout1000}>
 			<Loading
-				loadables={[UserProfileService.Instance.LoadingUserProfile, UserActivityService.Instance.FindOrCreateUserActivityForMonth(`${year}-${month}`)]}
+				receivers={[UserProfileService.Instance.UserProfile, UserActivityService.Instance.FindOrCreateUserActivityForMonth(`${year}-${month}`)]}
 				successComponent={(userProfile, userActivityForMonth) => <LoadedMonthView monthKey={`${props.year}-${props.month}`} userName={userProfile.UserName} userActivityForMonth={userActivityForMonth} />}
+				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				pendingComponent={<LoadingSpinner />}
+				notStartedComponent={<LoadingSpinner />}
 			/>
 		</div>
 	);

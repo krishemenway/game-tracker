@@ -13,6 +13,8 @@ import PageHeader from "Common/PageHeader";
 import PageFooter from "Common/PageFooter";
 import TimeSpentByHourChart from "Common/TimeSpentByHourChart";
 import ListOf from "Common/ListOf";
+import LoadingErrorMessages from "Common/LoadingErrorMessages";
+import LoadingSpinner from "Common/LoadingSpinner";
 
 const DayView: React.FC<{ year:string; month: string; day: string; className?: string }> = (props) => {
 	const layout = useLayoutStyles();
@@ -24,8 +26,11 @@ const DayView: React.FC<{ year:string; month: string; day: string; className?: s
 	return (
 		<div className={layout.centerLayout1000}>
 			<Loading
-				loadables={[UserActivityService.Instance.FindOrCreateUserActivityForDate(dateKey), UserProfileService.Instance.LoadingUserProfile]}
+				receivers={[UserActivityService.Instance.FindOrCreateUserActivityForDate(dateKey), UserProfileService.Instance.UserProfile]}
 				successComponent={(userActivityForDate, userProfile) => <LoadedDayView dateKey={dateKey} userActivityForDate={userActivityForDate} userName={userProfile.UserName} />}
+				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				pendingComponent={<LoadingSpinner />}
+				notStartedComponent={<LoadingSpinner />}
 			/>
 		</div>
 	);

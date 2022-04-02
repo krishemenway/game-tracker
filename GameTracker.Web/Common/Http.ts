@@ -1,18 +1,11 @@
-import { Loadable } from "Common/Loadable";
-
 export class Http {
 	/**
-	 * @param url Url path for get request
+	 * @param url Url path for get request.
+	 * @param transformFunc Optional conversion function if you want something more complex than the response object stored.
 	 * @template TResponse Describes the type for the json response
 	 */
-	public static get<TResponse, TLoadableData = TResponse>(url: string, loadable: Loadable<TLoadableData>, transformFunc?: (response: TResponse) => TLoadableData): Promise<TResponse> {
-		return new Promise<TResponse>((onFulfilled, onRejected) => {
-			if (!loadable.CanMakeRequest()) {
-				return;
-			}
-
-			loadable.StartLoading();
-
+	public static get<TResponse, TTransformedData = TResponse>(url: string, transformFunc?: (response: TResponse) => TTransformedData): Promise<TTransformedData> {
+		return new Promise<TTransformedData>((onFulfilled, onRejected) => {
 			fetch(url)
 				.then((response) => {
 					if (!response.ok) {
@@ -21,11 +14,9 @@ export class Http {
 
 					return response.json();
 				})
-				.then((jsonResponse) => {
-					loadable.SucceededLoading(transformFunc === undefined ? jsonResponse : transformFunc(jsonResponse));
-					onFulfilled(jsonResponse as TResponse);
-				}, (reason) => {
-					loadable.FailedLoading(reason.message);
+				.then((jsonResponse: TResponse) => {
+					onFulfilled(transformFunc === undefined ? jsonResponse as unknown as TTransformedData : transformFunc(jsonResponse));
+				}, (reason: Error) => {
 					onRejected(reason);
 				});
 		});
@@ -33,20 +24,14 @@ export class Http {
 
 	/**
 	 * @param url Url path for get request
-	 * @param request Request for the post body
-	 * @param loadable Loadable to track progress of request
+	 * @param request Request object to be JSON.stringified for the post body.
+	 * @param transformFunc Optional conversion function if you want something more complex than the response object stored.
 	 * @template TRequest Describes the type for the json request
 	 * @template TResponse Describes the type for the json response
 	 */
-	public static post<TRequest, TResponse>(url: string, request: TRequest, loadable: Loadable<TResponse>): Promise<TResponse> {
-		return new Promise<TResponse>((onFulfilled, onRejected) => {
-			if (!loadable.CanMakeRequest()) {
-				return;
-			}
-
-			loadable.StartLoading();
-
-			fetch(url, { 
+	public static post<TRequest, TResponse, TLoadableData>(url: string, request: TRequest, transformFunc?: (response: TResponse) => TLoadableData): Promise<TLoadableData> {
+		return new Promise<TLoadableData>((onFulfilled, onRejected) => {
+			fetch(url, {
 				body: JSON.stringify(request),
 				method: "post",
 				headers: { "Content-Type": "application/json" },
@@ -58,11 +43,9 @@ export class Http {
 
 				return response.json();
 			})
-			.then((jsonResponse) => {
-				loadable.SucceededLoading(jsonResponse);
-				onFulfilled(jsonResponse as TResponse);
-			}, (reason) => {
-				loadable.FailedLoading(reason);
+			.then((jsonResponse: TResponse) => {
+				onFulfilled(transformFunc === undefined ? jsonResponse as unknown as TLoadableData : transformFunc(jsonResponse));
+			}, (reason: Error) => {
 				onRejected(reason);
 			});
 		});
