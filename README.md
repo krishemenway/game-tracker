@@ -33,3 +33,7 @@ project for tracking what games you are playing and when and creating your own p
 		* Maybe Origin has an API somewhere? Hah
 	* UPlay
 		* No research has been done here.
+* Yearly Game Awards
+	* Most Played Game of Year
+	* Longest session of year
+	* Belongs on a year profile?
