@@ -1,20 +1,20 @@
 import * as React from "react";
 import clsx from "clsx";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
-import { ControlPanelService, ControlPanelSettings, ModifiableObservedProcess } from "ControlPanel/ControlPanelService";
+import { ControlPanelService, ModifiableObservedProcess } from "ControlPanel/ControlPanelService";
 import { useObservable } from "Common/useObservable";
 import { SectionHeader } from "ControlPanel/ControlPanel";
 import SearchIcon from "Icons/SearchIcon";
 import Paginator from "Common/Paginator";
 import { HasValue } from "Common/Strings";
 import UserProfileThemeStore from "UserProfile/UserProfileTheme";
+import Loading from "Common/Loading";
+import LoadingErrorMessages from "Common/LoadingErrorMessages";
+import LoadingSpinner from "Common/LoadingSpinner";
 
-const ProcessManager: React.FC<{ settings: ControlPanelSettings }> = (props) => {
+const ProcessManager: React.FC = () => {
 	const [text, layout, background] = [useTextStyles(), useLayoutStyles(), useBackgroundStyles()];
-	const processes = useObservable(props.settings.AllObservedProcesses);
-	const [searchFilter, setSearchFilter] = React.useState("");
-
-	const filteredProcesses = HasValue(searchFilter) ? processes.filter((p) => p.ProcessPath.toLowerCase().indexOf(searchFilter.toLowerCase()) > -1) : processes;
+	const searchQuery = useObservable(ControlPanelService.Instance.SearchQuery);
 
 	return (
 		<div className={clsx(background.default, layout.paddingAll, layout.marginBottomDouble)}>
@@ -28,10 +28,10 @@ const ProcessManager: React.FC<{ settings: ControlPanelSettings }> = (props) => 
 
 						<input
 							type="text"
-							value={searchFilter}
+							value={searchQuery}
 							style={{ padding: "4px 0" }}
 							placeholder="Search ..."
-							onChange={(evt) => setSearchFilter(evt.currentTarget.value)}
+							onChange={(evt) => ControlPanelService.Instance.SearchQuery.Value = evt.currentTarget.value}
 							className={clsx(layout.width100, background.borderBottom, layout.marginBottomHalf, text.primary)}
 						/>
 					</div>
@@ -41,14 +41,22 @@ const ProcessManager: React.FC<{ settings: ControlPanelSettings }> = (props) => 
 				</div>
 			</div>
 
-			<Paginator
-				items={filteredProcesses}
-				createKey={(p) => p.Id.toString()}
-				renderItem={(p) => <ProcessListItem key={p.ProcessPath} process={p} />}
-				emptyItem={() => new ModifiableObservedProcess({ ProcessName: "", ProcessPath: "", Ignore: false })}
-				listClassName={clsx(background.bgAlternateDarken)}
-				listItemClassName={() => clsx(layout.flexRow, layout.paddingVertical, layout.paddingLeft)}
-				pageSize={9}
+			<Loading
+				receivers={[ControlPanelService.Instance.Processes]}
+				successComponent={(processes) => (
+					<Paginator
+						items={processes}
+						createKey={(p) => p.Id.toString()}
+						renderItem={(p) => <ProcessListItem key={p.ProcessPath} process={p} />}
+						emptyItem={() => new ModifiableObservedProcess({ ProcessName: "", ProcessPath: "", Ignore: false })}
+						listClassName={clsx(background.bgAlternateDarken)}
+						listItemClassName={() => clsx(layout.flexRow, layout.paddingVertical, layout.paddingLeft)}
+						pageSize={9}
+					/>
+				)}
+				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				pendingComponent={<LoadingSpinner />}
+				notStartedComponent={<LoadingSpinner />}
 			/>
 		</div>
 	);

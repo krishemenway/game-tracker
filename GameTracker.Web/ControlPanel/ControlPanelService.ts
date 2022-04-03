@@ -1,4 +1,4 @@
-import { Observable, ObservableArray } from "@residualeffect/reactor";
+import { Observable, ObservableArray, RateLimiter, RateLimitType, Unsubscribe, ValueFilter } from "@residualeffect/reactor";
 import { Http } from "Common/Http";
 import { Receiver } from "Common/Loading";
 import { EditableField } from "Common/EditableField";
@@ -51,6 +51,10 @@ export interface ObservedProcess {
 	Ignore: boolean;
 }
 
+export interface FindObservedProcessesResponse {
+	Processes: ObservedProcess[];
+}
+
 export class ModifiableObservedProcess {
 	constructor(process: ObservedProcess) {
 		this.Id = ModifiableObservedProcess.LastId++;
@@ -83,7 +87,6 @@ export class ControlPanelSettings {
 		this.SecondaryTextColor = new EditableField("SecondaryTextColor", response.Theme.SecondaryTextColor);
 
 		this.ProcessScanIntervalInSeconds = new EditableField("ProcessScanIntervalInSeconds", response.ProcessScanIntervalInSeconds.toString(), undefined, (v) => parseInt(v, 10).toString());
-		this.AllObservedProcesses = new ObservableArray<ModifiableObservedProcess>(response.ObservedProcesses.sort((a, b) => a.ProcessPath < b.ProcessPath ? -1 : 1).map((p) => new ModifiableObservedProcess(p)));
 	}
 
 	public Current: ControlPanelStatusResponse;
@@ -102,18 +105,25 @@ export class ControlPanelSettings {
 	public SecondaryTextColor: EditableField;
 
 	public ProcessScanIntervalInSeconds: EditableField;
-	public AllObservedProcesses: ObservableArray<ModifiableObservedProcess>;
 }
 
 export class ControlPanelService {
 	constructor() {
 		this.Update = new Receiver<any>("Failed to update.");
-		this.Toggle = new Receiver<any>("Failed to toggle.");
+		this.ToggleProcess = new Receiver<any>("Failed to toggle.");
 		this.Status = new Receiver<ControlPanelSettings>("Something went wrong loading observed processes from the server. Can only view this tool on the device running the service.");
+		this.Processes = new Receiver<ModifiableObservedProcess[]>("Failed to load processes");
+
+		this.SearchQuery = new Observable("");
+		this.SearchQueryRateLimiter = RateLimiter(RateLimitType.Debounce, 200);
+		this.UnsubscribeSearch = this.SearchQuery.Subscribe((query) => this.SearchQueryRateLimiter(query, () => { this.Processes.Start(this.FindObservedProcesses(query)); }));
 	}
 
 	public LoadStatus(): void {
-		this.Status.Start(Http.get<ControlPanelStatusResponse, ControlPanelSettings>("/WebAPI/ControlPanel/Status", (r) => new ControlPanelSettings(r)));
+		this.Status.Start(Http.get<ControlPanelStatusResponse, ControlPanelSettings>("/WebAPI/ControlPanel/Status", (r) => {
+			this.Processes.Succeeded(this.TransformObservedProcess(r.ObservedProcesses));
+			return new ControlPanelSettings(r);
+		}));
 	}
 
 	public UpdateSetting(field: EditableField, onComplete: () => void): void {
@@ -125,12 +135,36 @@ export class ControlPanelService {
 	}
 
 	public OnToggleIgnored(observableProcess: ModifiableObservedProcess, ignore: boolean): void {
-		this.Toggle.Start(Http.post("/WebAPI/ControlPanel/ToggleIgnorePath", { FilePath: observableProcess.ProcessPath, Ignore: ignore }).then((_) => { observableProcess.Ignore.Value = ignore; }));
+		this.ToggleProcess.Start(Http.post("/WebAPI/ControlPanel/ToggleIgnorePath", { FilePath: observableProcess.ProcessPath, Ignore: ignore }).then((_) => { observableProcess.Ignore.Value = ignore; }));
+	}
+
+	public Dispose(): void {
+		this.UnsubscribeSearch();
+	}
+
+	private FindObservedProcesses(searchQuery?: string): Promise<ModifiableObservedProcess[]> {
+		if (searchQuery === undefined || searchQuery.length === 0) {
+			searchQuery = "**";
+		} else if (!searchQuery.startsWith("*") && !searchQuery.endsWith("*")) {
+			searchQuery = `**${searchQuery}**`;
+		}
+
+		return Http.post<unknown, FindObservedProcessesResponse, ModifiableObservedProcess[]>(`/WebAPI/ControlPanel/FindObservedProcesses?searchQuery=${searchQuery}`, {}, (r) => this.TransformObservedProcess(r.Processes));
+	}
+
+	private TransformObservedProcess(processes: ObservedProcess[]): ModifiableObservedProcess[] {
+		return processes.sort((a, b) => a.ProcessPath < b.ProcessPath ? -1 : 1).map((p) => new ModifiableObservedProcess(p));
 	}
 
 	public Status: Receiver<ControlPanelSettings>;
 	public Update: Receiver<any>;
-	public Toggle: Receiver<any>;
+
+	public Processes: Receiver<ModifiableObservedProcess[]>;
+	public SearchQuery: Observable<string>;
+	public ToggleProcess: Receiver<any>;
+
+	private SearchQueryRateLimiter: ValueFilter<string>;
+	private UnsubscribeSearch: Unsubscribe;
 
 	static get Instance(): ControlPanelService {
 		if (this._instance === undefined) {

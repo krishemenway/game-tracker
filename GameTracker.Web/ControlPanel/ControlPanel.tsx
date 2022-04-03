@@ -27,7 +27,7 @@ const LoadedControlPanel: React.FC<{ settings: ControlPanelSettings }> = ({ sett
 			<hr className={clsx(layout.horzRule, layout.marginBottomDouble)} />
 			<Section name="Settings" keyValueDescriptions={GetEditableSettings(settings)} />
 			<Section name="Theme" keyValueDescriptions={GetThemeSettings(settings)} />
-			<ProcessManager {...{ settings }} />
+			<ProcessManager />
 			<Section name="Important Paths" keyValueDescriptions={GetFilePathsFromSettings(settings)} />
 		</>
 	);
@@ -121,7 +121,7 @@ export default () => {
 		<div className={clsx(layout.centerLayout1000, layout.paddingTop, layout.paddingHorizontal)} style={{minHeight: "100%"}}>
 			<Loading
 				receivers={[ControlPanelService.Instance.Status]}
-				successComponent={(status) => <LoadedControlPanel {...{ settings: status }} />}
+				successComponent={(settings) => <LoadedControlPanel {...{ settings }} />}
 				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
 				pendingComponent={<LoadingSpinner />}
 				notStartedComponent={<LoadingSpinner />}
