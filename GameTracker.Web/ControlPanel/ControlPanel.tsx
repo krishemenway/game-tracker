@@ -45,7 +45,7 @@ const Section: React.FC<{ name: string; keyValueDescriptions: NameValueDescripti
 			<ListOf
 				items={keyValueDescriptions}
 				createKey={(kvd) => kvd.Name}
-				listItemClassName={(first, last) => clsx(!last && layout.marginBottomDouble)}
+				listItemClassName={(_, last) => clsx(!last && layout.marginBottomDouble)}
 				renderItem={(kvd) => (
 					<>
 						<div className={clsx(text.font16, text.secondary, layout.marginBottom)}>{kvd.Name}</div>
