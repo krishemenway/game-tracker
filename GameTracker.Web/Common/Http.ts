@@ -18,6 +18,9 @@ export class Http {
 					onFulfilled(transformFunc === undefined ? jsonResponse as unknown as TTransformedData : transformFunc(jsonResponse));
 				}, (reason: Error) => {
 					onRejected(reason);
+				})
+				.catch((reason) => {
+					onRejected(reason);
 				});
 		});
 	}
@@ -46,6 +49,9 @@ export class Http {
 			.then((jsonResponse: TResponse) => {
 				onFulfilled(transformFunc === undefined ? jsonResponse as unknown as TLoadableData : transformFunc(jsonResponse));
 			}, (reason: Error) => {
+				onRejected(reason);
+			})
+			.catch((reason) => {
 				onRejected(reason);
 			});
 		});
