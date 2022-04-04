@@ -1,7 +1,7 @@
 import * as React from "react";
 import { HexColorPicker } from "react-colorful";
+import { useObservable } from "@residualeffect/rereactor";
 import { EditableField } from "Common/EditableField";
-import { useObservable } from "Common/useObservable";
 import { Receiver } from "Common/Loading";
 import AnchoredModal from "Common/AnchoredModal";
 import { TextField, ReadOnlyTextField } from "Common/ToggleTextField";

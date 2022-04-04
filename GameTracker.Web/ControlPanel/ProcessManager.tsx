@@ -1,8 +1,8 @@
 import * as React from "react";
 import clsx from "clsx";
+import { useObservable } from "@residualeffect/rereactor";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { ControlPanelService, ModifiableObservedProcess } from "ControlPanel/ControlPanelService";
-import { useObservable } from "Common/useObservable";
 import { SectionHeader } from "ControlPanel/ControlPanel";
 import SearchIcon from "Icons/SearchIcon";
 import Paginator from "Common/Paginator";

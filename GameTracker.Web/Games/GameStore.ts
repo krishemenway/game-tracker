@@ -1,5 +1,5 @@
 import { Observable } from "@residualeffect/reactor";
-import { useObservable } from "Common/useObservable";
+import { useObservable } from "@residualeffect/rereactor";
 
 export interface Game {
 	GameId: string;

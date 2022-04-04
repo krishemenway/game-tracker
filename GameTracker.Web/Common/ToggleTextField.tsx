@@ -1,9 +1,9 @@
 import * as React from "react";
 import clsx from "clsx";
+import { useObservable } from "@residualeffect/rereactor";
 import { useLayoutStyles, createStyles, useActionStyles } from "AppStyles";
 import UserProfileThemeStore from "UserProfile/UserProfileTheme";
 import { EditableField } from "Common/EditableField";
-import { useObservable } from "./useObservable";
 import SaveIcon from "Icons/SaveIcon";
 import AnimatedLoadingIcon from "Icons/AnimatedLoadingIcon";
 import { Receiver, ReceiverData, ReceiveState } from "Common/Loading";
