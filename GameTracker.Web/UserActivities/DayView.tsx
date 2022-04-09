@@ -1,9 +1,9 @@
 import * as moment from "moment";
 import * as React from "react";
 import clsx from "clsx";
-import { useBackgroundStyles, useLayoutStyles } from "AppStyles";
+import { useLayoutStyles } from "AppStyles";
 import { UserActivityService } from "UserActivities/UserActivityService";
-import Loading from "Common/Loading";
+import { Loading } from "@krishemenway/react-loading-component";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import UserActivityBadge from "UserActivities/UserActivityBadge";
 import StatisticsSection from "Common/StatisticsSection";
@@ -27,10 +27,10 @@ const DayView: React.FC<{ year:string; month: string; day: string; className?: s
 		<div className={layout.centerLayout1000}>
 			<Loading
 				receivers={[UserActivityService.Instance.FindOrCreateUserActivityForDate(dateKey), UserProfileService.Instance.UserProfile]}
-				successComponent={(userActivityForDate, userProfile) => <LoadedDayView dateKey={dateKey} userActivityForDate={userActivityForDate} userName={userProfile.UserName} />}
-				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
-				pendingComponent={<LoadingSpinner />}
-				notStartedComponent={<LoadingSpinner />}
+				whenReceived={(userActivityForDate, userProfile) => <LoadedDayView dateKey={dateKey} userActivityForDate={userActivityForDate} userName={userProfile.UserName} />}
+				whenError={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				whenLoading={<LoadingSpinner />}
+				whenNotStarted={<LoadingSpinner />}
 			/>
 		</div>
 	);

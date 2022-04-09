@@ -1,6 +1,7 @@
 import * as React from "react";
 import clsx from "clsx";
 import { useObservable } from "@residualeffect/rereactor";
+import { Loading } from "@krishemenway/react-loading-component";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { ControlPanelService, ModifiableObservedProcess } from "ControlPanel/ControlPanelService";
 import { SectionHeader } from "ControlPanel/ControlPanel";
@@ -8,7 +9,6 @@ import SearchIcon from "Icons/SearchIcon";
 import Paginator from "Common/Paginator";
 import { HasValue } from "Common/Strings";
 import UserProfileThemeStore from "UserProfile/UserProfileTheme";
-import Loading from "Common/Loading";
 import LoadingErrorMessages from "Common/LoadingErrorMessages";
 import LoadingSpinner from "Common/LoadingSpinner";
 
@@ -43,7 +43,7 @@ const ProcessManager: React.FC = () => {
 
 			<Loading
 				receivers={[ControlPanelService.Instance.Processes]}
-				successComponent={(processes) => (
+				whenReceived={(processes) => (
 					<Paginator
 						items={processes}
 						createKey={(p) => p.Id.toString()}
@@ -54,9 +54,9 @@ const ProcessManager: React.FC = () => {
 						pageSize={9}
 					/>
 				)}
-				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
-				pendingComponent={<LoadingSpinner />}
-				notStartedComponent={<LoadingSpinner />}
+				whenError={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				whenLoading={<LoadingSpinner />}
+				whenNotStarted={<LoadingSpinner />}
 			/>
 		</div>
 	);

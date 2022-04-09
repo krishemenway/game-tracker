@@ -1,8 +1,8 @@
 import * as React from "react";
 import clsx from "clsx";
+import { Loading } from "@krishemenway/react-loading-component";
 import { useBackgroundStyles, useLayoutStyles, useTextStyles } from "AppStyles";
 import { UserProfileService, UserProfile } from "UserProfile/UserProfileService";
-import Loading from "Common/Loading";
 import StatisticsSection from "Common/StatisticsSection";
 import PageHeader from "Common/PageHeader";
 import ListOf from "Common/ListOf";
@@ -21,10 +21,10 @@ export default () => {
 		<div className={layout.centerLayout1000}>
 			<Loading
 				receivers={[UserProfileService.Instance.UserProfile]}
-				successComponent={(profile) => <LoadedAllGamesView userProfile={profile} />}
-				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
-				pendingComponent={<LoadingSpinner />}
-				notStartedComponent={<LoadingSpinner />}
+				whenReceived={(profile) => <LoadedAllGamesView userProfile={profile} />}
+				whenError={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				whenLoading={<LoadingSpinner />}
+				whenNotStarted={<LoadingSpinner />}
 			/>
 		</div>
 	);

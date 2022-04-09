@@ -2,7 +2,7 @@ import * as React from "react";
 import clsx from "clsx";
 import PageHeader from "Common/PageHeader";
 import PageFooter from "Common/PageFooter";
-import Loading from "Common/Loading";
+import { Loading } from "@krishemenway/react-loading-component";
 import { useBackgroundStyles, useLayoutStyles, useTextStyles } from "AppStyles";
 import { GameProfileService } from "GameProfiles/GameProfileService";
 import { GameProfile } from "GameProfiles/GameProfile";
@@ -31,10 +31,10 @@ export default (props: GameProfileProps) => {
 		<div className={clsx(layout.centerLayout1000)}>
 			<Loading
 				receivers={[GameProfileService.Instance.FindOrCreateProfile(props.gameId), UserProfileService.Instance.UserProfile]}
-				successComponent={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userProfile={userProfile} />}
-				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
-				pendingComponent={<LoadingSpinner />}
-				notStartedComponent={<LoadingSpinner />}
+				whenReceived={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userProfile={userProfile} />}
+				whenError={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				whenLoading={<LoadingSpinner />}
+				whenNotStarted={<LoadingSpinner />}
 			/>
 		</div>
 	);

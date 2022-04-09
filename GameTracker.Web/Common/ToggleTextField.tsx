@@ -1,28 +1,28 @@
 import * as React from "react";
 import clsx from "clsx";
 import { useObservable } from "@residualeffect/rereactor";
+import { Computed } from "@residualeffect/reactor";
 import { useLayoutStyles, createStyles, useActionStyles } from "AppStyles";
 import UserProfileThemeStore from "UserProfile/UserProfileTheme";
 import { EditableField } from "Common/EditableField";
 import SaveIcon from "Icons/SaveIcon";
 import AnimatedLoadingIcon from "Icons/AnimatedLoadingIcon";
-import { Receiver, ReceiverData, ReceiveState } from "Common/Loading";
 
 interface ToggleTextFieldProps {
 	minWidth?: string;
 	className?: string;
 	field: EditableField;
-	receiver: Receiver<unknown>;
+	disabled: Computed<boolean>;
 	onSave: (onComplete: () => void) => void;
 }
 
-export const ToggleTextField: React.FC<ToggleTextFieldProps> = ({ className, minWidth, field, receiver, onSave }) => {
+export const ToggleTextField: React.FC<ToggleTextFieldProps> = ({ className, minWidth, field, disabled, onSave }) => {
 	const [isEditing, setIsEditing] = React.useState(false);
 	const value = useObservable(field.Current);
-	const receiverData = useObservable(receiver.Data);
+	const isDisabled = useObservable(disabled);
 
 	return isEditing
-		? <TextField {...{ className, minWidth, field, value, receiverData }} onBlur={() => { onSave(() => setIsEditing(false)); }} />
+		? <TextField {...{ className, minWidth, field, value, disabled: isDisabled }} onBlur={() => { onSave(() => setIsEditing(false)); }} />
 		: <ReadOnlyTextField {...{ className, minWidth, value }} onClick={() => setIsEditing(true)} />
 };
 
@@ -43,11 +43,11 @@ interface TextFieldProps {
 	className?: string;
 	value: string;
 	field: EditableField;
-	receiverData: ReceiverData<unknown>;
+	disabled?: boolean;
 	onBlur?: () => void;
 }
 
-export const TextField: React.FC<TextFieldProps> = ({ className, minWidth, value, field, receiverData, onBlur }) => {
+export const TextField: React.FC<TextFieldProps> = ({ className, minWidth, value, field, disabled, onBlur }) => {
 	const [toggleTextFieldStyles, layout, action] = [createToggleTextFieldStyles(), useLayoutStyles(), useActionStyles()];
 	return (
 		<div className={clsx(layout.relative)}>
@@ -59,11 +59,11 @@ export const TextField: React.FC<TextFieldProps> = ({ className, minWidth, value
 				onChange={(evt) => { field.OnChange(evt.currentTarget.value); }}
 				style={{ minWidth: minWidth }}
 				autoFocus={true}
-				disabled={receiverData.State === ReceiveState.Pending}
+				disabled={disabled}
 			/>
 
 			<button type="button" className={clsx(layout.absolute, layout.marginLeftHalf, action.clickable)} style={{ marginTop: "-12px", top: "50%" }}>
-				{receiverData.State === ReceiveState.Pending
+				{disabled
 				? <AnimatedLoadingIcon size="24px" color={UserProfileThemeStore.CurrentTheme.SecondaryTextColor} />
 				: <SaveIcon size="24px" color={UserProfileThemeStore.CurrentTheme.SecondaryTextColor} />}
 			</button>

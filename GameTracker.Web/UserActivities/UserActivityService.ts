@@ -1,5 +1,5 @@
 import * as moment from "moment";
-import { Receiver } from "Common/Loading";
+import { Receiver } from "@krishemenway/react-loading-component";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import { Http } from "Common/Http";
 import { Game, GameStore } from "Games/GameStore";
@@ -17,7 +17,7 @@ export class UserActivityService {
 	}
 
 	public LoadForMonth(year: number, month: number): void {
-		const promise = Http.get<UserActivityForMonthResponse>(`/WebAPI/UserActivityForMonth?year=${year}&month=${month}`, (response) => {
+		const promise = () => Http.get<UserActivityForMonthResponse>(`/WebAPI/UserActivityForMonth?year=${year}&month=${month}`, (response) => {
 			GameStore.Instance.LoadGames(response.GamesByGameId);
 			return response;
 		});
@@ -30,7 +30,7 @@ export class UserActivityService {
 		const endTime = startTime.clone().add(1, "day");
 		const url = `/WebAPI/UserActivityPerDay?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
-		const promise = Http.get<UserActivityPerDayResponse, UserActivityForDate>(url, (response) => {
+		const promise = () => Http.get<UserActivityPerDayResponse, UserActivityForDate>(url, (response) => {
 			GameStore.Instance.LoadGames(response.GamesByGameId);
 			return response.UserActivityPerDay[dateKey];
 		});
@@ -56,7 +56,7 @@ export class UserActivityService {
 
 	public AddLoadedActivities(loadedUserActivities: Dictionary<UserActivityForDate>): void {
 		Object.keys(loadedUserActivities).forEach((dateKey) => {
-			this.FindOrCreateUserActivityForDate(dateKey).Succeeded(loadedUserActivities[dateKey]);
+			this.FindOrCreateUserActivityForDate(dateKey).Received(loadedUserActivities[dateKey]);
 		});
 	}
 

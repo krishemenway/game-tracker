@@ -2,7 +2,7 @@ import * as React from "react";
 import clsx from "clsx";
 import { useBackgroundStyles, useLayoutStyles } from "AppStyles";
 import { UserProfileService, UserProfile } from "UserProfile/UserProfileService";
-import Loading from "Common/Loading";
+import { Loading } from "@krishemenway/react-loading-component";
 import StatisticsSection from "Common/StatisticsSection";
 import PageHeader from "Common/PageHeader";
 import GameAwardBadge from "Awards/GameAwardBadge";
@@ -19,10 +19,10 @@ export default () => {
 		<div className={layout.centerLayout1000}>
 			<Loading
 				receivers={[UserProfileService.Instance.UserProfile]}
-				successComponent={(profile) => <LoadedAllAwardsView userProfile={profile} />}
-				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
-				pendingComponent={<LoadingSpinner />}
-				notStartedComponent={<LoadingSpinner />}
+				whenReceived={(profile) => <LoadedAllAwardsView userProfile={profile} />}
+				whenError={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				whenLoading={<LoadingSpinner />}
+				whenNotStarted={<LoadingSpinner />}
 			/>
 		</div>
 	);

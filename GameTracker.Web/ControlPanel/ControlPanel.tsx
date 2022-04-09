@@ -1,8 +1,8 @@
 import * as React from "react";
 import clsx from "clsx";
+import { Loading } from "@krishemenway/react-loading-component";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { ControlPanelService, ControlPanelSettings } from "ControlPanel/ControlPanelService";
-import Loading from "Common/Loading";
 import ListOf from "Common/ListOf";
 import ProcessManager from "ControlPanel/ProcessManager";
 import ToggleTextField from "Common/ToggleTextField";
@@ -68,7 +68,7 @@ export const SectionHeader: React.FC<{ headerText: string }> = ({ headerText }) 
 };
 
 const ControlPanelTextField: React.FC<{ field: EditableField, minWidth: string }> = ({ field, minWidth }) => {
-	return <ToggleTextField {...{ field, minWidth, receiver: ControlPanelService.Instance.Update }} onSave={(onComplete) => ControlPanelService.Instance.UpdateSetting(field, onComplete)} />;
+	return <ToggleTextField {...{ field, minWidth, disabled: ControlPanelService.Instance.Update.IsBusy }} onSave={(onComplete) => ControlPanelService.Instance.UpdateSetting(field, onComplete)} />;
 };
 
 const ControlPanelColorPicker: React.FC<{ field: EditableField }> = ({ field }) => {
@@ -121,10 +121,10 @@ export default () => {
 		<div className={clsx(layout.centerLayout1000, layout.paddingTop, layout.paddingHorizontal)} style={{minHeight: "100%"}}>
 			<Loading
 				receivers={[ControlPanelService.Instance.Status]}
-				successComponent={(settings) => <LoadedControlPanel {...{ settings }} />}
-				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
-				pendingComponent={<LoadingSpinner />}
-				notStartedComponent={<LoadingSpinner />}
+				whenReceived={(settings) => <LoadedControlPanel {...{ settings }} />}
+				whenError={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				whenLoading={<LoadingSpinner />}
+				whenNotStarted={<LoadingSpinner />}
 			/>
 		</div>
 	);

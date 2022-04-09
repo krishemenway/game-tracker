@@ -2,7 +2,7 @@ import * as moment from "moment";
 import * as React from "react";
 import clsx from "clsx";
 import { useLayoutStyles, useBackgroundStyles } from "AppStyles";
-import Loading from "Common/Loading";
+import { Loading } from "@krishemenway/react-loading-component";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import StatisticsSection from "Common/StatisticsSection";
 import PageHeader from "Common/PageHeader";
@@ -30,10 +30,10 @@ const MonthView: React.FC<{ year: string; month: string; className?: string }> =
 		<div className={layout.centerLayout1000}>
 			<Loading
 				receivers={[UserProfileService.Instance.UserProfile, UserActivityService.Instance.FindOrCreateUserActivityForMonth(`${year}-${month}`)]}
-				successComponent={(userProfile, userActivityForMonth) => <LoadedMonthView monthKey={`${props.year}-${props.month}`} userName={userProfile.UserName} userActivityForMonth={userActivityForMonth} />}
-				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
-				pendingComponent={<LoadingSpinner />}
-				notStartedComponent={<LoadingSpinner />}
+				whenReceived={(userProfile, userActivityForMonth) => <LoadedMonthView monthKey={`${props.year}-${props.month}`} userName={userProfile.UserName} userActivityForMonth={userActivityForMonth} />}
+				whenError={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				whenLoading={<LoadingSpinner />}
+				whenNotStarted={<LoadingSpinner />}
 			/>
 		</div>
 	);
@@ -102,7 +102,7 @@ const TimeSpentEachGameChart: React.FC<{ userActivityForMonth: UserActivityForMo
 				)}
 			/>
 			<Tooltip
-				formatter={(value) => [TimeSpan.Readable(parseInt(value.toString(), 10)), ""]}
+				formatter={(value: object) => [TimeSpan.Readable(parseInt(value.toString(), 10)), ""]}
 				separator=" "
 				cursor={{
 					fill: "rgba(0,0,0,.33)",
@@ -145,7 +145,7 @@ const TimeSpentEachDayChart: React.FC<{ userActivityForMonth: UserActivityForMon
 				)}
 			/>
 			<Tooltip
-				formatter={(value) => [TimeSpan.Readable(parseInt(value.toString(), 10)), ""]}
+				formatter={(value: object) => [TimeSpan.Readable(parseInt(value.toString(), 10)), ""]}
 				separator=" "
 				cursor={{
 					fill: "rgba(0,0,0,.33)",

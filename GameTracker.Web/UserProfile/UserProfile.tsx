@@ -1,9 +1,9 @@
 import * as React from "react";
 import clsx from "clsx";
+import { Loading } from "@krishemenway/react-loading-component";
 import { useBackgroundStyles, useLayoutStyles, useTextStyles } from "AppStyles";
 import { UserProfileService, UserProfile } from "UserProfile/UserProfileService";
 import UserActivityBadge from "UserActivities/UserActivityBadge";
-import Loading from "Common/Loading";
 import UserActivityCalendar from "UserActivities/UserActivityCalendar";
 import PageHeader from "Common/PageHeader";
 import PageFooter from "Common/PageFooter";
@@ -25,10 +25,10 @@ export default () => {
 		<div className={layout.centerLayout1000}>
 			<Loading
 				receivers={[UserProfileService.Instance.UserProfile]}
-				successComponent={(profile) => <LoadedUserProfile userProfile={profile} />}
-				errorComponent={(errors) => <LoadingErrorMessages errorMessages={errors} />}
-				pendingComponent={<LoadingSpinner />}
-				notStartedComponent={<LoadingSpinner />}
+				whenReceived={(profile) => <LoadedUserProfile userProfile={profile} />}
+				whenError={(errors) => <LoadingErrorMessages errorMessages={errors} />}
+				whenLoading={<LoadingSpinner />}
+				whenNotStarted={<LoadingSpinner />}
 			/>
 		</div>
 	);

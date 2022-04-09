@@ -1,6 +1,6 @@
+import { Receiver } from "@krishemenway/react-loading-component";
 import { GameProfile } from "GameProfiles/GameProfile";
 import { Http } from "Common/Http";
-import { Receiver } from "Common/Loading";
 import { GameStore } from "Games/GameStore";
 
 export interface GameProfileResponse {
@@ -22,7 +22,7 @@ export class GameProfileService {
 	}
 
 	public LoadProfile(gameId: string): void {
-		const profile = Http.get<GameProfileResponse, GameProfile>(`/WebAPI/GameProfile/${gameId}`, (response) => {
+		const profile = () => Http.get<GameProfileResponse, GameProfile>(`/WebAPI/GameProfile/${gameId}`, (response) => {
 			GameStore.Instance.LoadGames({ [response.GameProfile.Game.GameId]: response.GameProfile.Game });
 			return response.GameProfile
 		});
