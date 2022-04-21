@@ -1,0 +1,48 @@
+﻿{
+	"Control": "FullWidthColumn",
+	"ControlData": {
+		"Content": [
+			{
+				"Control": "PageHeader",
+				"ControlData": {
+					"HeaderText": ""
+				}
+			},
+			{
+				"Control": "EqualWidthColumns",
+				"ControlData": {
+					"Columns": [
+						{
+							"Control": "StatisticsList",
+							"ControlData": {
+								"Keys": [ "TotalGamesPlayedInMonth", "TotalSessionsInMonth" ]
+							}
+						},
+						{
+							"Control": "StatisticsList",
+							"ControlData": {
+								"Keys": [ "TotalTimePlayedInMonth" ]
+							}
+						}
+					]
+				}
+			},
+			{
+				"Control": "TimeOfDayHistogram"
+			},
+			{
+				"Control": "EqualWidthColumns",
+				"ControlData": {
+					"Columns": [
+						{
+							"Control": "TimePlayedPerGameBarChart"
+						},
+						{
+							"Control": "TimePlayedPerDayBarChart"
+						}
+					]
+				}
+			}
+		]
+	}
+}

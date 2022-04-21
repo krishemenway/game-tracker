@@ -1,0 +1,28 @@
+﻿{
+	"Control": "FullWidthColumn",
+	"ControlData": {
+		"Content": [
+			{
+				"Control": "Statistics",
+				"ControlData": {
+					"SectionsPerRow": 2,
+					"Sections": [
+						{
+							"Statistics": [ "TotalGames" ]
+						},
+						{
+							"Statistics": [ "Placeholder" ]
+						}
+					]
+				}
+			},
+			{
+				"Control": "ListOfGamesWithShowMore",
+				"ControlData": {
+					"NumberOfGames": null,
+					"GamesPerRow": 3
+				}
+			}
+		]
+	}
+}

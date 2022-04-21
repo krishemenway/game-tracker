@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<Version>0.0.1</Version>
@@ -38,6 +38,12 @@
 		<EmbeddedResource Include="app.ico">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
+		<EmbeddedResource Include="ViewConfigurations\GameProfileView.json" />
+		<EmbeddedResource Include="ViewConfigurations\MonthOverviewView.json" />
+		<EmbeddedResource Include="ViewConfigurations\DayOverviewView.json" />
+		<EmbeddedResource Include="ViewConfigurations\AllAwardsView.json" />
+		<EmbeddedResource Include="ViewConfigurations\AllGamesView.json" />
+		<EmbeddedResource Include="ViewConfigurations\UserProfileView.json" />
 	</ItemGroup>
 
 </Project>

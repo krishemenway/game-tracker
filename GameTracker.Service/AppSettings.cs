@@ -1,4 +1,5 @@
 ﻿using GameTracker.UserProfiles;
+using GameTracker.ViewConfigurations;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
@@ -18,6 +19,7 @@ namespace GameTracker
 		public int ProcessScanIntervalInSeconds { get; }
 		public string[] StartsWithExclusions { get; }
 		public string[] ProcessNameExclusions { get; }
+		public ViewConfiguration[] ViewConfigurations { get; }
 	}
 
 	public class AppSettings : IAppSettings
@@ -36,6 +38,7 @@ namespace GameTracker
 		public int ProcessScanIntervalInSeconds => Configuration.GetValue<int>("ProcessScanIntervalInSeconds");
 		public string[] StartsWithExclusions => Configuration.GetSection("StartsWithExclusions").Get<string[]>();
 		public string[] ProcessNameExclusions => Configuration.GetSection("ProcessNameExclusions").Get<string[]>();
+		public ViewConfiguration[] ViewConfigurations => Configuration.GetSection("Views").Get<ViewConfiguration[]>();
 
 		public IConfigurationRoot Configuration => LazyConfiguration.Value;
 
@@ -72,6 +75,7 @@ namespace GameTracker
 		public int ProcessScanIntervalInSeconds { get; set; }
 		public string[] StartsWithExclusions { get; set; }
 		public string[] ProcessNameExclusions { get; set; }
+		public ViewConfiguration[] ViewConfigurations { get; set; }
 
 		public static SerializableAppSettings CreateFromCurrentSettings()
 		{
@@ -86,6 +90,7 @@ namespace GameTracker
 				ProcessScanIntervalInSeconds = AppSettings.Instance.ProcessScanIntervalInSeconds,
 				StartsWithExclusions = AppSettings.Instance.StartsWithExclusions,
 				ProcessNameExclusions = AppSettings.Instance.ProcessNameExclusions,
+				ViewConfigurations = AppSettings.Instance.ViewConfigurations,
 			};
 		}
 

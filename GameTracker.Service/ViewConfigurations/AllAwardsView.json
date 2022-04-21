@@ -1,0 +1,28 @@
+﻿{
+	"Control": "FullWidthColumn",
+	"ControlData": {
+		"Content": [
+			{
+				"Control": "StatisticsSections",
+				"ControlData": {
+					"SectionsPerRow": 2,
+					"Sections": [
+						{
+							"Statistics": [ "TotalAwards" ]
+						},
+						{
+							"Statistics": [ "Placeholder" ]
+						}
+					]
+				}
+			},
+			{
+				"Control": "ListOfAwardsWithShowMore",
+				"ControlData": {
+					"NumberOfAwards": null,
+					"AwardsPerRow": 3
+				}
+			}
+		]
+	}
+}
