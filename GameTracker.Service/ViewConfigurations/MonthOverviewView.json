@@ -1,48 +1,52 @@
 ﻿{
-	"Control": "FullWidthColumn",
-	"ControlData": {
-		"Content": [
-			{
-				"Control": "PageHeader",
-				"ControlData": {
-					"HeaderText": ""
-				}
-			},
-			{
-				"Control": "EqualWidthColumns",
-				"ControlData": {
-					"Columns": [
-						{
-							"Control": "StatisticsList",
-							"ControlData": {
-								"Keys": [ "TotalGamesPlayedInMonth", "TotalSessionsInMonth" ]
+	"Width": "1000px",
+	"Center": true,
+	"Layout": {
+		"Control": "FullWidthColumn",
+		"ControlData": {
+			"Content": [
+				{
+					"Control": "PageHeader",
+					"ControlData": {
+						"HeaderText": ""
+					}
+				},
+				{
+					"Control": "EqualWidthColumns",
+					"ControlData": {
+						"Columns": [
+							{
+								"Control": "StatisticsList",
+								"ControlData": {
+									"Keys": [ "TotalGamesPlayedInMonth", "TotalSessionsInMonth" ]
+								}
+							},
+							{
+								"Control": "StatisticsList",
+								"ControlData": {
+									"Keys": [ "TotalTimePlayedInMonth" ]
+								}
 							}
-						},
-						{
-							"Control": "StatisticsList",
-							"ControlData": {
-								"Keys": [ "TotalTimePlayedInMonth" ]
+						]
+					}
+				},
+				{
+					"Control": "TimeOfDayHistogram"
+				},
+				{
+					"Control": "EqualWidthColumns",
+					"ControlData": {
+						"Columns": [
+							{
+								"Control": "TimePlayedPerGameBarChart"
+							},
+							{
+								"Control": "TimePlayedPerDayBarChart"
 							}
-						}
-					]
+						]
+					}
 				}
-			},
-			{
-				"Control": "TimeOfDayHistogram"
-			},
-			{
-				"Control": "EqualWidthColumns",
-				"ControlData": {
-					"Columns": [
-						{
-							"Control": "TimePlayedPerGameBarChart"
-						},
-						{
-							"Control": "TimePlayedPerDayBarChart"
-						}
-					]
-				}
-			}
-		]
+			]
+		}
 	}
 }

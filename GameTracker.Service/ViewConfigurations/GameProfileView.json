@@ -1,40 +1,44 @@
 ﻿{
-	"Control": "FullWidthColumn",
-	"ControlData": {
-		"Content": [
-			{
-				"Control": "PageHeader",
-				"ControlData": {
-					"HeaderText": ""
+	"Width": "1000px",
+	"Center": true,
+	"Layout": {
+		"Control": "FullWidthColumn",
+		"ControlData": {
+			"Content": [
+				{
+					"Control": "PageHeader",
+					"ControlData": {
+						"HeaderText": ""
+					}
+				},
+				{
+					"Control": "RecentActivity",
+					"ControlData": {
+						"NumberOfActivities": 10,
+						"ActivitiesPerRow": 2
+					}
+				},
+				{
+					"Control": "MonthOverview",
+					"ControlData": {
+						"NumberOfMonths": 3
+					}
+				},
+				{
+					"Control": "AllGames",
+					"ControlData": {
+						"NumberOfGames": 10,
+						"GamesPerRow": 2
+					}
+				},
+				{
+					"Control": "AllAwards",
+					"ControlData": {
+						"NumberOfAwards": 9,
+						"AwardsPerRow": 3
+					}
 				}
-			},
-			{
-				"Control": "RecentActivity",
-				"ControlData": {
-					"NumberOfActivities": 10,
-					"ActivitiesPerRow": 2
-				}
-			},
-			{
-				"Control": "MonthOverview",
-				"ControlData": {
-					"NumberOfMonths": 3
-				}
-			},
-			{
-				"Control": "AllGames",
-				"ControlData": {
-					"NumberOfGames": 10,
-					"GamesPerRow": 2
-				}
-			},
-			{
-				"Control": "AllAwards",
-				"ControlData": {
-					"NumberOfAwards": 9,
-					"AwardsPerRow": 3
-				}
-			}
-		]
+			]
+		}
 	}
 }

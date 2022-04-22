@@ -1,66 +1,73 @@
 ﻿{
-	"Control": "FullWidthColumn",
-	"ControlData": {
-		"Content": [
-			{
-				"Control": "PageHeader",
-				"ControlData": {
-					"HeaderText": ""
-				}
-			},
-			{
-				"Control": "Section",
-				"ControlData": {
-					"Title": "Recent Activity",
-					"Content": [
-						{
-							"Control": "UserRecentActivityList",
-							"ControlData": {
-								"NumberOfActivities": 10,
-								"ActivitiesPerRow": 2
+	"Width": "1000px",
+	"Center": true,
+	"MarginTop": "10px",
+	"Layout": {
+		"Control": "FullWidthColumn",
+		"ControlData": {
+			"ContentGap": "20px",
+			"Content": [
+				{
+					"Control": "PageHeader",
+					"ControlData": { }
+				},
+				{
+					"Control": "Section",
+					"ControlData": {
+						"Title": "Recent Activity",
+						"ContentGap": "20px",
+						"Content": [
+							{
+								"Control": "UserRecentActivityList",
+								"ControlData": {
+									"ColumnGap": "20px",
+									"RowGap": "5px",
+									"NumberOfActivities": 10,
+									"ActivitiesPerRow": 2
+								}
+							},
+							{
+								"Control": "UserRecentActivityCalendarMonths",
+								"ControlData": { }
 							}
-						},
-						{
-							"Control": "UserRecentActivityCalendarMonths",
-							"ControlData": {
-								"MonthsToShow": 3
+						]
+					}
+				},
+				{
+					"Control": "Section",
+					"ControlData": {
+						"Title": "All Games",
+						"Content": [
+							{
+								"Control": "UserListOfGames",
+								"ControlData": {
+									"ColumnGap": "20px",
+									"RowGap": "5px",
+									"LimitGames": 12,
+									"GamesPerRow": 3
+								}
 							}
-						}
-					]
-				}
-			},
-			{
-				"Control": "Section",
-				"ControlData": {
-					"Title": "All Games",
-					"Content": [
-						{
-							"Control": "UserListOfGames",
-							"ControlData": {
-								"NumberOfGames": 10,
-								"GamesPerRow": 2,
-								"ShowMoreEnabled": true
+						]
+					}
+				},
+				{
+					"Control": "Section",
+					"ControlData": {
+						"Title": "Awards",
+						"Content": [
+							{
+								"Control": "UserListOfAwards",
+								"ControlData": {
+									"ColumnGap": "20px",
+									"RowGap": "10px",
+									"LimitAwards": 9,
+									"AwardsPerRow": 3
+								}
 							}
-						}
-					]
+						]
+					}
 				}
-			},
-			{
-				"Control": "Section",
-				"ControlData": {
-					"Title": "Awards",
-					"Content": [
-						{
-							"Control": "UserListOfAwards",
-							"ControlData": {
-								"NumberOfAwards": 9,
-								"AwardsPerRow": 3,
-								"ShowMoreEnabled": true
-							}
-						}
-					]
-				}
-			}
-		]
+			]
+		}
 	}
 }
