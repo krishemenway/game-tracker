@@ -100,10 +100,14 @@ export const useLayoutStyles = createUseStyles(() => ({
 		borderTop: "1px solid rgba(255,255,255,.4)",
 	},
 	inlineBlock: { display: "inline-block" },
+	flexGapDefault: { gap: "10px" },
+	flexGapHalf: { gap: "5px" },
 	flexColumn: { display: "flex", flexDirection: "column", },
 	flexRow: { display: "flex", flexDirection: "row", width: "100%" },
 	flexCenter: { alignItems: "center" },
 	flexWrap: { flexWrap: "wrap", },
+	flexGapHorizontal: { columnGap: "10px" },
+	flexGapVertical: { rowGap: "10px" },
 	flexItemSpacing: {
 		marginLeft: "-10px",
 		marginRight: "-10px",
@@ -119,6 +123,10 @@ export const useLayoutStyles = createUseStyles(() => ({
 		}
 	},
 	flexFillRemaining: { flexGrow: 1 },
+	flexFullWidth: { flex: "1 0 100%" },
+	flexOneHalf: { flex: "1 0 40%" },
+	flexOneThird: { flex: "1 0 30%" },
+	flexOneQuarter: { flex: "1 0 20%" },
 
 	width100: { width: "100%" },
 	width85: { width: "85%" },
@@ -160,6 +168,7 @@ export const useLayoutStyles = createUseStyles(() => ({
 	marginAll: { margin: "10px", },
 	marginHalf: { margin: "5px", },
 
+
 	marginVertical: { marginTop: "10px", marginBottom: "10px", },
 	marginVerticalHalf: { marginTop: "5px", marginBottom: "5px", },
 	marginVerticalDouble: { marginTop: "20px", marginBottom: "20px" },
@@ -167,6 +176,7 @@ export const useLayoutStyles = createUseStyles(() => ({
 	marginHorizontal: { marginLeft: "10px", marginRight: "10px", },
 	marginHorizontalHalf: { marginLeft: "5px", marginRight: "5px", },
 	marginHorizontalDouble: { marginLeft: "20px", marginRight: "20px" },
+	marginHorizontalAuto: { marginLeft: "auto", marginRight: "auto" },
 
 	marginRight: { marginRight: "10px", },
 	marginRightHalf: { marginRight: "5px", },
@@ -236,3 +246,14 @@ export const useTextStyles = createUseStyles(() => ({
 		letterSpacing: "5px",
 	},
 }));
+
+export function getWidthClassFromQuantityPerRow(perRow: number) {
+	const layout = useLayoutStyles();
+	switch(perRow) {
+		case 1: return layout.flexFullWidth;
+		case 2: return layout.flexOneHalf;
+		case 3: return layout.flexOneThird;
+		case 4: return layout.flexOneQuarter;
+		default: throw new Error(`Cannot handle per row value ${perRow}`);
+	}
+}

@@ -10,7 +10,6 @@ import StatisticsSection from "Common/StatisticsSection";
 import { TimeSpan } from "Common/TimeSpan";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import PageHeader from "Common/PageHeader";
-import PageFooter from "Common/PageFooter";
 import TimeSpentByHourChart from "Common/TimeSpentByHourChart";
 import ListOf from "Common/ListOf";
 import LoadingErrorMessages from "Common/LoadingErrorMessages";
@@ -43,7 +42,7 @@ const LoadedDayView: React.FC<{ dateKey: string; userActivityForDate: UserActivi
 
 	return (
 		<>
-			<PageHeader UserName={props.userName} PageTitle={dateAsMoment.format("MMMM Do, YYYY")} />
+			<PageHeader userName={props.userName} pageTitle={dateAsMoment.format("MMMM Do, YYYY")} />
 
 			<div className={clsx(layout.flexRow, layout.flexEvenDistribution, layout.flexItemSpacing, layout.marginBottomDouble)}>
 				<StatisticsSection
@@ -68,8 +67,6 @@ const LoadedDayView: React.FC<{ dateKey: string; userActivityForDate: UserActivi
 				listItemClassName={() => clsx(layout.width50, layout.marginBottomHalf)}
 				renderItem={(activity) => <UserActivityBadge activity={activity} />}
 			/>
-
-			<PageFooter />
 		</>
 	);
 };

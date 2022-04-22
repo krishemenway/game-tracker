@@ -6,7 +6,6 @@ import { Loading } from "@krishemenway/react-loading-component";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import StatisticsSection from "Common/StatisticsSection";
 import PageHeader from "Common/PageHeader";
-import PageFooter from "Common/PageFooter";
 import { UserActivityService } from "UserActivities/UserActivityService";
 import { UserActivityForMonthResponse } from "UserActivities/UserActivityForMonthResponse";
 import { TimeSpan } from "Common/TimeSpan";
@@ -45,7 +44,7 @@ const LoadedMonthView: React.FC<{ monthKey: string; userName: string; userActivi
 
 	return (
 		<>
-			<PageHeader UserName={props.userName} PageTitle={dateAsMoment.format("MMMM YYYY")} />
+			<PageHeader userName={props.userName} pageTitle={dateAsMoment.format("MMMM YYYY")} />
 
 			<div className={clsx(layout.flexRow, layout.flexEvenDistribution, layout.flexItemSpacing, layout.marginBottomDouble)}>
 				<StatisticsSection
@@ -68,8 +67,6 @@ const LoadedMonthView: React.FC<{ monthKey: string; userName: string; userActivi
 				<div><TimeSpentEachGameChart currentMonth={dateAsMoment} userActivityForMonth={props.userActivityForMonth} /></div>
 				<div><TimeSpentEachDayChart currentMonth={dateAsMoment} userActivityForMonth={props.userActivityForMonth} /></div>
 			</div>
-
-			<PageFooter />
 		</>
 	);
 };

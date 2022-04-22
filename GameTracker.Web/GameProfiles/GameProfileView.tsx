@@ -1,7 +1,6 @@
 import * as React from "react";
 import clsx from "clsx";
 import PageHeader from "Common/PageHeader";
-import PageFooter from "Common/PageFooter";
 import { Loading } from "@krishemenway/react-loading-component";
 import { useBackgroundStyles, useLayoutStyles, useTextStyles } from "AppStyles";
 import { GameProfileService } from "GameProfiles/GameProfileService";
@@ -45,7 +44,7 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 
 	return (
 		<>
-			<PageHeader UserName={props.userProfile.UserName} PageTitle={props.gameProfile.Game.Name} />
+			<PageHeader userName={props.userProfile.UserName} pageTitle={props.gameProfile.Game.Name} />
 
 			<GameStatistics gameId={props.gameId} gameProfile={props.gameProfile} />
 
@@ -77,8 +76,6 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 					showMoreLimit={6}
 				/>
 			</Section>
-
-			<PageFooter />
 		</>
 	);
 };

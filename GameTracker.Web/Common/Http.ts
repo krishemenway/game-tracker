@@ -11,7 +11,10 @@ export class Http {
 					throw new Error(`Received response status code: ${response.status}`);
 				}
 
-				return response.json();
+				return response.json().catch(() => {
+					console.error(`JSON parsing failed for url ${url}`);
+					throw new Error("Unknown response received from the server. Try again later.");
+				});
 			})
 			.then((jsonResponse: TResponse) => {
 				return transformFunc === undefined
@@ -40,7 +43,10 @@ export class Http {
 					throw new Error(`Received response status code: ${response.status}`);
 				}
 
-				return response.json();
+				return response.json().catch(() => {
+					console.error(`JSON parsing failed for url ${url}`);
+					throw new Error("Unknown response received from the server. Try again later.");
+				});
 			})
 			.then((jsonResponse: TResponse) => {
 				return transformFunc === undefined ? jsonResponse as unknown as TLoadableData : transformFunc(jsonResponse)
