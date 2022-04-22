@@ -37,3 +37,5 @@ project for tracking what games you are playing and when and creating your own p
 	* Most Played Game of Year
 	* Longest session of year
 	* Belongs on a year profile?
+* Game-themed profile views?
+	* Mario platform bar graphs
