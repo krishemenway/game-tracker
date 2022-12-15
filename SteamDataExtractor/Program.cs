@@ -5,6 +5,7 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Process = System.Diagnostics.Process;
@@ -15,26 +16,98 @@ namespace SteamDataExtractor
 	{
 		public static int Main(string[] args)
 		{
-			var rootCommand = new RootCommand("Steam Data Extractor")
-			{
-				new Option<FileInfo>("--json", getDefaultValue: () => new FileInfo(Path.Combine(ExecutableFolderPath, "games.json")), description: "Path to games.json file."),
-				new Option<FileInfo>("--steamcmd", getDefaultValue: () => new FileInfo(Path.Combine(ExecutableFolderPath, "SteamCMD", "SteamCMD.exe")), description: "Path to SteamCMD.exe for use in fetching game info."),
-			};
+			JsonOptions.Converters.Add(new TypeConverterJsonAdapter());
 
-			rootCommand.Handler = CommandHandler.Create<FileInfo, FileInfo>((json, steamCMD) =>
+			var rootCommand = new RootCommand("Steam Data Extractor");
+
+			foreach(var command in BuildCommands())
 			{
-				Start(json, steamCMD);
-			});
+				rootCommand.AddCommand(command);
+			}
 
 			return rootCommand.InvokeAsync(args).Result;
 		}
 
-		public static void Start(FileInfo gamesJsonFile, FileInfo steamCMDFile)
+		private static IEnumerable<Command> BuildCommands()
 		{
-			JsonOptions.Converters.Add(new TypeConverterJsonAdapter());
+			var refreshImages = new Command("refresh", "refresh images for all games")
+			{
+				GamesJsonOption,
+				SteamCmdPathOption,
+			};
+
+			refreshImages.Handler = CommandHandler.Create<FileInfo, FileInfo>((json, steamCMD) =>
+			{
+				Refresh(json, steamCMD);
+			});
+
+			yield return refreshImages;
+
+			var addGameCommand = new Command("add", "add a new game to the json file")
+			{
+				GamesJsonOption,
+				SteamCmdPathOption,
+				SteamIdOption,
+			};
+
+			addGameCommand.Handler = CommandHandler.Create<FileInfo, FileInfo, int>((json, steamCMD, steamId) =>
+			{
+				Add(json, steamCMD, steamId);
+			});
+
+			yield return addGameCommand;
+		}
+
+		private static void Add(FileInfo gamesJsonFile, FileInfo steamCMDFile, int steamId)
+		{
+			if (steamId == 0)
+			{
+				throw new InvalidDataException("Cannot add steam id 0");
+			}
 
 			var games = FindAllGames(gamesJsonFile);
 
+			if (games.Games.Any(g => g.SteamId == steamId))
+			{
+				Console.WriteLine("SteamId already exists in json");
+				return;
+
+			}
+			var steamDataBySteamId = TryFindSteamData(steamCMDFile, out var missingAppIds, steamId);
+
+			if (missingAppIds.Any())
+			{
+				FetchMissingAppIds(steamCMDFile, missingAppIds);
+				steamDataBySteamId = TryFindSteamData(steamCMDFile, out var stillMissingAppIds, steamId);
+
+				if (stillMissingAppIds.Any())
+				{
+					Console.WriteLine($"Still Missing: {string.Join(',', stillMissingAppIds)}");
+					return;
+				}
+			}
+
+			var steamData = steamDataBySteamId[steamId.ToString()];
+			var releaseDate = DateTime.UnixEpoch.AddSeconds(long.Parse(steamData.Common.SteamReleaseDate));
+
+			var game = new Game
+			{
+				GameId = $"{Regex.Replace(steamData.Common.Name, @"[^\w]", "")}-{releaseDate.Year}",
+				Name = steamData.Common.Name,
+				SteamId = steamId,
+				ReleaseDate = releaseDate.Date,
+				IconUri = BuildIconUri(steamData),
+				MatchExecutablePatterns = steamData.Config.Launch.Values.Select(x => $"**\\{steamData.Config.InstallDir}\\{x.Executable}").ToArray(),
+			};
+
+			games.Games = games.Games.Append(game).OrderBy(x => x.GameId).ToArray();
+
+			WriteNewGames(gamesJsonFile, games);
+		}
+
+		private static void Refresh(FileInfo gamesJsonFile, FileInfo steamCMDFile)
+		{
+			var games = FindAllGames(gamesJsonFile);
 			var gamesByAppId = games.Games
 				.Where(game => game.SteamId != null)
 				.GroupBy(game => game.SteamId)
@@ -56,7 +129,7 @@ namespace SteamDataExtractor
 
 				foreach(var game in gamesByAppId[appIdAsLong])
 				{
-					game.IconUri = $"https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/{appIdAsLong}/{appId.Value.Common.Icon}.jpg";
+					game.IconUri = BuildIconUri(appId.Value);
 				}
 			}
 
@@ -148,6 +221,11 @@ namespace SteamDataExtractor
 			return current;
 		}
 
+		private static string BuildIconUri(SteamData steamData)
+		{
+			return $"https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/{steamData.Common.GameId}/{steamData.Common.Icon}.jpg";
+		}
+
 		private static GamesConfigurationFile FindAllGames(FileInfo jsonPath)
 		{
 			using (var streamReader = new StreamReader(jsonPath.FullName))
@@ -174,6 +252,10 @@ namespace SteamDataExtractor
 
 		public static string ExecutablePath { get; } = Process.GetCurrentProcess().MainModule.FileName;
 		public static string ExecutableFolderPath { get; } = Path.GetDirectoryName(ExecutablePath);
+
+		public static Option<FileInfo> GamesJsonOption { get; } = new Option<FileInfo>("--json", getDefaultValue: () => new FileInfo(Path.Combine(ExecutableFolderPath, "games.json")), description: "Path to games.json file.");
+		public static Option<FileInfo> SteamCmdPathOption { get; } = new Option<FileInfo>("--steamcmd", getDefaultValue: () => new FileInfo(Path.Combine(ExecutableFolderPath, "SteamCMD", "SteamCMD.exe")), description: "Path to SteamCMD.exe for use in fetching game info.");
+		public static Option<int> SteamIdOption { get; } = new Option<int>("--steamid", getDefaultValue: () => 0, description: "SteamId for the game to be added") { IsRequired = true };
 	}
 
 	public class SteamData
@@ -187,8 +269,15 @@ namespace SteamDataExtractor
 	{
 		public string Icon { get; set; }
 		public string Logo { get; set; }
-		public string Logo_Small { get; set; }
 		public string Name { get; set; }
+
+		public string GameId { get; set; }
+
+		[JsonPropertyName("logo_small")]
+		public string LogoSmall { get; set; }
+
+		[JsonPropertyName("steam_release_date")]
+		public string SteamReleaseDate { get; set; }
 	}
 
 	public class SteamExtendedData

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
 	  <OutputType>Exe</OutputType>
-	  <PublishSingleFile>true</PublishSingleFile>
+	  <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
 	  <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
 	  <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
