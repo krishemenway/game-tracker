@@ -95,7 +95,7 @@ namespace SteamDataExtractor
 				GameId = $"{Regex.Replace(steamData.Common.Name, @"[^\w]", "")}-{releaseDate.Year}",
 				Name = steamData.Common.Name,
 				SteamId = steamId,
-				ReleaseDate = releaseDate.Date,
+				ReleaseDate = DateTime.SpecifyKind(releaseDate.Date, DateTimeKind.Unspecified),
 				IconUri = BuildIconUri(steamData),
 				MatchExecutablePatterns = steamData.Config.Launch.Values.Select(x => $"**\\{steamData.Config.InstallDir}\\{x.Executable}").ToArray(),
 			};
