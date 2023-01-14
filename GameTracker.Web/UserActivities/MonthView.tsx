@@ -99,7 +99,7 @@ const TimeSpentEachGameChart: React.FC<{ userActivityForMonth: UserActivityForMo
 				)}
 			/>
 			<Tooltip
-				formatter={(value: object) => [TimeSpan.Readable(parseInt(value.toString(), 10)), ""]}
+				formatter={(value) => [TimeSpan.Readable(parseInt(value.toString(), 10)), ""]}
 				separator=" "
 				cursor={{
 					fill: "rgba(0,0,0,.33)",
@@ -142,7 +142,7 @@ const TimeSpentEachDayChart: React.FC<{ userActivityForMonth: UserActivityForMon
 				)}
 			/>
 			<Tooltip
-				formatter={(value: object) => [TimeSpan.Readable(parseInt(value.toString(), 10)), ""]}
+				formatter={(value) => [TimeSpan.Readable(parseInt(value.toString(), 10)), ""]}
 				separator=" "
 				cursor={{
 					fill: "rgba(0,0,0,.33)",
