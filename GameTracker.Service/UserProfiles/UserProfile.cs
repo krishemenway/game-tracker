@@ -1,4 +1,4 @@
-﻿using GameTracker.Games;
+﻿using GameTracker.GameAwards;
 using GameTracker.UserActivities;
 using System;
 using System.Collections.Generic;

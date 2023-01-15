@@ -1,9 +1,9 @@
-﻿using GameTracker.Games;
+﻿using GameTracker.GameAwards;
 using GameTracker.UserActivities;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GameTracker.GameProfiles
+namespace GameTracker.Games
 {
 	public class GameProfileFactory
 	{
@@ -17,8 +17,7 @@ namespace GameTracker.GameProfiles
 
 		public GameProfile Create(IGame game, AllUserActivityCache allUserActivity)
 		{
-			var orderedUserActivities = allUserActivity.AllUserActivity
-				.Where(userActivity => userActivity.GameId == game.GameId)
+			var orderedUserActivities = allUserActivity.FindActivityForGame(game.GameId)
 				.OrderByDescending(x => x.EndTime)
 				.ToList();
 
@@ -32,7 +31,7 @@ namespace GameTracker.GameProfiles
 				MeanUserActivityTimePlayedInSeconds = orderedUserActivities.Average(x => x.TimeSpentInSeconds),
 				TotalTimePlayedInSeconds = orderedUserActivities.Sum(x => x.TimeSpentInSeconds),
 				TimeSpentInSecondsByHour = _timeSpentByHourCalculator.Calculate(orderedUserActivities).ToDictionary(x => x.Key.ToString(), x => x.Value),
-				GameAwards = _gameAwardStore.CalculateAllGameAwards(allUserActivity).Where(x => x.GameId == game.GameId).ToList(),
+				GameAwards = _gameAwardStore.AllGameAwardWinners(allUserActivity).Where(x => x.GameId == game.GameId).ToList(),
 			};
 		}
 
@@ -43,7 +42,7 @@ namespace GameTracker.GameProfiles
 	public class GameProfile
 	{
 		public IGame Game { get; set; }
-		
+
 		public IReadOnlyList<UserActivity> AllActivity { get; set; }
 		public Dictionary<string, UserActivityForDate> ActivitiesByDate { get; set; }
 		public Dictionary<string, double> TimeSpentInSecondsByHour { get; set; }

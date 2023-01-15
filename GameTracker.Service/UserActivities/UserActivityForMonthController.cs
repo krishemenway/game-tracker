@@ -24,11 +24,8 @@ namespace GameTracker.UserActivities
 		[HttpGet(nameof(UserActivityForMonth))]
 		public ActionResult<UserActivityForMonthResponse> UserActivityForMonth([FromQuery] int month, [FromQuery] int year)
 		{
-			var firstOfMonth = DateTimeOffset.Parse($"{year}-{month}-01");
-			var lastOfMonth = firstOfMonth.AddMonths(1).Subtract(TimeSpan.FromSeconds(1));
-
 			var userActivityForMonth = _allUserActivityCache
-				.FindUserActivity(firstOfMonth, lastOfMonth)
+				.FindActivityForMonth(new MonthOfYear { Year = year, Month = month })
 				.OrderBy(x => x.AssignedToDate)
 				.ThenBy(x => x.EndTime).ToList();
 
@@ -51,7 +48,7 @@ namespace GameTracker.UserActivities
 				TimeSpentInSecondsByDate = userActivityForMonth
 					.GroupBy(userActivity => userActivity.AssignedToDate)
 					.ToDictionary(groupedUserActivities => groupedUserActivities.Key.ToString("yyyy-MM-dd"), groupedUserActivities => groupedUserActivities.Sum(activity => activity.TimeSpentInSeconds))
-					.SetDefaultValuesForKeys(StartOfEachDayInMonth(lastOfMonth).Select(date => date.ToString("yyyy-MM-dd")), (_) => 0),
+					.SetDefaultValuesForKeys(Enumerable.Range(1, DateTime.DaysInMonth(year, month) - 1).Select(date => date.ToString("yyyy-MM-dd")), (_) => 0),
 
 				GamesByGameId = _gameStore.FindGames(distinctGameIds).ToDictionary(x => x.Key.Value, x => x.Value),
 
