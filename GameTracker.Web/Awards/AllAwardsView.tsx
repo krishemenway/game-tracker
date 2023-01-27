@@ -33,7 +33,7 @@ function LoadedAllAwardsView(props: { userProfile: UserProfile }) {
 
 	return (
 		<>
-			<PageHeader userName={props.userProfile.UserName} pageTitle="All Games" />
+			<PageHeader userName={props.userProfile.UserName} pageTitle="All Awards" />
 
 			<section className={clsx(layout.marginBottom, layout.flexRow, layout.flexEvenDistribution, layout.flexItemSpacing)}>
 				<StatisticsSection
