@@ -81,14 +81,6 @@ namespace GameTracker.Games
 			return null;
 		}
 
-		private async Task<FileResult> DefaultIcon()
-		{
-			var defaultGameIconPath = Program.FilePathInExecutableFolder("DefaultGameIcon32.png");
-			var iconContents = await _memoryCache.GetOrCreateAsync($"GameIcon-Default-32", (cache) => System.IO.File.ReadAllBytesAsync(defaultGameIconPath));
-
-			return File(iconContents, "image/png", true);
-		}
-
 		private async Task<byte[]> TryReadImage(Id<Game> gameId, string fileExtension)
 		{
 			var iconPath = IconPath(gameId, fileExtension);
@@ -120,12 +112,12 @@ namespace GameTracker.Games
 			}
 		}
 
-		private string IconPath(Id<Game> gameId, string fileExtension)
+		private static string IconPath(Id<Game> gameId, string fileExtension)
 		{
 			return Path.Combine(IconFolderPath(gameId), $"icon{fileExtension}");
 		}
 
-		private string IconFolderPath(Id<Game> gameId)
+		private static string IconFolderPath(Id<Game> gameId)
 		{
 			return Path.Combine(BaseIconFolderPath, gameId.ToString());
 		}
@@ -140,6 +132,7 @@ namespace GameTracker.Games
 			{
 				{ "image/jpg", ".jpg" },
 				{ "image/png", ".png" },
+				{ "image/webp", ".webp" },
 			};
 
 		public static string BaseIconFolderPath { get; } = Path.Combine(Path.GetTempPath(), "GameTrackerIcons");
