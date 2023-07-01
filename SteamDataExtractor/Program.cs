@@ -88,14 +88,14 @@ namespace SteamDataExtractor
 			}
 
 			var steamData = steamDataBySteamId[steamId.ToString()];
-			var releaseDate = DateTime.UnixEpoch.AddSeconds(long.Parse(steamData.Common.SteamReleaseDate));
 
+			var releaseDate = TryExtractReleaseDate(steamData.Common);
 			var game = new Game
 			{
-				GameId = $"{Regex.Replace(steamData.Common.Name, @"[^\w]", "")}-{releaseDate.Year}",
+				GameId = $"{Regex.Replace(steamData.Common.Name, @"[^\w]", "")}-{releaseDate?.Year}",
 				Name = steamData.Common.Name,
 				SteamId = steamId,
-				ReleaseDate = DateTime.SpecifyKind(releaseDate.Date, DateTimeKind.Unspecified),
+				ReleaseDate = releaseDate,
 				IconUri = BuildIconUri(steamData),
 				MatchExecutablePatterns = steamData.Config.Launch.Values.Select(x => $"**\\{steamData.Config.InstallDir}\\{x.Executable}").ToArray(),
 			};
@@ -243,6 +243,27 @@ namespace SteamDataExtractor
 			}
 		}
 
+		private static DateTime? TryExtractReleaseDate(SteamCommonData commonData)
+		{
+			if (!string.IsNullOrEmpty(commonData.OriginalReleaseDate))
+			{
+				return ConvertUnixEpochOffsetToDateTime(commonData.OriginalReleaseDate);
+			}
+
+			if (!string.IsNullOrEmpty(commonData.SteamReleaseDate))
+			{
+				return ConvertUnixEpochOffsetToDateTime(commonData.SteamReleaseDate);
+			}
+
+			return null;
+		}
+
+		private static DateTime ConvertUnixEpochOffsetToDateTime(string releaseDate)
+		{
+			var convertedDate = DateTime.UnixEpoch.AddSeconds(long.Parse(releaseDate));
+			return DateTime.SpecifyKind(convertedDate.Date, DateTimeKind.Unspecified);
+		}
+
 		private static JsonSerializerOptions JsonOptions { get; } = new JsonSerializerOptions
 		{
 			AllowTrailingCommas = true,
@@ -278,6 +299,9 @@ namespace SteamDataExtractor
 
 		[JsonPropertyName("steam_release_date")]
 		public string SteamReleaseDate { get; set; }
+
+		[JsonPropertyName("original_release_date")]
+		public string OriginalReleaseDate { get; set; }
 	}
 
 	public class SteamExtendedData
