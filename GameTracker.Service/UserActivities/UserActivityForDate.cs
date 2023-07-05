@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using StronglyTyped.StringIds;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GameTracker.UserActivities
@@ -11,6 +12,8 @@ namespace GameTracker.UserActivities
 		}
 
 		public IReadOnlyList<UserActivity> AllUserActivity { get; }
+
+		public Id<Game> MostPlayedGame => AllUserActivity.GroupBy(x => x.GameId, x => x.TimeSpentInSeconds).MaxBy(x => x.ToArray().Sum()).Key;
 		public Dictionary<string, double> TotalTimeSpentInSecondsByHour => new TimeSpentByHourCalculator().Calculate(AllUserActivity).ToDictionary(x => x.Key.ToString(), x => x.Value);
 
 		public int TotalActivityCount => AllUserActivity.Count;

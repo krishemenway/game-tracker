@@ -113,32 +113,24 @@ const UserActivityCalendarMonthDay: React.FC<UserActivityCalendarMonthDayProps> 
 	const currentDayString = React.useMemo(() => `${props.firstDayInMonth.format("YYYY-MM")}-${padNumber(props.dayInMonth, 2)}`, [props.firstDayInMonth, props.dayInMonth]);
 	const startOfMonthPadding = React.useMemo(() => props.dayInMonth === 1 ? ((props.firstDayInMonth.day() / 7 * 100) + "%") : undefined, [props.firstDayInMonth, props.dayInMonth]);
 
-	const activities = acitivitesForDate(props.firstDayInMonth, props.dayInMonth, props.userActivitiesByDate);
 	const isSelectedDay = currentDayString === props.currentPopoverDate?.format("YYYY-MM-DD");
 
 	return (
 		<div className={clsx(layout.flexRow, layout.flexCenter, text.center, classes.calendarDay, isSelectedDay && background.borderAll)} style={{marginLeft: startOfMonthPadding}}>
-			<UserActivityCalendarMonthDayIcon
-				activities={activities}
-				onClick={(element) => { props.setCurrentPopoverDate(moment(currentDayString)); props.setPopoverAnchor(element); }}
-			/>
+			{props.userActivitiesByDate[currentDayString] === undefined && (
+				<NoActivityIcon className={clsx(layout.width100, text.center)} />
+			)}
+
+			{props.userActivitiesByDate[currentDayString] !== undefined && (
+				<SingleActivityIcon 
+					gameId={props.userActivitiesByDate[currentDayString].MostPlayedGame}
+					onClick={(element) => { props.setCurrentPopoverDate(moment(currentDayString)); props.setPopoverAnchor(element); }}
+					className={clsx(layout.width100, layout.height100, text.center)}
+				/>
+			)}
 		</div>
 	);
 };
-
-const UserActivityCalendarMonthDayIcon: React.FC<{ activities: UserActivity[], onClick: (element: HTMLElement) => void }> = (props) => {
-	const [layout, text] = [useLayoutStyles(), useTextStyles()];
-	const uniqueGames = props.activities.map((activity) => activity.GameId).distinct();
-
-	switch (uniqueGames.length) {
-		case 0:
-			return <NoActivityIcon className={clsx(layout.width100, text.center)} />
-		case 1:
-			return <SingleActivityIcon className={clsx(layout.width100, layout.height100, text.center)} gameId={uniqueGames[0]} onClick={props.onClick} />
-		default:
-			return <MultipleActivityIcon className={clsx(layout.width100, layout.height100, text.center)} count={uniqueGames.length} onClick={props.onClick} />
-	}
-}
 
 const NoActivityIcon: React.FC<{ className: string }> = (props) => <div {...props}>&ndash;</div>
 const SingleActivityIcon: React.FC<{ gameId: string; className: string; onClick: (element: HTMLElement) => void }> = (props) => {
@@ -147,16 +139,6 @@ const SingleActivityIcon: React.FC<{ gameId: string; className: string; onClick:
 	return (
 		<button className={clsx(action.clickable, action.clickableBackground, props.className)} onClick={(evt) => props.onClick(evt.currentTarget)}>
 			<GameIcon gameId={props.gameId} style={{ width: "24px", height: "24px" }} />
-		</button>
-	);
-};
-
-const MultipleActivityIcon: React.FC<{ className: string; count: number; onClick: (element: HTMLElement) => void }> = (props) => {
-	const action = useActionStyles();
-
-	return (
-		<button className={clsx(action.clickable, action.clickableBackground, props.className)} onClick={(evt) => props.onClick(evt.currentTarget)}>
-			{props.count}
 		</button>
 	);
 };

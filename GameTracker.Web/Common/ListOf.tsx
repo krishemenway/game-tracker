@@ -2,7 +2,7 @@ import * as React from "react";
 
 export interface ListPropsOf<TItem> {
 	items: readonly TItem[];
-	renderItem: (item: TItem) => JSX.Element;
+	renderItem: (item: TItem, index: number) => JSX.Element;
 	createKey: (item: TItem, index: number) => string;
 	emptyListView?: JSX.Element;
 
@@ -20,7 +20,7 @@ export default function ListOf<TItem>(props: ListPropsOf<TItem>): JSX.Element {
 	return (
 		<ol key={props.key} className={props.listClassName} style={props.style}>
 			{props.items.map((item, index) => (
-				<li className={props.listItemClassName !== undefined ? props.listItemClassName(index === 0, index === props.items.length - 1) : ""} key={props.createKey(item, index)}>{props.renderItem(item)}</li>
+				<li className={props.listItemClassName !== undefined ? props.listItemClassName(index === 0, index === props.items.length - 1) : ""} key={props.createKey(item, index)}>{props.renderItem(item, index)}</li>
 			))}
 		</ol>
 	);
