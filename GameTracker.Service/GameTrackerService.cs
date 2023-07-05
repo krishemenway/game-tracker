@@ -40,7 +40,7 @@ namespace GameTracker
 			ProcessScannerTimer.Elapsed += (sender, args) => { new ProcessScanner().ScanProcesses(ProcessScannerTimer); };
 
 			UserActivityFileMonitor = new HostFileChangeMonitor(new[] { UserActivityStore.DataFilePath }.ToList());
-			UserActivityFileMonitor.NotifyOnChanged((_) => { AllUserActivityCache.CancellationTokenSource.Cancel(); });
+			UserActivityFileMonitor.NotifyOnChanged((_) => { AllUserActivityCache.ResetUserActivityCache(); });
 
 			WebAssetsFileMonitor = new HostFileChangeMonitor(WebAssets.AllAssetPaths.ToArray());
 			WebAssetsFileMonitor.NotifyOnChanged((_) => { WebAssets.CancellationTokenSource.Cancel(); });

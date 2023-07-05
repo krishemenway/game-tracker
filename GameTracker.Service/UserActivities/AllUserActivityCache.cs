@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
 using Range.Net;
+using Serilog;
 using StronglyTyped.StringIds;
 using System;
 using System.Collections.Generic;
@@ -60,7 +61,12 @@ namespace GameTracker.UserActivities
 			return FindUserActivity(startTime, endTime).GroupByDate().SetDefaultValuesForKeys(allDays, (day) => emptyActivity);
 		}
 
-		public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
+		public static void ResetUserActivityCache()
+		{
+			CancellationTokenSource.Cancel();
+			CancellationTokenSource.Dispose();
+			CancellationTokenSource = new CancellationTokenSource();
+		}
 
 		private UserActivityCacheData AllUserActivity
 		{
@@ -68,10 +74,13 @@ namespace GameTracker.UserActivities
 			{
 				return _memoryCache.GetOrCreate("AllUserActivity", (cache) => {
 					cache.AddExpirationToken(new CancellationChangeToken(CancellationTokenSource.Token));
+					Log.Debug("Rebuilding user activity cache");
 					return new UserActivityCacheData(_userActivityStore.FindAllUserActivity());
 				});
 			}
 		}
+
+		private static CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();
 
 		private readonly IMemoryCache _memoryCache;
 		private readonly IUserActivityStore _userActivityStore;
