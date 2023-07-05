@@ -44,7 +44,7 @@ const LoadedDayView: React.FC<{ dateKey: string; userActivityForDate: UserActivi
 		<>
 			<PageHeader userName={props.userName} pageTitle={dateAsMoment.format("MMMM Do, YYYY")} />
 
-			<div className={clsx(layout.flexRow, layout.flexEvenDistribution, layout.flexItemSpacing, layout.marginBottomDouble)}>
+			<div className={clsx(layout.flexRow, layout.flexGapDefault, layout.flexEvenDistribution, layout.marginVertical)}>
 				<StatisticsSection
 					statistics={[
 						{ Label: "Total Time Played", Value: TimeSpan.Readable(props.userActivityForDate.TotalTimeSpentInSeconds) },

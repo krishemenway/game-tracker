@@ -46,7 +46,7 @@ const LoadedMonthView: React.FC<{ monthKey: string; userName: string; userActivi
 		<>
 			<PageHeader userName={props.userName} pageTitle={dateAsMoment.format("MMMM YYYY")} />
 
-			<div className={clsx(layout.flexRow, layout.flexEvenDistribution, layout.flexItemSpacing, layout.marginBottomDouble)}>
+			<div className={clsx(layout.flexRow, layout.flexGapDefault, layout.flexEvenDistribution, layout.marginVertical)}>
 				<StatisticsSection
 					statistics={[
 						{ Label: "Total Games Played", Value: props.userActivityForMonth.TotalGamesPlayed },

@@ -29,7 +29,7 @@ const EqualWidthColumnsComponent: React.FC<{ viewName: string; control: EqualWid
 			items={props.control.ControlData.Columns}
 			renderItem={(c) => <RenderControl viewName={props.viewName} control={c} userProfile={props.userProfile} />}
 			createKey={(_, index) => index.toString()}
-			listClassName={clsx(layout.flexRow, layout.flexGapDefault)}
+			listClassName={clsx(layout.flexRow, layout.flexGapDefault, layout.flexEvenDistribution)}
 			listItemClassName={() => clsx(layout.marginBottom)}
 		/>
 	);

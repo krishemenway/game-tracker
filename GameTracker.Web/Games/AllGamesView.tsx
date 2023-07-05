@@ -39,7 +39,7 @@ function LoadedAllGamesView(props: { userProfile: UserProfile }) {
 		<>
 			<PageHeader userName={props.userProfile.UserName} pageTitle="All Games" />
 
-			<section className={clsx(layout.marginBottom, layout.flexRow, layout.flexEvenDistribution, layout.flexItemSpacing)}>
+			<section className={clsx(layout.flexRow, layout.flexGapDefault, layout.flexEvenDistribution, layout.marginVertical)}>
 				<StatisticsSection
 					statistics={[
 						{ Label: "Total Games", Value: totalGames },
