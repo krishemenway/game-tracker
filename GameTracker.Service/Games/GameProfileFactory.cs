@@ -23,7 +23,7 @@ namespace GameTracker.Games
 
 			return new GameProfile
 			{
-				Game = game,
+				Game = new GameViewModel(game),
 				AllActivity = orderedUserActivities,
 				ActivitiesByDate = orderedUserActivities.GroupByDate(),
 				MostRecent = orderedUserActivities.FirstOrDefault(),
@@ -41,7 +41,7 @@ namespace GameTracker.Games
 
 	public class GameProfile
 	{
-		public IGame Game { get; set; }
+		public GameViewModel Game { get; set; }
 
 		public IReadOnlyList<UserActivity> AllActivity { get; set; }
 		public Dictionary<string, UserActivityForDate> ActivitiesByDate { get; set; }

@@ -17,7 +17,15 @@ interface ControlDayPopoverProps {
 	setPopoverAnchor: (element: HTMLElement) => void;
 }
 
-const UserActivityCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActivityForDate>; className?: string; }> = (props) => {
+interface UserActivityCalendarProps {
+	userActivitiesByDate: Dictionary<UserActivityForDate>;
+	className?: string;
+	showMoreLimit?: number|null;
+	showMorePath?: string;
+	showMoreLengthOverride?: number|null;
+}
+
+const UserActivityCalendar: React.FC<UserActivityCalendarProps> = (props) => {
 	const [layout, background, text, styles] = [useLayoutStyles(), useBackgroundStyles(), useTextStyles(), useStyles()];
 	const firstDaysInMonth = React.useMemo(() => createFirstDaysInMonths(props.userActivitiesByDate), [props.userActivitiesByDate]);
 
@@ -32,7 +40,9 @@ const UserActivityCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActi
 				createKey={(m) => m.format("YYYY-MM")}
 				listClassName={clsx(props.className, layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}
 				listItemClassName={() => clsx(layout.width33, layout.marginVerticalHalf)}
-				showMoreLimit={6}
+				showMoreLimit={props.showMoreLimit ?? null}
+				showMorePath={props.showMorePath}
+				showMoreLengthOverride={props.showMoreLengthOverride}
 				renderItem={(firstDayInMonth) => (
 					<UserActivityCalendarMonth
 						firstDayInMonth={firstDayInMonth}
@@ -57,7 +67,7 @@ const UserActivityCalendar: React.FC<{ userActivitiesByDate: Dictionary<UserActi
 						</div>
 
 						<AggregateGameTableForDay
-							activities={acitivitesForDate(currentPopoverDate, currentPopoverDate.date(), props.userActivitiesByDate)}
+							activities={activitiesForDate(currentPopoverDate, currentPopoverDate.date(), props.userActivitiesByDate)}
 						/>
 					</div>
 				)}
@@ -143,7 +153,7 @@ const SingleActivityIcon: React.FC<{ gameId: string; className: string; onClick:
 	);
 };
 
-function acitivitesForDate(firstDayInMonth: moment.Moment, dayInMonth: number, userActivitiesByDate: Dictionary<UserActivityForDate>): UserActivity[] {
+function activitiesForDate(firstDayInMonth: moment.Moment, dayInMonth: number, userActivitiesByDate: Dictionary<UserActivityForDate>): UserActivity[] {
 	const dateKey = firstDayInMonth.format("YYYY-MM-") + padNumber(dayInMonth, 2);
 	return userActivitiesByDate[dateKey]?.AllUserActivity ?? [];
 }

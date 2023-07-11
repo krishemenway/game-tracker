@@ -56,14 +56,6 @@ namespace GameTracker.UserActivities
 			return AllUserActivity.AllUserActivity.Where(userActivity => searchRange.Contains(userActivity.AssignedToDate)).ToArray();
 		}
 
-		public IReadOnlyDictionary<string, UserActivityForDate> FindUserActivityByDay(DateTimeOffset startTime, DateTimeOffset endTime)
-		{
-			var emptyActivity = new UserActivityForDate(new UserActivity[0]);
-			var allDays = Enumerable.Range(0, endTime.Subtract(startTime).Days).Select(dayCount => startTime.AddDays(dayCount).ToString("yyyy-MM-dd"));
-
-			return FindUserActivity(startTime, endTime).GroupByDate().SetDefaultValuesForKeys(allDays, (day) => emptyActivity);
-		}
-
 		private UserActivityCacheData AllUserActivity
 		{
 			get

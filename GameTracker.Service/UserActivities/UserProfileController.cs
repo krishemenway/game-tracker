@@ -23,7 +23,15 @@ namespace GameTracker.UserActivities
 		[HttpGet(nameof(UserProfile))]
 		public ActionResult<UserProfile> UserProfile()
 		{
-			var orderedActivities = _allUserActivityCache.FindAll().OrderByDescending(x => x.EndTime).ToArray();
+			var notBeforeTime = _allUserActivityCache.RelevantMonths
+				.Select(x => x.FirstOfMonth)
+				.OrderByDescending(firstOfMonth => firstOfMonth)
+				.Take(3).LastOrDefault();
+
+			var orderedActivities = _allUserActivityCache
+				.FindUserActivity(notBeforeTime, null)
+				.OrderByDescending(x => x.EndTime)
+				.ToArray();
 
 			var mostRecentActivity = orderedActivities.FirstOrDefault();
 
@@ -37,8 +45,9 @@ namespace GameTracker.UserActivities
 				StartedCollectingDataTime = _allUserActivityCache.StartedCollectingDataTime,
 				RecentActivities = orderedActivities.Take(10).ToArray(),
 				ActivitiesByDate = orderedActivities.GroupByDate(),
-				GamesByGameId = gamesByGameId.ToDictionary(x => x.Key.Value, x => x.Value),
+				GamesByGameId = gamesByGameId.ToDictionary(x => x.Key.Value, x => new GameViewModel(x.Value)),
 				AllGameAwards = _gameAwardStore.AllGameAwardWinners(_allUserActivityCache),
+				TotalMonthsOfActivity = _allUserActivityCache.RelevantMonths.Count(),
 			};
 		}
 

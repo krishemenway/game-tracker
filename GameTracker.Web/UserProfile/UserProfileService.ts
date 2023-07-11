@@ -13,6 +13,7 @@ export interface UserProfile {
 
 	RecentActivities: UserActivity[];
 	TotalGamesPlayed: number;
+	TotalMonthsOfActivity: number;
 	ActivitiesByDate: Dictionary<UserActivityForDate>;
 	GamesByGameId: Dictionary<Game>;
 	AllGameAwards: GameAward[];

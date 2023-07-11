@@ -7,13 +7,15 @@ import ListOf, { ListPropsOf } from "Common/ListOf";
 interface Props<T> extends ListPropsOf<T> {
 	showMoreLimit: number|null;
 	showMorePath?: string;
+	showMoreLengthOverride?: number|null;
 }
 
 function ListWithShowMore<T>(props: Props<T>): JSX.Element {
 	const [layout, action] = [useLayoutStyles(), useActionStyles()];
 	const [showAll, setShowAll] = React.useState(false);
-	const showMoreLimit = props.showMoreLimit ?? props.items.length;
-	const showButton = !showAll && props.items.length > showMoreLimit;
+	const itemLength = props.showMoreLengthOverride ?? props.items.length;
+	const showMoreLimit = props.showMoreLimit ?? itemLength;
+	const showButton = !showAll && itemLength > showMoreLimit;
 
 	return (
 		<div className={clsx(layout.flexColumn, layout.flexGapHalf)}>
@@ -31,7 +33,7 @@ function ListWithShowMore<T>(props: Props<T>): JSX.Element {
 					className={clsx(layout.flexColumn, layout.flexCenter, layout.width100, layout.paddingVertical, action.clickable, action.clickableBackground, action.clickableBackgroundBorder)}
 					onClick={() => setShowAll(true)}
 				>
-					Show All ({props.items.length - showMoreLimit} more)
+					Show All ({itemLength - showMoreLimit} more)
 				</button>
 			) : <></>}
 
@@ -40,7 +42,7 @@ function ListWithShowMore<T>(props: Props<T>): JSX.Element {
 					className={clsx(layout.flexColumn, layout.flexCenter, layout.width100, layout.paddingVertical, action.clickable, action.clickableBackground, action.clickableBackgroundBorder)}
 					to={props.showMorePath}
 				>
-					Show All ({props.items.length - showMoreLimit} more)
+					Show All ({itemLength - showMoreLimit} more)
 				</Link>
 			) : <></>}
 		</div>

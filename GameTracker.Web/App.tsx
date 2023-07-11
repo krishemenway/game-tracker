@@ -7,6 +7,7 @@ import ThemeStore, { UserProfileTheme } from "UserProfile/UserProfileTheme";
 import GameProfile from "GameProfiles/GameProfileView";
 import DayView from "UserActivities/DayView";
 import MonthView from "UserActivities/MonthView";
+import AllActivityView from "UserActivities/AllActivityView";
 import ControlPanel from "ControlPanel/ControlPanel";
 import NotFound from "Common/NotFound";
 import AllGamesView from "Games/AllGamesView";
@@ -42,6 +43,12 @@ const App: React.FC = () => {
 						exact
 						path="/activity/:year/:month"
 						component={(props: RouteComponentProps<{ year: string; month: string }>) => <MonthView year={props.match.params.year} month={props.match.params.month} />}
+					/>
+
+					<Route
+						exact
+						path="/activity"
+						component={() => <AllActivityView />}
 					/>
 
 					<Route

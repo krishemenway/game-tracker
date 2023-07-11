@@ -1,5 +1,4 @@
 ﻿using GameTracker.ProcessSessions;
-using Range.Net;
 using System;
 using Guid = StronglyTyped.GuidIds;
 using String = StronglyTyped.StringIds;
@@ -18,8 +17,6 @@ namespace GameTracker.UserActivities
 		public double TimeSpentInSeconds => (EndTime - StartTime).TotalSeconds;
 
 		public String.Id<Game> GameId { get; set; }
-
-		public Range<DateTimeOffset> DateRange => new Range<DateTimeOffset>(StartTime, EndTime);
 
 		internal class ClassMap : CsvHelper.Configuration.ClassMap<UserActivity>
 		{

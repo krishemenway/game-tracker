@@ -49,7 +49,7 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 			<GameStatistics gameId={props.gameId} gameProfile={props.gameProfile} />
 
 			<Section title="Recent Activity">
-				<UserActivityCalendar userActivitiesByDate={props.gameProfile.ActivitiesByDate} />
+				<UserActivityCalendar userActivitiesByDate={props.gameProfile.ActivitiesByDate} showMoreLimit={3} />
 			</Section>
 
 			<Section title="Game Awards" hide={props.gameProfile.GameAwards.length === 0}>

@@ -17,10 +17,10 @@ namespace GameTracker.UserActivities
 
 			foreach (var activity in userActivities)
 			{
-				for (var startOfHour = StartOfHour(activity.DateRange.Minimum); startOfHour < activity.DateRange.Maximum; startOfHour = startOfHour.AddHours(1))
+				for (var startOfHour = StartOfHour(activity.StartTime); startOfHour < activity.EndTime; startOfHour = startOfHour.AddHours(1))
 				{
 					var endOfHour = startOfHour.AddHours(1);
-					var timeSpentInHour = (endOfHour > activity.DateRange.Maximum ? activity.DateRange.Maximum : endOfHour) - (startOfHour < activity.DateRange.Minimum ? activity.DateRange.Minimum : startOfHour);
+					var timeSpentInHour = (endOfHour > activity.EndTime ? activity.EndTime : endOfHour) - (startOfHour < activity.StartTime ? activity.StartTime : startOfHour);
 					timeSpentByHour[startOfHour.Hour] = timeSpentByHour[startOfHour.Hour] + timeSpentInHour;
 				}
 			}

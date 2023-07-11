@@ -14,6 +14,17 @@ export class UserActivityService {
 	constructor() {
 		this.UserActivityByDate = {};
 		this.UserActivityForMonth = {};
+		this.AllUserActivity = new Receiver<Dictionary<UserActivityForDate>>("Failed to load all user activity.");
+	}
+
+	public LoadAll(): void {
+		const url = `/WebAPI/UserActivityPerDay?startTime=1980-01-01&endTime=${new Date().toISOString()}`;
+		const promise = () => Http.get<UserActivityPerDayResponse, Dictionary<UserActivityForDate>>(url, (response) => {
+			GameStore.Instance.LoadGames(response.GamesByGameId);
+			return response.UserActivityPerDay;
+		});
+
+		this.AllUserActivity.Start(promise);
 	}
 
 	public LoadForMonth(year: number, month: number): void {
@@ -61,7 +72,8 @@ export class UserActivityService {
 	}
 
 	public UserActivityForMonth: Dictionary<Receiver<UserActivityForMonthResponse>>;
-	public UserActivityByDate: Dictionary<Receiver<UserActivityForDate>>
+	public UserActivityByDate: Dictionary<Receiver<UserActivityForDate>>;
+	public AllUserActivity: Receiver<Dictionary<UserActivityForDate>>;
 
 	static get Instance(): UserActivityService {
 		if (this._instance === undefined) {

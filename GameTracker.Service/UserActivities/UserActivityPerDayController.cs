@@ -22,13 +22,13 @@ namespace GameTracker.UserActivities
 		[HttpGet(nameof(UserActivityPerDay))]
 		public ActionResult<UserActivityPerDayResponse> UserActivityPerDay([FromQuery] DateTimeOffset startTime, [FromQuery] DateTimeOffset endTime)
 		{
-			var userActivityPerDay = _allUserActivityCache.FindUserActivityByDay(startTime, endTime);
-			var distinctGameIds = userActivityPerDay.SelectMany(x => x.Value.AllUserActivity).Select(x => x.GameId).Distinct().ToArray();
+			var allUserActivitiesInRange = _allUserActivityCache.FindUserActivity(startTime, endTime);
+			var distinctGameIds = allUserActivitiesInRange.Select(x => x.GameId).Distinct().ToArray();
 
 			return new UserActivityPerDayResponse
 			{
-				UserActivityPerDay = userActivityPerDay,
-				GamesByGameId = _gameStore.FindGames(distinctGameIds).ToDictionary(x => x.Key.Value, x => x.Value),
+				UserActivityPerDay = allUserActivitiesInRange.GroupByDate(),
+				GamesByGameId = _gameStore.FindGames(distinctGameIds).ToDictionary(x => x.Key.Value, x => new GameViewModel(x.Value)),
 			};
 		}
 
@@ -39,6 +39,6 @@ namespace GameTracker.UserActivities
 	public class UserActivityPerDayResponse
 	{
 		public IReadOnlyDictionary<string, UserActivityForDate> UserActivityPerDay { get; set; }
-		public IReadOnlyDictionary<string, IGame> GamesByGameId { get; set; }
+		public IReadOnlyDictionary<string, GameViewModel> GamesByGameId { get; set; }
 	}
 }
