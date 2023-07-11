@@ -1,12 +1,12 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Primitives;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.FileProviders;
 using Range.Net;
 using Serilog;
 using StronglyTyped.StringIds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace GameTracker.UserActivities
 {
@@ -26,6 +26,9 @@ namespace GameTracker.UserActivities
 		public IEnumerable<MonthOfYear> RelevantMonths => AllUserActivity.ActivityForMonths.Keys;
 		public IEnumerable<int> RelevantYears => AllUserActivity.ActivityForYears.Keys;
 		public IEnumerable<Id<Game>> RelevantGames => AllUserActivity.ActivityForGames.Keys;
+
+		public double TotalTimeSpentInSeconds => AllUserActivity.TotalTimeSpentInSeconds;
+		public DateTimeOffset StartedCollectingDataTime => AllUserActivity.StartedCollectingDataTime;
 
 		public IReadOnlyList<UserActivity> FindAll()
 		{
@@ -50,7 +53,7 @@ namespace GameTracker.UserActivities
 		public IReadOnlyList<UserActivity> FindUserActivity(DateTimeOffset? startTime, DateTimeOffset? endTime)
 		{
 			var searchRange = new Range<DateTimeOffset>(startTime ?? DateTimeOffset.MinValue, endTime ?? DateTimeOffset.MaxValue);
-			return AllUserActivity.AllUserActivity.Where(userActivity => searchRange.Contains(userActivity.AssignedToDate)).ToList();
+			return AllUserActivity.AllUserActivity.Where(userActivity => searchRange.Contains(userActivity.AssignedToDate)).ToArray();
 		}
 
 		public IReadOnlyDictionary<string, UserActivityForDate> FindUserActivityByDay(DateTimeOffset startTime, DateTimeOffset endTime)
@@ -61,29 +64,23 @@ namespace GameTracker.UserActivities
 			return FindUserActivity(startTime, endTime).GroupByDate().SetDefaultValuesForKeys(allDays, (day) => emptyActivity);
 		}
 
-		public static void ResetUserActivityCache()
-		{
-			CancellationTokenSource.Cancel();
-			CancellationTokenSource.Dispose();
-			CancellationTokenSource = new CancellationTokenSource();
-		}
-
 		private UserActivityCacheData AllUserActivity
 		{
 			get
 			{
 				return _memoryCache.GetOrCreate("AllUserActivity", (cache) => {
-					cache.AddExpirationToken(new CancellationChangeToken(CancellationTokenSource.Token));
+					cache.AddExpirationToken(StaticFileProvider.Watch(UserActivityStore.DataFileName));
+
 					Log.Debug("Rebuilding user activity cache");
 					return new UserActivityCacheData(_userActivityStore.FindAllUserActivity());
 				});
 			}
 		}
 
-		private static CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();
-
 		private readonly IMemoryCache _memoryCache;
 		private readonly IUserActivityStore _userActivityStore;
+
+		private static IFileProvider StaticFileProvider { get; } = new PhysicalFileProvider(Program.AppDataFolderPath);
 	}
 
 	public class UserActivityCacheData
@@ -91,12 +88,16 @@ namespace GameTracker.UserActivities
 		public UserActivityCacheData(IReadOnlyList<UserActivity> userActivities)
 		{
 			AllUserActivity = userActivities;
-			ActivityForMonths = userActivities.GroupBy(x => MonthOfYear.Create(x.AssignedToDate)).ToDictionary(x => x.Key, activities => (IReadOnlyList<UserActivity>)activities.ToList());
-			ActivityForYears = userActivities.GroupBy(x => x.AssignedToDate.Year).ToDictionary(x => x.Key, activities => (IReadOnlyList<UserActivity>)activities.ToList());
-			ActivityForGames = userActivities.GroupBy(x => x.GameId).ToDictionary(x => x.Key, activities => (IReadOnlyList<UserActivity>)activities.ToList());
+			TotalTimeSpentInSeconds = userActivities.Sum(x => x.TimeSpentInSeconds);
+			StartedCollectingDataTime = userActivities.Min(x => x.StartTime);
+			ActivityForMonths = userActivities.GroupBy(x => MonthOfYear.Create(x.AssignedToDate)).ToDictionary(x => x.Key, activities => (IReadOnlyList<UserActivity>)activities.ToArray());
+			ActivityForYears = userActivities.GroupBy(x => x.AssignedToDate.Year).ToDictionary(x => x.Key, activities => (IReadOnlyList<UserActivity>)activities.ToArray());
+			ActivityForGames = userActivities.GroupBy(x => x.GameId).ToDictionary(x => x.Key, activities => (IReadOnlyList<UserActivity>)activities.ToArray());
 		}
 
 		public IReadOnlyList<UserActivity> AllUserActivity { get; }
+		public double TotalTimeSpentInSeconds { get; }
+		public DateTimeOffset StartedCollectingDataTime { get; }
 		public IReadOnlyDictionary<MonthOfYear, IReadOnlyList<UserActivity>> ActivityForMonths { get; }
 		public IReadOnlyDictionary<int, IReadOnlyList<UserActivity>> ActivityForYears { get; }
 		public IReadOnlyDictionary<Id<Game>, IReadOnlyList<UserActivity>> ActivityForGames { get; }

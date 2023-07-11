@@ -55,7 +55,9 @@ namespace GameTracker.UserActivities
 			Log.Information("Recorded {UserActivityCount} activities.", userActivities.Length);
 		}
 
-		public static string DataFilePath => Program.FilePathInAppData("UserActivity.csv");
+		public const string DataFileName = "UserActivity.csv";
+		public static string DataFilePath => Program.FilePathInAppData(DataFileName);
+
 		private static CsvConfiguration CsvConfiguration { get; }
 
 		private static object FileLock { get; } = new object();

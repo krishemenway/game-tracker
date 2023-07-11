@@ -24,20 +24,19 @@ namespace GameTracker.UserProfiles
 		[HttpGet(nameof(UserProfile))]
 		public ActionResult<UserProfile> UserProfile()
 		{
-			var orderedActivities = _allUserActivityCache.FindAll().OrderByDescending(x => x.EndTime).ToList();
+			var orderedActivities = _allUserActivityCache.FindAll().OrderByDescending(x => x.EndTime).ToArray();
 
 			var mostRecentActivity = orderedActivities.FirstOrDefault();
-			var oldestActivity = orderedActivities.LastOrDefault();
 
-			var gamesByGameId = _gameStore.FindGames(_allUserActivityCache.RelevantGames.ToList());
+			var gamesByGameId = _gameStore.FindGames(_allUserActivityCache.RelevantGames.ToArray());
 
 			return new UserProfile
 			{
 				UserName = AppSettings.Instance.UserName,
-				TotalTimeSpentInSeconds = orderedActivities.Sum(x => x.TimeSpentInSeconds),
+				TotalTimeSpentInSeconds = _allUserActivityCache.TotalTimeSpentInSeconds,
 				MostRecentActivity = mostRecentActivity,
-				StartedCollectingDataTime = oldestActivity?.StartTime,
-				RecentActivities = orderedActivities.Take(10).ToList(),
+				StartedCollectingDataTime = _allUserActivityCache.StartedCollectingDataTime,
+				RecentActivities = orderedActivities.Take(10).ToArray(),
 				ActivitiesByDate = orderedActivities.GroupByDate(),
 				GamesByGameId = gamesByGameId.ToDictionary(x => x.Key.Value, x => x.Value),
 				AllGameAwards = _gameAwardStore.AllGameAwardWinners(_allUserActivityCache),

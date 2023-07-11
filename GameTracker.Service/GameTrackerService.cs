@@ -39,9 +39,6 @@ namespace GameTracker
 			ProcessScannerTimer = new System.Timers.Timer(AppSettings.Instance.ProcessScanIntervalInSeconds * 1000) { AutoReset = true };
 			ProcessScannerTimer.Elapsed += (sender, args) => { new ProcessScanner().ScanProcesses(ProcessScannerTimer); };
 
-			UserActivityFileMonitor = new HostFileChangeMonitor(new[] { UserActivityStore.DataFilePath });
-			UserActivityFileMonitor.NotifyOnChanged((_) => { AllUserActivityCache.ResetUserActivityCache(); });
-
 			WebAssetsFileMonitor = new HostFileChangeMonitor(WebAssets.AllAssetPaths.ToArray());
 			WebAssetsFileMonitor.NotifyOnChanged((_) => { WebAssets.CancellationTokenSource.Cancel(); });
 
@@ -77,7 +74,6 @@ namespace GameTracker
 
 		public Task StopAsync(CancellationToken cancellationToken)
 		{
-			UserActivityFileMonitor?.Dispose();
 			ProcessScannerTimer?.Stop();
 			GamesDataUpdateTimer?.Stop();
 			return WebHost.StopAsync();
@@ -124,7 +120,6 @@ namespace GameTracker
 		public static string WebHostListenAddress => $"http://*:{AppSettings.Instance.WebPort}";
 		public static readonly HttpClient HttpClient = new();
 
-		private HostFileChangeMonitor UserActivityFileMonitor { get; }
 		private HostFileChangeMonitor WebAssetsFileMonitor { get; }
 		private System.Timers.Timer GamesDataUpdateTimer { get; set; }
 		private System.Timers.Timer ProcessScannerTimer { get; set; }
