@@ -19,7 +19,7 @@ namespace GameTracker.Games
 		{
 			var orderedUserActivities = allUserActivity.FindActivityForGame(game.GameId)
 				.OrderByDescending(x => x.EndTime)
-				.ToList();
+				.ToArray();
 
 			return new GameProfile
 			{
@@ -27,11 +27,11 @@ namespace GameTracker.Games
 				AllActivity = orderedUserActivities,
 				ActivitiesByDate = orderedUserActivities.GroupByDate(),
 				MostRecent = orderedUserActivities.FirstOrDefault(),
-				TotalUserActivityCount = orderedUserActivities.Count,
+				TotalUserActivityCount = orderedUserActivities.Length,
 				MeanUserActivityTimePlayedInSeconds = orderedUserActivities.Average(x => x.TimeSpentInSeconds),
 				TotalTimePlayedInSeconds = orderedUserActivities.Sum(x => x.TimeSpentInSeconds),
 				TimeSpentInSecondsByHour = _timeSpentByHourCalculator.Calculate(orderedUserActivities).ToDictionary(x => x.Key.ToString(), x => x.Value),
-				GameAwards = _gameAwardStore.AllGameAwardWinners(allUserActivity).Where(x => x.GameId == game.GameId).ToList(),
+				GameAwards = _gameAwardStore.AllGameAwardWinners(allUserActivity).Where(x => x.GameId == game.GameId).ToArray(),
 			};
 		}
 

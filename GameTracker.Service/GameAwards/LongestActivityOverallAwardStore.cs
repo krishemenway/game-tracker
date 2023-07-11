@@ -30,7 +30,7 @@ namespace GameTracker.GameAwards
 				.OrderByDescending(x => x.TimeSpentInSeconds)
 				.Take(count)
 				.Select(activity => CreateAward(activity))
-				.ToList();
+				.ToArray();
 		}
 
 		private static GameAward CreateAward(UserActivity userActivity)

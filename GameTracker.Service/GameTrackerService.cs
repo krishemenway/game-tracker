@@ -39,7 +39,7 @@ namespace GameTracker
 			ProcessScannerTimer = new System.Timers.Timer(AppSettings.Instance.ProcessScanIntervalInSeconds * 1000) { AutoReset = true };
 			ProcessScannerTimer.Elapsed += (sender, args) => { new ProcessScanner().ScanProcesses(ProcessScannerTimer); };
 
-			UserActivityFileMonitor = new HostFileChangeMonitor(new[] { UserActivityStore.DataFilePath }.ToList());
+			UserActivityFileMonitor = new HostFileChangeMonitor(new[] { UserActivityStore.DataFilePath });
 			UserActivityFileMonitor.NotifyOnChanged((_) => { AllUserActivityCache.ResetUserActivityCache(); });
 
 			WebAssetsFileMonitor = new HostFileChangeMonitor(WebAssets.AllAssetPaths.ToArray());

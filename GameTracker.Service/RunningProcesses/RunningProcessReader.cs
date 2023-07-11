@@ -48,7 +48,7 @@ namespace GameTracker.RunningProcesses
 				});
 			}
 
-			return allProcesses.Distinct().ToList();
+			return allProcesses.Distinct().ToArray();
 		}
 
 		private bool TryGetValueForProcess<TData, TValue>(TData data, Func<TData, TValue> getValueFunc, out TValue gotValue)

@@ -27,11 +27,11 @@ namespace GameTracker.UserActivities
 			var userActivityForMonth = _allUserActivityCache
 				.FindActivityForMonth(new MonthOfYear { Year = year, Month = month })
 				.OrderBy(x => x.AssignedToDate)
-				.ThenBy(x => x.EndTime).ToList();
+				.ThenBy(x => x.EndTime).ToArray();
 
 			var distinctGameIds = userActivityForMonth
 				.Select(x => x.GameId)
-				.Distinct().ToList();
+				.Distinct().ToArray();
 
 			return new UserActivityForMonthResponse
 			{
@@ -52,7 +52,7 @@ namespace GameTracker.UserActivities
 
 				GamesByGameId = _gameStore.FindGames(distinctGameIds).ToDictionary(x => x.Key.Value, x => x.Value),
 
-				TotalGamesPlayed = distinctGameIds.Count,
+				TotalGamesPlayed = distinctGameIds.Length,
 				TotalTimePlayedInSeconds = userActivityForMonth.Sum(x => x.TimeSpentInSeconds),
 			};
 		}

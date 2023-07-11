@@ -49,7 +49,7 @@ namespace GameTracker.ProcessSessions
 			{
 				csv.Context.RegisterClassMap<ProcessSession.ClassMap>();
 
-				return csv.GetRecords<ProcessSession>().ToList();
+				return csv.GetRecords<ProcessSession>().ToArray();
 			}
 		}
 
@@ -94,7 +94,7 @@ namespace GameTracker.ProcessSessions
 		{
 			return _pendingProcessSessionsByFilePath.Values
 				.Where(pendingProcess => !runningProcesses.Any(p => pendingProcess.FilePath == p.FilePath ))
-				.ToList();
+				.ToArray();
 		}
 
 		private void AddRunningProcessesThatHaveStarted(IReadOnlyList<RunningProcess> runningProcesses)
@@ -121,7 +121,7 @@ namespace GameTracker.ProcessSessions
 			{
 				csv.Context.RegisterClassMap<ProcessSession.ClassMap>();
 
-				processSessions = pendingProcessSessions.Select(pendingProcessSession => CreateProcessSession(pendingProcessSession, currentTime)).ToList();
+				processSessions = pendingProcessSessions.Select(pendingProcessSession => CreateProcessSession(pendingProcessSession, currentTime)).ToArray();
 				csv.WriteRecords(processSessions);
 				Log.Debug("Wrote {CountOfWrittenProcesses} process completions to file.", processSessions.Count);
 			}

@@ -29,7 +29,7 @@ namespace GameTracker.ObservedProcesses
 
 		public IReadOnlyList<ObservedProcess> FindAll()
 		{
-			return _observedRunningProcessesByFilePath.Select(x => x.Value).ToList();
+			return _observedRunningProcessesByFilePath.Select(x => x.Value).ToArray();
 		}
 
 		public bool ShouldIgnoreByUserDecision(string filePath)

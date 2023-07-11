@@ -25,14 +25,14 @@ namespace GameTracker.GameAwards
 				.OrderByDescending(x => x.TimeSpentInSeconds)
 				.Take(count)
 				.Select(userActivity => CreateAwardForGame(userActivity))
-				.ToList();
+				.ToArray();
 		}
 
 		public IReadOnlyList<GameAward> AllWinnersForType(AllUserActivityCache allUserActivityCache)
 		{
 			return allUserActivityCache.RelevantYears
 				.SelectMany(year => StandingsForGameAward(year, 1, allUserActivityCache))
-				.ToList();
+				.ToArray();
 		}
 
 		private static Id<GameAward> CreateId(int year)

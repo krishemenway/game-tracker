@@ -35,7 +35,7 @@ namespace GameTracker.UserActivities
 
 				csv.Context.RegisterClassMap<UserActivity.ClassMap>();
 
-				return csv.GetRecords<UserActivity>().ToList();
+				return csv.GetRecords<UserActivity>().ToArray();
 			}
 		}
 

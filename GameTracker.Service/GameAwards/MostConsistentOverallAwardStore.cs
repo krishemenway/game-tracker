@@ -31,7 +31,7 @@ namespace GameTracker.GameAwards
 				.OrderByDescending(x => x.TotalDaysPlayed)
 				.Take(count)
 				.Select(x => CreateAwardForGame(x.GameId, x.TotalDaysPlayed))
-				.ToList();
+				.ToArray();
 		}
 
 		private static GameAward CreateAwardForGame(Id<Game> gameId, int totalDaysPlayed)

@@ -23,7 +23,7 @@ namespace GameTracker.GameAwards
 		{
 			return allUserActivityCache.RelevantMonths
 				.SelectMany(month => StandingsForGameAward(month, 1, allUserActivityCache))
-				.ToList();
+				.ToArray();
 		}
 
 		private IReadOnlyList<GameAward> StandingsForGameAward(MonthOfYear month, int count, AllUserActivityCache allUserActivityCache)
@@ -32,7 +32,7 @@ namespace GameTracker.GameAwards
 				.OrderByDescending(x => x.TimeSpentInSeconds)
 				.Take(count)
 				.Select(activity => CreateAwardForMonth(month, activity))
-				.ToList();
+				.ToArray();
 		}
 
 		private static Id<GameAward> CreateId(MonthOfYear month)

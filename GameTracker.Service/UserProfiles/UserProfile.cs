@@ -14,7 +14,7 @@ namespace GameTracker.UserProfiles
 		public DateTimeOffset? StartedCollectingDataTime { get; set; }
 		public UserActivity MostRecentActivity { get; set; }
 
-		public List<UserActivity> RecentActivities { get; set; }
+		public IReadOnlyList<UserActivity> RecentActivities { get; set; }
 		public Dictionary<string, UserActivityForDate> ActivitiesByDate { get; set; }
 
 		public Dictionary<string, IGame> GamesByGameId { get; set; }
