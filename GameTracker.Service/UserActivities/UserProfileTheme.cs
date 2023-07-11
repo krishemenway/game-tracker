@@ -1,4 +1,4 @@
-﻿namespace GameTracker.UserProfiles
+﻿namespace GameTracker.UserActivities
 {
 	public class UserProfileTheme
 	{

@@ -1,9 +1,8 @@
 ﻿using GameTracker.GameAwards;
-using GameTracker.UserActivities;
 using System;
 using System.Collections.Generic;
 
-namespace GameTracker.UserProfiles
+namespace GameTracker.UserActivities
 {
 	public class UserProfile
 	{

@@ -3,9 +3,7 @@ using GameTracker.ObservedProcesses;
 using GameTracker.ProcessSessions;
 using GameTracker.RunningProcesses;
 using GameTracker.UserActivities;
-using GameTracker.UserProfiles;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 

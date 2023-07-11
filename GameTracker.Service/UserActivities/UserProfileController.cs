@@ -1,11 +1,10 @@
 ﻿using GameTracker.GameAwards;
 using GameTracker.Games;
-using GameTracker.UserActivities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Linq;
 
-namespace GameTracker.UserProfiles
+namespace GameTracker.UserActivities
 {
 	[Route("WebAPI")]
 	public class UserProfileController : ControllerBase

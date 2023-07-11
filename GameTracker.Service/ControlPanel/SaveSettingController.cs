@@ -1,4 +1,4 @@
-﻿using GameTracker.UserProfiles;
+﻿using GameTracker.UserActivities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;

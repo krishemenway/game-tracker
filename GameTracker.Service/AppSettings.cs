@@ -1,4 +1,4 @@
-﻿using GameTracker.UserProfiles;
+﻿using GameTracker.UserActivities;
 using GameTracker.ViewConfigurations;
 using Microsoft.Extensions.Configuration;
 using System;
