@@ -21,9 +21,7 @@ namespace GameTracker.GameAwards
 
 		public IReadOnlyList<GameAward> AllWinnersForType(AllUserActivityCache allUserActivityCache)
 		{
-			return allUserActivityCache.RelevantYears
-				.SelectMany(year => StandingsForGameAward(1, allUserActivityCache))
-				.ToArray();
+			return StandingsForGameAward(1, allUserActivityCache);
 		}
 
 		private IReadOnlyList<GameAward> StandingsForGameAward(int count, AllUserActivityCache allUserActivityCache)
