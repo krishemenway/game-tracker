@@ -47,6 +47,7 @@ namespace GameTracker.GameAwards
 			{
 				new MostConsistentOverallAwardStore(),
 				new LongestActivityOverallAwardStore(),
+				new MostPlayedGameOverallAwardStore(),
 
 				new MostPlayedGameOfYearAwardStore(),
 				new LongestActivityOfYearAwardStore(),

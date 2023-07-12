@@ -1,6 +1,7 @@
 export enum GameAwardType {
 	MostConsistentOverall = "MostConsistentOverall",
 	LongestActivityOverall = "LongestActivityOverall",
+	MostPlayedGameOverall = "MostPlayedGameOverall",
 	MostPlayedGameOfYear = "MostPlayedGameOfYear",
 	LongestActivityOfYear = "LongestActivityOfYear",
 	MostPlayedGameOfMonth = "MostPlayedGameOfMonth",
@@ -83,4 +84,13 @@ export interface LongestActivityOverallDetails {
 export interface LongestActivityOverallAward extends GameAwardBase {
 	GameAwardType: GameAwardType.LongestActivityOverall;
 	GameAwardTypeDetails: LongestActivityOverallDetails;
+}
+
+export interface MostPlayedGameOverallDetails {
+	TimeSpentInSeconds: number;
+}
+
+export interface MostPlayedGameOverallAward extends GameAwardBase {
+	GameAwardType: GameAwardType.MostPlayedGameOverall;
+	GameAwardTypeDetails: MostPlayedGameOverallDetails;
 }

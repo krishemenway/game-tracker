@@ -14,6 +14,7 @@ import AllGamesView from "Games/AllGamesView";
 import AllAwardsView from "Awards/AllAwardsView";
 import CatchAllErrors from "Common/CatchAllErrors";
 import LoadingErrorMessages from "Common/LoadingErrorMessages";
+import GameAwardStandingsView from "Awards/GameAwardStandingsView";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import { ConfiguredView } from "ViewConfigurations/ViewConfiguration";
 
@@ -26,6 +27,12 @@ const App: React.FC = () => {
 				<ResetModalOnLocationChange />
 
 				<Switch>
+
+					<Route
+						exact
+						path="/awards/:gameAwardId"
+						component={(props: RouteComponentProps<{ gameAwardId: string; }>) => <GameAwardStandingsView gameAwardId={props.match.params.gameAwardId} />}
+					/>
 
 					<Route
 						exact
