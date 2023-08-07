@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StronglyTyped.StringIds;
+using System;
 
 namespace GameTracker.ObservedProcesses
 {
@@ -14,5 +15,8 @@ namespace GameTracker.ObservedProcesses
 		public bool Ignore { get; set; }
 
 		public DateTimeOffset FirstObservedTime { get; set; }
+
+		/// <summary>Matched game with process</summary>
+		public Id<Game>? GameId { get; set; }
 	}
 }

@@ -1,13 +1,13 @@
 ﻿using GameTracker.Games;
 using GameTracker.ProcessSessions;
 using Serilog;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GameTracker.UserActivities
 {
 	public interface IUserActivityService
 	{
-		bool TryCreateActivity(ProcessSession processSession, out UserActivity userActivity);
 		bool TryCreateActivities(ProcessSession[] processSessions, out UserActivity[] userActivities);
 	}
 
@@ -17,33 +17,27 @@ namespace GameTracker.UserActivities
 			IGameMatcher gameMatcher = null,
 			IUserActivityFactory userActivityFactory = null)
 		{
-			_gameMatcher = gameMatcher ?? new GameMatcher(new GameStore().FindAll);
+			_gameMatcher = gameMatcher ?? new GameMatcher();
 			_userActivityFactory = userActivityFactory ?? new UserActivityFactory();
 		}
 
 		public bool TryCreateActivities(ProcessSession[] processSessions, out UserActivity[] userActivities)
 		{
-			userActivities = processSessions
-				.Select(process => TryCreateActivity(process, out var activity) ? activity : null)
-				.Where(process => process != null)
-				.ToArray();
+			var userActivitiesList = new List<UserActivity>();
 
-			return userActivities.Any();
-		}
-
-		public bool TryCreateActivity(ProcessSession processSession, out UserActivity userActivity)
-		{
-			if (!_gameMatcher.TryMatch(processSession.FilePath, out var matchedGame))
+			foreach(var processSessionsForFilePath in processSessions.GroupBy(x => x.FilePath))
 			{
-				userActivity = null;
-				Log.Debug("Failed to match {FilePath}", processSession.FilePath);
-				return false;
+				if (!_gameMatcher.TryMatch(processSessionsForFilePath.Key, out var game))
+				{
+					Log.Debug("Failed to match {FilePath}", processSessionsForFilePath.Key);
+					continue;
+				}
+
+				userActivitiesList.AddRange(processSessionsForFilePath.Select(session => _userActivityFactory.Create(session, game)));
 			}
 
-			userActivity = _userActivityFactory.Create(processSession, matchedGame);
-			Log.Debug("Created user activity for game {GameId}.", matchedGame.GameId);
-			SystemTrayForm.ShowBalloonInfo($"Played {matchedGame.Name} for {(processSession.EndTime - processSession.StartTime).HumanReadable()}.");
-			return true;
+			userActivities = userActivitiesList.ToArray();
+			return userActivities.Any();
 		}
 
 		private readonly IGameMatcher _gameMatcher;

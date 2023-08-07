@@ -79,6 +79,12 @@ namespace GameTracker.ProcessSessions
 			if (_userActivityService.TryCreateActivities(processSessions.ToArray(), out var userActivities))
 			{
 				_userActivityStore.SaveActivity(userActivities);
+
+				if (userActivities.Length == 1)
+				{
+					var activity = userActivities.Single();
+					SystemTrayForm.ShowBalloonInfo($"Played {activity.GameId} for {(activity.EndTime - activity.StartTime).HumanReadable()}.");
+				}
 			}
 		}
 

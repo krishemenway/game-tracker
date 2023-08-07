@@ -1,4 +1,5 @@
-﻿using GlobExpressions;
+﻿using GameTracker.ObservedProcesses;
+using GlobExpressions;
 using StronglyTyped.StringIds;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,17 +13,29 @@ namespace GameTracker.Games
 
 	public class GameMatcher : IGameMatcher
 	{
-		public GameMatcher(FindAllGames findAllGamesFunc)
+		public GameMatcher(
+			IGameStore gameStore = null,
+			IObservedProcessStore observedProcessStore = null)
 		{
-			_findAllGamesFunc = findAllGamesFunc;
+			_gameStore = gameStore ?? new GameStore();
+			_observedProcessStore = observedProcessStore ?? new ObservedProcessStore();
 		}
 
 		public bool TryMatch(string filePath, out IGame gameOrNull)
 		{
-			foreach (var (gameId, game) in _findAllGamesFunc())
+			if (_observedProcessStore.TryGetGameIdForFilePath(filePath, out var gameIdOrNull)
+				&& gameIdOrNull.HasValue
+				&& _gameStore.TryGetGame(gameIdOrNull.Value, out var existingGame))
+			{
+				gameOrNull = existingGame;
+				return true;
+			}
+
+			foreach (var (gameId, game) in _gameStore.FindAll())
 			{
 				if (game.MatchExecutablePatterns.Any(pattern => new Glob(pattern, GlobOptions.CaseInsensitive).IsMatch(filePath)))
 				{
+					_observedProcessStore.MarkProcessWithGameId(filePath, game.GameId);
 					gameOrNull = game;
 					return true;
 				}
@@ -34,6 +47,7 @@ namespace GameTracker.Games
 
 		public delegate IReadOnlyDictionary<Id<Game>, IGame> FindAllGames();
 
-		private readonly FindAllGames _findAllGamesFunc;
+		private readonly IGameStore _gameStore;
+		private readonly IObservedProcessStore _observedProcessStore;
 	}
 }

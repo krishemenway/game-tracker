@@ -1,6 +1,5 @@
 ﻿using GameTracker.ProcessSessions;
 using Serilog;
-using System;
 using System.Linq;
 
 namespace GameTracker.UserActivities
@@ -19,6 +18,7 @@ namespace GameTracker.UserActivities
 
 		public void Backfill()
 		{
+			SystemTrayForm.ShowBalloonInfo($"Started running user activity backfiller.");
 			Log.Information("Started running user activity backfiller");
 
 			var allUserActivityByProcessSessionId = _userActivityStore.FindAllUserActivity().ToDictionary(x => x.ProcessSessionId, x => x);
@@ -32,7 +32,8 @@ namespace GameTracker.UserActivities
 				_userActivityStore.SaveActivity(userActivities);
 			}
 
-			Log.Information("Finished running user activity backfiller");
+			SystemTrayForm.ShowBalloonInfo($"Finished running user activity backfiller. Count: {userActivities.Length}");
+			Log.Information("Finished running user activity backfiller. Count: {UserActivityCount}", userActivities.Length);
 		}
 
 		private readonly IProcessSessionStore _processSessionStore;
