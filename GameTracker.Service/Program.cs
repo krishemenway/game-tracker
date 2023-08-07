@@ -41,6 +41,8 @@ namespace GameTracker
 				Log.Logger = new LoggerConfiguration()
 					.ReadFrom.Configuration(AppSettings.Instance.Configuration)
 					.MinimumLevel.ControlledBy(LoggingLevelSwitch)
+					.MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+					.MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
 					.WriteTo.Console()
 					.WriteTo.File(Path.Combine(ExecutableFolderPath, "GameTracker.Service.log"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 5)
 					.CreateLogger();
