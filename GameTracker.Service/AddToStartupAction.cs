@@ -15,7 +15,7 @@ namespace GameTracker
 		{
 			using var shortcut = new WindowsShortcut
 			{
-				Path = Program.ExecutablePath,
+				Path = @$"cmd.exe /c start ""Game Tracker"" /Low ""{Program.ExecutablePath}""",
 				Description = "Startup link for game tracker"
 			};
 
