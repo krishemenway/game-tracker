@@ -76,10 +76,10 @@ namespace GameTracker.Games
 
 					return File.WriteAllTextAsync(GamesFilePath, json).ContinueWith((t) => { SystemTrayForm.ShowBalloonInfo(overview); });
 				}
-				catch (Exception e)
+				catch (Exception exception)
 				{
-					Log.Error("Failed to update games data. Threw exception {Exception}", e.ToString());
-					SystemTrayForm.ShowBalloonError($"Failed to update games data. Threw exception {e}");
+					Log.Error(exception, "Failed to update games data.");
+					SystemTrayForm.ShowBalloonError($"Failed to update games data. Check Logs for more details.");
 
 					return Task.CompletedTask;
 				}
