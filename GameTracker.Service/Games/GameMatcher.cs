@@ -33,7 +33,7 @@ namespace GameTracker.Games
 
 			foreach (var (gameId, game) in _gameStore.FindAll())
 			{
-				if (game.MatchExecutablePatterns.Any(pattern => new Glob(pattern, GlobOptions.CaseInsensitive).IsMatch(filePath)))
+				if (game.MatchExecutablePatterns.Any(pattern => new Glob(RemoveCommas(pattern), GlobOptions.CaseInsensitive).IsMatch(RemoveCommas(filePath))))
 				{
 					_observedProcessStore.MarkProcessWithGameId(filePath, game.GameId);
 					gameOrNull = game;
@@ -43,6 +43,14 @@ namespace GameTracker.Games
 
 			gameOrNull = null;
 			return false;
+		}
+
+		private string RemoveCommas(string thingWithCommasInIt)
+		{
+			// Dealing with Glob not really dealing with commas well here.
+			// Chances seem low that there would be an accidental collison because of the prescense/non-precense of a comma in the path of two different games.
+			// See https://github.com/kthompson/glob/issues/41
+			return thingWithCommasInIt.Replace(",", "");
 		}
 
 		public delegate IReadOnlyDictionary<Id<Game>, IGame> FindAllGames();
