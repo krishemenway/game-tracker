@@ -155,7 +155,7 @@ export class ControlPanelService {
 	}
 
 	private TransformObservedProcess(processes: ObservedProcess[]): ModifiableObservedProcess[] {
-		return processes.sort((a, b) => a.ProcessPath < b.ProcessPath ? -1 : 1).map((p) => new ModifiableObservedProcess(p));
+		return processes.map((p) => new ModifiableObservedProcess(p));
 	}
 
 	public Status: Receiver<ControlPanelSettings>;
