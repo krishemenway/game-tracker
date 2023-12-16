@@ -173,7 +173,7 @@ function createFirstDaysInMonths(userActivitiesByDate: Dictionary<UserActivityFo
 	return Object.keys(userActivitiesByDate)
 		.map((dateKey) => dateKey.slice(0, 7))
 		.distinct()
-		.sort().reverse()
+		.sort()
 		.map((monthKey) => moment(monthKey + "-01"));
 }
 
