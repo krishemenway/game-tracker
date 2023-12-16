@@ -33,11 +33,13 @@ namespace GameTracker
 
 		public GameTrackerService()
 		{
+			ProcessScanner = new ProcessScanner();
+
 			GamesDataUpdateTimer = new System.Timers.Timer(TimeSpan.FromDays(1).TotalMilliseconds) { AutoReset = true };
 			GamesDataUpdateTimer.Elapsed += (sender, args) => GameStore.ReloadGamesFromCentralRepository();
 
 			ProcessScannerTimer = new System.Timers.Timer(AppSettings.Instance.ProcessScanIntervalInSeconds * 1000) { AutoReset = true };
-			ProcessScannerTimer.Elapsed += (sender, args) => { new ProcessScanner().ScanProcesses(ProcessScannerTimer); };
+			ProcessScannerTimer.Elapsed += (sender, args) => { ProcessScanner.ScanProcesses(ProcessScannerTimer); };
 
 			WebAssetsFileMonitor = new HostFileChangeMonitor(WebAssets.AllAssetPaths.ToArray());
 			WebAssetsFileMonitor.NotifyOnChanged((_) => { WebAssets.CancellationTokenSource.Cancel(); });
@@ -76,6 +78,7 @@ namespace GameTracker
 		{
 			ProcessScannerTimer?.Stop();
 			GamesDataUpdateTimer?.Stop();
+			ProcessScanner.ScanProcesses(ProcessScannerTimer);
 			return WebHost.StopAsync();
 		}
 
@@ -124,5 +127,6 @@ namespace GameTracker
 		private System.Timers.Timer GamesDataUpdateTimer { get; set; }
 		private System.Timers.Timer ProcessScannerTimer { get; set; }
 		private IWebHost WebHost { get; set; }
+		private ProcessScanner ProcessScanner { get; }
 	}
 }
