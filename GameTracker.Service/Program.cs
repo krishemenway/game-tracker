@@ -24,7 +24,7 @@ namespace GameTracker
 		public static string FilePathInExecutableFolder(string fileName) => Path.Combine(ExecutableFolderPath, fileName);
 		public static string FilePathInAppData(string fileName) => Path.Combine(AppDataFolderPath, fileName);
 
-		public static LoggingLevelSwitch LoggingLevelSwitch { get; } = new LoggingLevelSwitch(LogEventLevel.Debug);
+		public static LoggingLevelSwitch LoggingLevelSwitch { get; } = new LoggingLevelSwitch(LogEventLevel.Information);
 		public static CancellationTokenSource CloseServiceToken { get; } = new CancellationTokenSource();
 
 		public static async Task Main(string[] args)
