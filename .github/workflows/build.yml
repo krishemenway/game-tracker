@@ -3,7 +3,7 @@ name: GameTracker
 on: [push]
 
 jobs:
-  build-service:
+  service:
     runs-on: windows-latest
 
     steps:
@@ -19,7 +19,7 @@ jobs:
         name: service
         path: ./service
 
-  build-web:
+  web:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -32,5 +32,18 @@ jobs:
       working-directory: ./GameTracker.Web
     - uses: actions/upload-artifact@v4
       with:
-        name: service
+        name: web
         path: ./GameTracker.Web/dist
+
+  combine:
+    needs: [service, web]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        path: ./artifacts
+        merge-multiple: true
+    - uses: actions/upload-artifact@v4
+      with:
+        name: combined
+        path: ./artifacts
