@@ -1,5 +1,5 @@
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { GameAward } from "Awards/GameAward";
 import { useLayoutStyles, useTextStyles } from "AppStyles";
 import GameIcon from "Games/GameIcon";

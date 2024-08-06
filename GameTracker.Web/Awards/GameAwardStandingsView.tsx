@@ -1,30 +1,29 @@
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Text } from "recharts";
 import { useBackgroundStyles, useLayoutStyles } from "AppStyles";
 import { GameAwardStandingsService, GameAwardStandings } from "Awards/GameAwardStandingsService";
-import { Loading } from "@krishemenway/react-loading-component";
+import { Loading } from "Common/Loading";
 import PageHeader from "Common/PageHeader";
 import LoadingErrorMessages from "Common/LoadingErrorMessages";
 import LoadingSpinner from "Common/LoadingSpinner";
-import { TimeSpan } from "Common/TimeSpan";
 import { UserProfile, UserProfileService } from "UserProfile/UserProfileService";
 import GameLinkOrLabel from "Games/GameLink";
-import GameIcon from "Games/GameIcon";
 import ThemeStore from "UserProfile/UserProfileTheme";
 import { GameAward } from "Awards/GameAward";
 import { GetService } from "./GameAwardService";
-import GameName from "Games/GameName";
 import { GameStore } from "Games/GameStore";
 import { useObservable } from "@residualeffect/rereactor";
+import { useParams } from "react-router-dom";
 
-const GameAwardStandingsView: React.FC<{ gameAwardId: string }> = (props) => {
+const GameAwardStandingsView: React.FC = () => {
 	const layout = useLayoutStyles();
+	const params = useParams<{ gameAwardId: string }>();
 
 	React.useEffect(() => {
 		UserProfileService.Instance.LoadProfile();
-		GameAwardStandingsService.Instance.LoadStandings(props.gameAwardId);
-	}, [props.gameAwardId]);
+		GameAwardStandingsService.Instance.LoadStandings(params.gameAwardId ?? "");
+	}, [params.gameAwardId]);
 
 	return (
 		<div className={layout.centerLayout1000}>

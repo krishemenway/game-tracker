@@ -1,9 +1,9 @@
 import * as moment from "moment";
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { useLayoutStyles } from "AppStyles";
 import { UserActivityService } from "UserActivities/UserActivityService";
-import { Loading } from "@krishemenway/react-loading-component";
+import { Loading } from "Common/Loading";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import UserActivityBadge from "UserActivities/UserActivityBadge";
 import StatisticsSection from "Common/StatisticsSection";
@@ -14,10 +14,12 @@ import TimeSpentByHourChart from "Common/TimeSpentByHourChart";
 import ListOf from "Common/ListOf";
 import LoadingErrorMessages from "Common/LoadingErrorMessages";
 import LoadingSpinner from "Common/LoadingSpinner";
+import { useParams } from "react-router-dom";
 
-const DayView: React.FC<{ year:string; month: string; day: string; className?: string }> = (props) => {
+const DayView: React.FC = () => {
 	const layout = useLayoutStyles();
-	const dateKey = `${props.year}-${props.month}-${props.day}`;
+	const params = useParams<{ year:string; month: string; day: string; }>();
+	const dateKey = `${params.year}-${params.month}-${params.day}`;
 
 	React.useEffect(() => { UserActivityService.Instance.LoadForDate(dateKey); }, [dateKey]);
 	React.useEffect(() => { UserProfileService.Instance.LoadProfile(); }, []);

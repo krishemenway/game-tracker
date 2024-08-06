@@ -1,5 +1,5 @@
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { useBackgroundStyles } from "AppStyles";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { TimeSpan } from "Common/TimeSpan";

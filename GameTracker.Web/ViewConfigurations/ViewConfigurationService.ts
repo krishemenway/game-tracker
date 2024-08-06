@@ -1,5 +1,5 @@
 import { Http } from "Common/Http";
-import { Receiver } from "@krishemenway/react-loading-component";
+import { Receiver } from "Common/Receiver";
 import { EqualWidthColumnsControl } from "Common/EqualWidthColumns";
 import { FullWidthColumnControl } from "Common/FullWidthColumnControl";
 import { PageHeaderControl } from "Common/PageHeader";
@@ -41,7 +41,7 @@ export class ViewConfigurationService {
 	}
 
 	public LoadViews(): void {
-		this.LoadingAllViews.Start(() => Http.get<AllViewsResponse, Dictionary<ViewConfiguration>>("/WebAPI/AllViews", (response) => response.ViewsByName));
+		this.LoadingAllViews.Start((abort) => Http.get<AllViewsResponse, Dictionary<ViewConfiguration>>("/WebAPI/AllViews", abort, (response) => response.ViewsByName));
 	}
 
 	public LoadingAllViews: Receiver<Dictionary<ViewConfiguration>>;

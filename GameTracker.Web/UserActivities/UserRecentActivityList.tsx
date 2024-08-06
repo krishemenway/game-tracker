@@ -1,5 +1,5 @@
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { getWidthClassFromQuantityPerRow, useLayoutStyles } from "AppStyles";
 import ListOf from "Common/ListOf";
 import { UserProfile } from "UserProfile/UserProfileService";

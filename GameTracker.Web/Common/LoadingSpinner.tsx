@@ -1,5 +1,5 @@
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { useLayoutStyles, useTextStyles, createStyles } from "AppStyles";
 import AnimatedLoadingIcon from "Icons/AnimatedLoadingIcon";
 import ThemeStore from "UserProfile/UserProfileTheme"

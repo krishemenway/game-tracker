@@ -1,7 +1,7 @@
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { useObservable } from "@residualeffect/rereactor";
-import { Loading } from "@krishemenway/react-loading-component";
+import { Loading } from "Common/Loading";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { ControlPanelService, ModifiableObservedProcess } from "ControlPanel/ControlPanelService";
 import { SectionHeader } from "ControlPanel/ControlPanel";

@@ -3,7 +3,7 @@ import ListOf from "Common/ListOf";
 import { RenderControl, ViewControlHandler } from "ViewConfigurations/ViewConfiguration";
 import { UserProfile } from "UserProfile/UserProfileService";
 import { ControlConfiguration } from "ViewConfigurations/ViewConfigurationService";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { useLayoutStyles } from "AppStyles";
 
 export const FullWidthColumnControlHandler: ViewControlHandler<FullWidthColumnControl> = {

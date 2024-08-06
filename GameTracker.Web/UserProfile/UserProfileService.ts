@@ -1,6 +1,6 @@
 import { UserActivity } from "UserActivities/UserActivity";
 import { Http } from "Common/Http";
-import { Receiver } from "@krishemenway/react-loading-component";
+import { Receiver } from "Common/Receiver";
 import { Game, GameStore } from "Games/GameStore";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import { UserActivityService } from "UserActivities/UserActivityService";
@@ -25,7 +25,7 @@ export class UserProfileService {
 	}
 
 	public LoadProfile(): void {
-		this.UserProfile.Start(() => Http.get<UserProfile>("/WebAPI/UserProfile").then((response) => {
+		this.UserProfile.Start((abort) => Http.get<UserProfile>("/WebAPI/UserProfile", abort).then((response) => {
 			GameStore.Instance.LoadGames(response.GamesByGameId);
 			UserActivityService.Instance.AddLoadedActivities(response.ActivitiesByDate);
 			return response;

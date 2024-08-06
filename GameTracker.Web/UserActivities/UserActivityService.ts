@@ -1,5 +1,5 @@
 import * as moment from "moment";
-import { Receiver } from "@krishemenway/react-loading-component";
+import { Receiver } from "Common/Receiver";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import { Http } from "Common/Http";
 import { Game, GameStore } from "Games/GameStore";
@@ -19,21 +19,18 @@ export class UserActivityService {
 
 	public LoadAll(): void {
 		const url = `/WebAPI/UserActivityPerDay?startTime=1980-01-01&endTime=${new Date().toISOString()}`;
-		const promise = () => Http.get<UserActivityPerDayResponse, Dictionary<UserActivityForDate>>(url, (response) => {
+
+		this.AllUserActivity.Start((abort) => Http.get<UserActivityPerDayResponse, Dictionary<UserActivityForDate>>(url, abort, (response) => {
 			GameStore.Instance.LoadGames(response.GamesByGameId);
 			return response.UserActivityPerDay;
-		});
-
-		this.AllUserActivity.Start(promise);
+		}));
 	}
 
 	public LoadForMonth(year: number, month: number): void {
-		const promise = () => Http.get<UserActivityForMonthResponse>(`/WebAPI/UserActivityForMonth?year=${year}&month=${month}`, (response) => {
+		this.FindOrCreateUserActivityForMonth(`${year}-${month}`).Start((abort) => Http.get<UserActivityForMonthResponse>(`/WebAPI/UserActivityForMonth?year=${year}&month=${month}`, abort, (response) => {
 			GameStore.Instance.LoadGames(response.GamesByGameId);
 			return response;
-		});
-
-		this.FindOrCreateUserActivityForMonth(`${year}-${month}`).Start(promise);
+		}));
 	}
 
 	public LoadForDate(dateKey: string): void {
@@ -41,12 +38,10 @@ export class UserActivityService {
 		const endTime = startTime.clone().add(1, "day");
 		const url = `/WebAPI/UserActivityPerDay?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
-		const promise = () => Http.get<UserActivityPerDayResponse, UserActivityForDate>(url, (response) => {
+		this.FindOrCreateUserActivityForDate(dateKey).Start((abort) => Http.get<UserActivityPerDayResponse, UserActivityForDate>(url, abort, (response) => {
 			GameStore.Instance.LoadGames(response.GamesByGameId);
 			return response.UserActivityPerDay[dateKey];
-		});
-
-		this.FindOrCreateUserActivityForDate(dateKey).Start(promise);
+		}));
 	}
 
 	public FindOrCreateUserActivityForDate(dayKey: string): Receiver<UserActivityForDate> {

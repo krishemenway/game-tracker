@@ -1,5 +1,5 @@
 import { Http } from "Common/Http";
-import { Receiver } from "@krishemenway/react-loading-component";
+import { Receiver } from "Common/Receiver";
 import { GameAward } from "Awards/GameAward";
 
 export interface GameAwardStandings {
@@ -12,7 +12,7 @@ export class GameAwardStandingsService {
 	}
 
 	public LoadStandings(gameAwardId: string): void {
-		this.Standings.Start(() => Http.get<GameAwardStandings>(`/WebAPI/Awards/${gameAwardId}`));
+		this.Standings.Start((abort) => Http.get<GameAwardStandings>(`/WebAPI/Awards/${gameAwardId}`, abort));
 	}
 
 	public Standings: Receiver<GameAwardStandings>;

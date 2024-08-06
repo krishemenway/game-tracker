@@ -1,10 +1,9 @@
-import * as moment from "moment";
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { Link, useLocation } from "react-router-dom";
 import { useActionStyles } from "AppStyles";
 
-const UserProfileLink: React.FC<{ className?: string }> = (props) => {
+const UserProfileLink: React.FC<{ className?: string; children: React.ReactNode }> = (props) => {
 	const location = useLocation();
 	const action = useActionStyles();
 

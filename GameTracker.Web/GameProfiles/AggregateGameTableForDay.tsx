@@ -1,5 +1,5 @@
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { UserActivity } from "UserActivities/UserActivity";
 import { TimeSpan } from "Common/TimeSpan";
 import GameLink from "Games/GameLink";

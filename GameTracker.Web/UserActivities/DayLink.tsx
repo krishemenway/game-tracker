@@ -1,11 +1,11 @@
 import * as moment from "moment";
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { Link, useLocation } from "react-router-dom";
 import { useActionStyles } from "AppStyles";
 
 const currentDate = moment();
-const DayLinkOrLabel: React.FC<{ date: moment.Moment }> = (props) => {
+const DayLinkOrLabel: React.FC<{ date: moment.Moment; children: React.ReactNode }> = (props) => {
 	const location = useLocation();
 	const action = useActionStyles();
 

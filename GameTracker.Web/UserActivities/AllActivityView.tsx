@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useLayoutStyles, useBackgroundStyles } from "AppStyles";
-import { Loading } from "@krishemenway/react-loading-component";
+import { Loading } from "Common/Loading";
 import PageHeader from "Common/PageHeader";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import UserActivityCalendar from "UserActivities/UserActivityCalendar";

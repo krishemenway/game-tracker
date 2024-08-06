@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as moment from "moment";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { GameProfile } from "GameProfiles/GameProfile";
 import { useLayoutStyles } from "AppStyles";
 import { TimeSpan } from "Common/TimeSpan";

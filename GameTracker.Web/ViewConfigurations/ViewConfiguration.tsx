@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Loading, Receiver } from "@krishemenway/react-loading-component";
+import { Receiver } from "Common/Receiver";
+import { Loading } from "Common/Loading";
 import LoadingSpinner from "Common/LoadingSpinner";
 import LoadingErrorMessages from "Common/LoadingErrorMessages";
 import { ControlConfiguration, LayoutConfiguration, ViewConfiguration, ViewConfigurationService } from "ViewConfigurations/ViewConfigurationService";
@@ -13,7 +14,7 @@ import { UserListOfAwardsControlHandler } from "Awards/UserListOfAwards";
 import { UserRecentActivityCalendarMonthsControlHandler } from "UserActivities/UserRecentActivityCalendarMonths";
 import { SectionControlHandler } from "Common/Section";
 import { useLayoutStyles } from "AppStyles";
-import clsx from "clsx";
+import { clsx } from "clsx";
 
 const finishedEmptyReceiver = new Receiver<any>("Empty");
 finishedEmptyReceiver.Received({});

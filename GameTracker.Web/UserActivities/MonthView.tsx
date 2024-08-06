@@ -1,8 +1,8 @@
 import * as moment from "moment";
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { useLayoutStyles, useBackgroundStyles } from "AppStyles";
-import { Loading } from "@krishemenway/react-loading-component";
+import { Loading } from "Common/Loading";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import StatisticsSection from "Common/StatisticsSection";
 import PageHeader from "Common/PageHeader";
@@ -16,11 +16,13 @@ import GameLink from "Games/GameLink";
 import ThemeStore from "UserProfile/UserProfileTheme";
 import LoadingErrorMessages from "Common/LoadingErrorMessages";
 import LoadingSpinner from "Common/LoadingSpinner";
+import { useParams } from "react-router-dom";
 
-const MonthView: React.FC<{ year: string; month: string; className?: string }> = (props) => {
+const MonthView: React.FC = () => {
 	const layout = useLayoutStyles();
-	const year = parseInt(props.year, 10);
-	const month = parseInt(props.month, 10);
+	const params = useParams<{ year: string; month: string; }>()
+	const year = parseInt(params.year ?? "", 10);
+	const month = parseInt(params.month ?? "", 10);
 
 	React.useEffect(() => { UserActivityService.Instance.LoadForMonth(year, month); }, []);
 	React.useEffect(() => { UserProfileService.Instance.LoadProfile(); }, []);
@@ -29,7 +31,7 @@ const MonthView: React.FC<{ year: string; month: string; className?: string }> =
 		<div className={layout.centerLayout1000}>
 			<Loading
 				receivers={[UserProfileService.Instance.UserProfile, UserActivityService.Instance.FindOrCreateUserActivityForMonth(`${year}-${month}`)]}
-				whenReceived={(userProfile, userActivityForMonth) => <LoadedMonthView monthKey={`${props.year}-${props.month}`} userName={userProfile.UserName} userActivityForMonth={userActivityForMonth} />}
+				whenReceived={(userProfile, userActivityForMonth) => <LoadedMonthView monthKey={`${params.year}-${params.month}`} userName={userProfile.UserName} userActivityForMonth={userActivityForMonth} />}
 				whenError={(errors) => <LoadingErrorMessages errorMessages={errors} />}
 				whenLoading={<LoadingSpinner />}
 				whenNotStarted={<LoadingSpinner />}

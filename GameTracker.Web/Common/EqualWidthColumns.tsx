@@ -1,5 +1,5 @@
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { useLayoutStyles } from "AppStyles";
 import ListOf from "Common/ListOf";
 import { ViewControlHandler } from "ViewConfigurations/ViewConfiguration";

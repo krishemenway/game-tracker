@@ -1,6 +1,6 @@
 import { Observable, ObservableArray, RateLimiter, RateLimitType, Unsubscribe, ValueFilter } from "@residualeffect/reactor";
 import { Http } from "Common/Http";
-import { Receiver } from "@krishemenway/react-loading-component";
+import { Receiver } from "Common/Receiver";
 import { EditableField } from "Common/EditableField";
 import { UserProfileTheme } from "UserProfile/UserProfileTheme";
 
@@ -116,42 +116,40 @@ export class ControlPanelService {
 
 		this.SearchQuery = new Observable("");
 		this.SearchQueryRateLimiter = RateLimiter(RateLimitType.Debounce, 200);
-		this.UnsubscribeSearch = this.SearchQuery.Subscribe((query) => this.SearchQueryRateLimiter(query, () => { this.Processes.Start(() => this.FindObservedProcesses(query)); }));
+		this.UnsubscribeSearch = this.SearchQuery.Subscribe((query) => this.SearchQueryRateLimiter(query, () => { this.Processes.Start((abort) => this.FindObservedProcesses(abort, query)); }));
 	}
 
 	public LoadStatus(): void {
-		const promise = () => Http.get<ControlPanelStatusResponse, ControlPanelSettings>("/WebAPI/ControlPanel/Status", (r) => {
+		this.Status.Start((abort) => Http.get<ControlPanelStatusResponse, ControlPanelSettings>("/WebAPI/ControlPanel/Status", abort, (r) => {
 			this.Processes.Received(this.TransformObservedProcess(r.ObservedProcesses));
 			return new ControlPanelSettings(r);
-		});
-
-		this.Status.Start(promise);
+		}));
 	}
 
 	public UpdateSetting(field: EditableField, onComplete: () => void): void {
 		if (field.HasChanged.Value && field.CanMakeRequest()) {
-			this.Update.Start(() => Http.post("/WebAPI/ControlPanel/SaveSetting", { Field: field.FieldId, Value: field.Current.Value }).then(() => { field.OnSaved(); onComplete(); }));
+			this.Update.Start((abort) => Http.post("/WebAPI/ControlPanel/SaveSetting", { Field: field.FieldId, Value: field.Current.Value }, abort).then(() => { field.OnSaved(); onComplete(); }));
 		} else {
 			onComplete();
 		}
 	}
 
 	public OnToggleIgnored(observableProcess: ModifiableObservedProcess, ignore: boolean): void {
-		this.ToggleProcess.Start(() => Http.post("/WebAPI/ControlPanel/ToggleIgnorePath", { FilePath: observableProcess.ProcessPath, Ignore: ignore }).then((_) => { observableProcess.Ignore.Value = ignore; }));
+		this.ToggleProcess.Start((abort) => Http.post("/WebAPI/ControlPanel/ToggleIgnorePath", { FilePath: observableProcess.ProcessPath, Ignore: ignore }, abort).then((_) => { observableProcess.Ignore.Value = ignore; }));
 	}
 
 	public Dispose(): void {
 		this.UnsubscribeSearch();
 	}
 
-	private FindObservedProcesses(searchQuery?: string): Promise<ModifiableObservedProcess[]> {
+	private FindObservedProcesses(abort: AbortController, searchQuery?: string): Promise<ModifiableObservedProcess[]> {
 		if (searchQuery === undefined || searchQuery.length === 0) {
 			searchQuery = "**";
 		} else if (!searchQuery.startsWith("*") && !searchQuery.endsWith("*")) {
 			searchQuery = `**${searchQuery}**`;
 		}
 
-		return Http.post<unknown, FindObservedProcessesResponse, ModifiableObservedProcess[]>(`/WebAPI/ControlPanel/FindObservedProcesses?searchQuery=${searchQuery}`, {}, (r) => this.TransformObservedProcess(r.Processes));
+		return Http.post<unknown, FindObservedProcessesResponse, ModifiableObservedProcess[]>(`/WebAPI/ControlPanel/FindObservedProcesses?searchQuery=${searchQuery}`, {}, abort, (r) => this.TransformObservedProcess(r.Processes));
 	}
 
 	private TransformObservedProcess(processes: ObservedProcess[]): ModifiableObservedProcess[] {

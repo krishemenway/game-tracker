@@ -1,6 +1,6 @@
 import * as React from "react";
-import clsx from "clsx";
-import { Loading } from "@krishemenway/react-loading-component";
+import { clsx } from "clsx";
+import { Loading } from "Common/Loading";
 import { useLayoutStyles, useTextStyles, useBackgroundStyles } from "AppStyles";
 import { ControlPanelService, ControlPanelSettings } from "ControlPanel/ControlPanelService";
 import ListOf from "Common/ListOf";

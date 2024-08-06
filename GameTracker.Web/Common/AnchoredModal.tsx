@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { clsx } from "clsx";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { createUseStyles } from "react-jss";
@@ -25,6 +25,7 @@ interface ModalProps {
 	anchorElement: HTMLElement|null;
 	anchorAlignment: ModalAnchorAlignment;
 	onClosed: () => void;
+	children: React.ReactNode;
 }
 
 export function ResetAllModals(): void {

@@ -1,10 +1,10 @@
-import clsx from "clsx";
+import { clsx } from "clsx";
 import * as React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useActionStyles } from "AppStyles";
 import { useGame } from "Games/GameStore";
 
-const GameLinkOrLabel: React.FC<{ gameId: string, title?: string; className?: string }> = (props) => {
+const GameLinkOrLabel: React.FC<{ gameId: string, title?: string; className?: string; children: React.ReactNode }> = (props) => {
 	const game = useGame(props.gameId);
 	const location = useLocation();
 	const action = useActionStyles();

@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { clsx } from "clsx";
 import * as React from "react";
 import { useLayoutStyles, useActionStyles, useTextStyles } from "AppStyles";
 import ListOf, { ListPropsOf } from "Common/ListOf";

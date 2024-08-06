@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { clsx } from "clsx";
 import * as React from "react";
 import { useLayoutStyles, useActionStyles } from "AppStyles";
 import { Link } from "react-router-dom";

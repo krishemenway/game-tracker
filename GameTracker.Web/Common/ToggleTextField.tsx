@@ -1,5 +1,5 @@
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { useObservable } from "@residualeffect/rereactor";
 import { Computed } from "@residualeffect/reactor";
 import { useLayoutStyles, createStyles, useActionStyles } from "AppStyles";

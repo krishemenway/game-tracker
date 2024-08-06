@@ -1,7 +1,7 @@
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import PageHeader from "Common/PageHeader";
-import { Loading } from "@krishemenway/react-loading-component";
+import { Loading } from "Common/Loading";
 import { useBackgroundStyles, useLayoutStyles, useTextStyles } from "AppStyles";
 import { GameProfileService } from "GameProfiles/GameProfileService";
 import { GameProfile } from "GameProfiles/GameProfile";
@@ -15,22 +15,21 @@ import ListOf from "Common/ListOf";
 import ListWithShowMore from "Common/ListWithShowMore";
 import LoadingErrorMessages from "Common/LoadingErrorMessages";
 import LoadingSpinner from "Common/LoadingSpinner";
+import { useParams } from "react-router-dom";
 
-interface GameProfileProps {
-	gameId: string;
-}
-
-export default (props: GameProfileProps) => {
+export default () => {
 	const layout = useLayoutStyles();
+	const params = useParams<{ gameId: string; }>();
+	const gameId = params.gameId ?? "";
 
-	React.useEffect(() => { GameProfileService.Instance.LoadProfile(props.gameId); }, []);
+	React.useEffect(() => { GameProfileService.Instance.LoadProfile(gameId); }, []);
 	React.useEffect(() => { UserProfileService.Instance.LoadProfile(); }, []);
 
 	return (
 		<div className={clsx(layout.centerLayout1000)}>
 			<Loading
-				receivers={[GameProfileService.Instance.FindOrCreateProfile(props.gameId), UserProfileService.Instance.UserProfile]}
-				whenReceived={(gameProfile, userProfile) => <LoadedGameProfile gameId={props.gameId} gameProfile={gameProfile} userProfile={userProfile} />}
+				receivers={[GameProfileService.Instance.FindOrCreateProfile(gameId), UserProfileService.Instance.UserProfile]}
+				whenReceived={(gameProfile, userProfile) => <LoadedGameProfile gameId={gameId} gameProfile={gameProfile} userProfile={userProfile} />}
 				whenError={(errors) => <LoadingErrorMessages errorMessages={errors} />}
 				whenLoading={<LoadingSpinner />}
 				whenNotStarted={<LoadingSpinner />}
@@ -80,7 +79,7 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 	);
 };
 
-const Section: React.FC<{ title: string, hide?: boolean }> = (props) => {
+const Section: React.FC<{ title: string, hide?: boolean; children: React.ReactNode }> = (props) => {
 	const [layout, text] = [useLayoutStyles(), useTextStyles()];
 
 	if (props.hide ?? false) {

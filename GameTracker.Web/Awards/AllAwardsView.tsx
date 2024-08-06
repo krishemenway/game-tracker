@@ -1,8 +1,8 @@
 import * as React from "react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { useBackgroundStyles, useLayoutStyles } from "AppStyles";
 import { UserProfileService, UserProfile } from "UserProfile/UserProfileService";
-import { Loading } from "@krishemenway/react-loading-component";
+import { Loading } from "Common/Loading";
 import StatisticsSection from "Common/StatisticsSection";
 import PageHeader from "Common/PageHeader";
 import GameAwardBadge from "Awards/GameAwardBadge";

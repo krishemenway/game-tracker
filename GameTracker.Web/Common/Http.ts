@@ -4,8 +4,8 @@ export class Http {
 	 * @param transformFunc Optional conversion function if you want something more complex than the response object stored.
 	 * @template TResponse Describes the type for the json response
 	 */
-	public static get<TResponse, TTransformedData = TResponse>(url: string, transformFunc?: (response: TResponse) => TTransformedData): Promise<TTransformedData> {
-		return fetch(url)
+	public static get<TResponse, TTransformedData = TResponse>(url: string, abort: AbortController, transformFunc?: (response: TResponse) => TTransformedData): Promise<TTransformedData> {
+		return fetch(url, { signal: abort.signal })
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error(`Received response status code: ${response.status}`);
@@ -30,11 +30,12 @@ export class Http {
 	 * @template TRequest Describes the type for the json request
 	 * @template TResponse Describes the type for the json response
 	 */
-	public static post<TRequest, TResponse, TLoadableData>(url: string, request: TRequest, transformFunc?: (response: TResponse) => TLoadableData): Promise<TLoadableData> {
+	public static post<TRequest, TResponse, TLoadableData>(url: string, request: TRequest, abort: AbortController, transformFunc?: (response: TResponse) => TLoadableData): Promise<TLoadableData> {
 		const fetchRequest: RequestInit = {
 			body: JSON.stringify(request),
 			method: "post",
 			headers: { "Content-Type": "application/json" },
+			signal: abort.signal,
 		};
 
 		return fetch(url, fetchRequest)
