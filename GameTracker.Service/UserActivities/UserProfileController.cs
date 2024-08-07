@@ -1,4 +1,4 @@
-﻿using GameTracker.GameAwards;
+﻿using GameTracker.UserAwards;
 using GameTracker.Games;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -11,13 +11,12 @@ namespace GameTracker.UserActivities
 	{
 		public UserProfileController(
 			IMemoryCache memoryCache,
-			AllUserActivityCache allUserActivityCache = null,
-			GameStore gameStore = null,
-			GameAwardStore gameAwardStore = null)
+			IGameStore gameStore = null,
+			IUserAwardStore userAwardStore = null)
 		{
-			_allUserActivityCache = allUserActivityCache ?? new AllUserActivityCache(memoryCache);
+			_allUserActivityCache = new AllUserActivityCache(memoryCache);
 			_gameStore = gameStore ?? new GameStore();
-			_gameAwardStore = gameAwardStore ?? new GameAwardStore();
+			_userAwardStore = userAwardStore ?? new UserAwardStore();
 		}
 
 		[HttpGet(nameof(UserProfile))]
@@ -46,13 +45,13 @@ namespace GameTracker.UserActivities
 				RecentActivities = orderedActivities.Take(10).ToArray(),
 				ActivitiesByDate = orderedActivities.GroupByDate(),
 				GamesByGameId = gamesByGameId.ToDictionary(x => x.Key.Value, x => new GameViewModel(x.Value)),
-				AllGameAwards = _gameAwardStore.AllGameAwardWinners(_allUserActivityCache),
+				AllAwards = _userAwardStore.AllAwardWinners(_allUserActivityCache),
 				TotalMonthsOfActivity = _allUserActivityCache.RelevantMonths.Count(),
 			};
 		}
 
 		private readonly AllUserActivityCache _allUserActivityCache;
-		private readonly GameStore _gameStore;
-		private readonly GameAwardStore _gameAwardStore;
+		private readonly IGameStore _gameStore;
+		private readonly IUserAwardStore _userAwardStore;
 	}
 }

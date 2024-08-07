@@ -13,7 +13,7 @@ import NotFound from "Common/NotFound";
 import AllGamesView from "Games/AllGamesView";
 import AllAwardsView from "Awards/AllAwardsView";
 import LoadingErrorMessages from "Common/LoadingErrorMessages";
-import GameAwardStandingsView from "Awards/GameAwardStandingsView";
+import UserAwardStandingsView from "Awards/UserAwardStandingsView";
 import { UserProfileService } from "UserProfile/UserProfileService";
 import { ConfiguredView } from "ViewConfigurations/ViewConfiguration";
 
@@ -29,7 +29,7 @@ const App: React.FC = () => {
 						element: <><Outlet /><ResetModalOnLocationChange /></>,
 						errorElement: <LoadingErrorMessages errorMessages={["Something went wrong, please try again later."]}/>,
 						children: [
-							{ path: "/awards/:gameAwardId", element: <GameAwardStandingsView /> },
+							{ path: "/awards/:userAwardId", element: <UserAwardStandingsView /> },
 							{ path: "/awards", element: <AllAwardsView /> },
 							{ path: "/activity/:year/:month/:day", element: <DayView /> },
 							{ path: "/activity/:year/:month", element: <MonthView /> },

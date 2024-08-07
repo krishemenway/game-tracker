@@ -1,4 +1,4 @@
-﻿using GameTracker.GameAwards;
+﻿using GameTracker.UserAwards;
 using GameTracker.Games;
 using System;
 using System.Collections.Generic;
@@ -19,6 +19,6 @@ namespace GameTracker.UserActivities
 		public Dictionary<string, UserActivityForDate> ActivitiesByDate { get; set; }
 
 		public Dictionary<string, GameViewModel> GamesByGameId { get; set; }
-		public IReadOnlyList<GameAward> AllGameAwards { get; set; }
+		public IReadOnlyList<UserAward> AllAwards { get; set; }
 	}
 }

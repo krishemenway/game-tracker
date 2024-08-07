@@ -1,7 +1,7 @@
 import { UserActivity } from "UserActivities/UserActivity";
 import { Game } from "Games/GameStore";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
-import { GameAward } from "Awards/GameAward";
+import { UserAward } from "Awards/UserAward";
 
 export interface GameProfile {
 	Game: Game;
@@ -16,5 +16,5 @@ export interface GameProfile {
 	TotalTimePlayedInSeconds: number;
 	TimeSpentInSecondsByHour: Dictionary<number>;
 
-	GameAwards: GameAward[];
+	GameAwards: UserAward[];
 }

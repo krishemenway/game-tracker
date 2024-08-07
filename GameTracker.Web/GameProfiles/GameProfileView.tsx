@@ -10,7 +10,7 @@ import UserActivityCalendar from "UserActivities/UserActivityCalendar";
 import GameStatistics from "GameProfiles/GameStatistics";
 import UserActivityBadge from "UserActivities/UserActivityBadge";
 import TimeSpentByHourChart from "Common/TimeSpentByHourChart";
-import GameAwardBadge from "Awards/GameAwardBadge";
+import UserAwardBadge from "Awards/UserAwardBadge";
 import ListOf from "Common/ListOf";
 import ListWithShowMore from "Common/ListWithShowMore";
 import LoadingErrorMessages from "Common/LoadingErrorMessages";
@@ -54,8 +54,8 @@ const LoadedGameProfile: React.FC<{ gameId: string; gameProfile: GameProfile; us
 			<Section title="Game Awards" hide={props.gameProfile.GameAwards.length === 0}>
 				<ListOf
 					items={props.gameProfile.GameAwards}
-					createKey={(a) => a.GameAwardId}
-					renderItem={(award) => <div className={clsx(background.default, layout.paddingAll, layout.height100)}><GameAwardBadge gameAward={award} /></div>}
+					createKey={(a) => a.AwardId}
+					renderItem={(award) => <div className={clsx(background.default, layout.paddingAll, layout.height100)}><UserAwardBadge award={award} /></div>}
 					listClassName={clsx(layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}
 					listItemClassName={() => clsx(layout.width33, layout.marginBottom)}
 				/>

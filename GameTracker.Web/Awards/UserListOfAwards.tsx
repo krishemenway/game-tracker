@@ -4,7 +4,7 @@ import { useBackgroundStyles, useLayoutStyles, getWidthClassFromQuantityPerRow }
 import ListWithShowMore from "Common/ListWithShowMore";
 import { UserProfile } from "UserProfile/UserProfileService";
 import { ViewControlHandler } from "ViewConfigurations/ViewConfiguration";
-import GameAwardBadge from "Awards/GameAwardBadge";
+import UserAwardBadge from "Awards/UserAwardBadge";
 
 export const UserListOfAwardsControlHandler: ViewControlHandler<UserListOfAwardsControl> = {
 	Name: "UserListOfAwards",
@@ -29,9 +29,9 @@ const UserListOfAwardsComponent: React.FC<{ control: UserListOfAwardsControl; us
 
 	return (
 		<ListWithShowMore
-			items={props.userProfile.AllGameAwards}
-			createKey={(a) => a.GameAwardId}
-			renderItem={(a) => <div className={clsx(background.default, layout.paddingAll, layout.height100)}><GameAwardBadge gameAward={a} /></div>}
+			items={props.userProfile.AllAwards}
+			createKey={(a) => a.AwardId}
+			renderItem={(award) => <div className={clsx(background.default, layout.paddingAll, layout.height100)}><UserAwardBadge award={award} /></div>}
 			showMoreLimit={props.control.ControlData.LimitAwards}
 			showMorePath="/Awards"
 			style={{ rowGap: props.control.ControlData.RowGap, columnGap: props.control.ControlData.ColumnGap }}

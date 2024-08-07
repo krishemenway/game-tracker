@@ -4,7 +4,7 @@ import { Receiver } from "Common/Receiver";
 import { Game, GameStore } from "Games/GameStore";
 import { UserActivityForDate } from "UserActivities/UserActivityForDate";
 import { UserActivityService } from "UserActivities/UserActivityService";
-import { GameAward } from "Awards/GameAward";
+import { UserAward } from "Awards/UserAward";
 
 export interface UserProfile {
 	UserName: string;
@@ -16,7 +16,7 @@ export interface UserProfile {
 	TotalMonthsOfActivity: number;
 	ActivitiesByDate: Dictionary<UserActivityForDate>;
 	GamesByGameId: Dictionary<Game>;
-	AllGameAwards: GameAward[];
+	AllAwards: UserAward[];
 }
 
 export class UserProfileService {

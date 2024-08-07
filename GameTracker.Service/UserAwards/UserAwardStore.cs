@@ -4,42 +4,42 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GameTracker.GameAwards
+namespace GameTracker.UserAwards
 {
-	public interface IGameAwardStore
+	public interface IUserAwardStore
 	{
-		IReadOnlyList<GameAward> AllGameAwardWinners(AllUserActivityCache allUserActivity);
-		bool TryGetStandingsForGameAward(Id<GameAward> gameAward, AllUserActivityCache allUserActivity, out IReadOnlyList<GameAward> gameAwards);
+		IReadOnlyList<UserAward> AllAwardWinners(AllUserActivityCache allUserActivity);
+		bool TryGetStandingsForAward(Id<UserAward> awardId, AllUserActivityCache allUserActivity, out IReadOnlyList<UserAward> standings);
 	}
 
-	public class GameAwardStore : IGameAwardStore
+	public class UserAwardStore : IUserAwardStore
 	{
-		public GameAwardStore(IReadOnlyList<IAwardTypeStore> awardTypeStores = null)
+		public UserAwardStore(IReadOnlyList<IAwardTypeStore> awardTypeStores = null)
 		{
 			_awardTypeStores = awardTypeStores ?? StaticAwardTypeStores;
 		}
 
-		public IReadOnlyList<GameAward> AllGameAwardWinners(AllUserActivityCache allUserActivity)
+		public IReadOnlyList<UserAward> AllAwardWinners(AllUserActivityCache allUserActivity)
 		{
 			if (!allUserActivity.HasData())
 			{
-				return Array.Empty<GameAward>();
+				return Array.Empty<UserAward>();
 			}
 
 			return _awardTypeStores.SelectMany(s => s.AllWinnersForType(allUserActivity)).ToList();
 		}
 
-		public bool TryGetStandingsForGameAward(Id<GameAward> gameAward, AllUserActivityCache allUserActivity, out IReadOnlyList<GameAward> gameAwards)
+		public bool TryGetStandingsForAward(Id<UserAward> gameAward, AllUserActivityCache allUserActivity, out IReadOnlyList<UserAward> standings)
 		{
-			var awardTypeStore = _awardTypeStores.SingleOrDefault(x => x.GameAwardIdIsForType(gameAward));
+			var awardTypeStore = _awardTypeStores.SingleOrDefault(x => x.AwardIdIsForType(gameAward));
 
 			if (awardTypeStore == null)
 			{
-				gameAwards = null;
+				standings = null;
 				return false;
 			}
 
-			gameAwards = awardTypeStore.StandingsForGameAwardId(gameAward, 50, allUserActivity);
+			standings = awardTypeStore.StandingsForAwardId(gameAward, 50, allUserActivity);
 			return true;
 		}
 

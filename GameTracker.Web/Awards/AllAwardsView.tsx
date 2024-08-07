@@ -5,7 +5,7 @@ import { UserProfileService, UserProfile } from "UserProfile/UserProfileService"
 import { Loading } from "Common/Loading";
 import StatisticsSection from "Common/StatisticsSection";
 import PageHeader from "Common/PageHeader";
-import GameAwardBadge from "Awards/GameAwardBadge";
+import UserAwardBadge from "Awards/UserAwardBadge";
 import ListOf from "Common/ListOf";
 import LoadingErrorMessages from "Common/LoadingErrorMessages";
 import LoadingSpinner from "Common/LoadingSpinner";
@@ -38,7 +38,7 @@ function LoadedAllAwardsView(props: { userProfile: UserProfile }) {
 			<section className={clsx(layout.flexRow, layout.flexGapDefault, layout.flexEvenDistribution, layout.marginVertical)}>
 				<StatisticsSection
 					statistics={[
-						{ Label: "Total Awards", Value: props.userProfile.AllGameAwards.length },
+						{ Label: "Total Awards", Value: props.userProfile.AllAwards.length },
 					]}
 				/>
 
@@ -51,9 +51,9 @@ function LoadedAllAwardsView(props: { userProfile: UserProfile }) {
 
 			<section className={clsx(layout.marginBottom)}>
 				<ListOf
-					items={props.userProfile.AllGameAwards}
-					createKey={(award) => award.GameAwardId}
-					renderItem={(award) => <div className={clsx(background.default, layout.paddingAll, layout.height100)}><GameAwardBadge gameAward={award} /></div>}
+					items={props.userProfile.AllAwards}
+					createKey={(award) => award.AwardId}
+					renderItem={(award) => <div className={clsx(background.default, layout.paddingAll, layout.height100)}><UserAwardBadge award={award} /></div>}
 					listClassName={clsx(layout.flexRow, layout.flexWrap, layout.flexItemSpacing)}
 					listItemClassName={() => clsx(layout.width33, layout.marginBottom)}
 				/>

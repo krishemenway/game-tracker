@@ -2,7 +2,7 @@ import * as React from "react";
 import { clsx } from "clsx";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Text } from "recharts";
 import { useBackgroundStyles, useLayoutStyles } from "AppStyles";
-import { GameAwardStandingsService, GameAwardStandings } from "Awards/GameAwardStandingsService";
+import { UserAwardStandingsService, UserAwardStandings } from "Awards/UserAwardStandingsService";
 import { Loading } from "Common/Loading";
 import PageHeader from "Common/PageHeader";
 import LoadingErrorMessages from "Common/LoadingErrorMessages";
@@ -10,26 +10,26 @@ import LoadingSpinner from "Common/LoadingSpinner";
 import { UserProfile, UserProfileService } from "UserProfile/UserProfileService";
 import GameLinkOrLabel from "Games/GameLink";
 import ThemeStore from "UserProfile/UserProfileTheme";
-import { GameAward } from "Awards/GameAward";
-import { GetService } from "./GameAwardService";
+import { UserAward } from "Awards/UserAward";
+import { GetService } from "./UserAwardService";
 import { GameStore } from "Games/GameStore";
 import { useObservable } from "@residualeffect/rereactor";
 import { useParams } from "react-router-dom";
 
-const GameAwardStandingsView: React.FC = () => {
+const UserAwardStandingsView: React.FC = () => {
 	const layout = useLayoutStyles();
-	const params = useParams<{ gameAwardId: string }>();
+	const params = useParams<{ userAwardId: string }>();
 
 	React.useEffect(() => {
 		UserProfileService.Instance.LoadProfile();
-		GameAwardStandingsService.Instance.LoadStandings(params.gameAwardId ?? "");
-	}, [params.gameAwardId]);
+		UserAwardStandingsService.Instance.LoadStandings(params.userAwardId ?? "");
+	}, [params.userAwardId]);
 
 	return (
 		<div className={layout.centerLayout1000}>
 			<Loading
-				receivers={[UserProfileService.Instance.UserProfile, GameAwardStandingsService.Instance.Standings]}
-				whenReceived={(userProfile, standings) => <LoadedGameAwardStandings userProfile={userProfile} gameAwardStandings={standings} />}
+				receivers={[UserProfileService.Instance.UserProfile, UserAwardStandingsService.Instance.Standings]}
+				whenReceived={(userProfile, standings) => <LoadedUserAwardStandings userProfile={userProfile} standings={standings} />}
 				whenError={(errors) => <LoadingErrorMessages errorMessages={errors} />}
 				whenLoading={<LoadingSpinner />}
 				whenNotStarted={<LoadingSpinner />}
@@ -38,25 +38,25 @@ const GameAwardStandingsView: React.FC = () => {
 	);
 };
 
-function LoadedGameAwardStandings(props: { userProfile: UserProfile; gameAwardStandings: GameAwardStandings }) {
+function LoadedUserAwardStandings(props: { userProfile: UserProfile; standings: UserAwardStandings }) {
 	const [layout, background] = [useLayoutStyles(), useBackgroundStyles()];
-	const description = GetService(props.gameAwardStandings.Standings[0]).CreateDescription(props.gameAwardStandings.Standings[0]);
+	const description = GetService(props.standings.Standings[0]).CreateDescription(props.standings.Standings[0]);
 
 	return (
 		<>
 			<PageHeader userName={props.userProfile.UserName} pageTitle={`Award Standings - ${description}`} />
 
 			<section className={clsx(layout.marginBottom)}>
-				<StandingsChart standings={props.gameAwardStandings.Standings} />
+				<StandingsChart standings={props.standings.Standings} />
 			</section>
 		</>
 	);
 }
 
-const StandingsChart: React.FC<{ standings: GameAward[]; }> = (props) => {
+const StandingsChart: React.FC<{ standings: UserAward[]; }> = (props) => {
 	const background = useBackgroundStyles();
 	const service = GetService(props.standings[0]);
-	const barChartData = props.standings.map((standing) => ({ name: standing.GameId, valueAsNumber: service.CreateValueAsNumber(standing) }));
+	const barChartData = props.standings.map((standing) => ({ name: standing.AwardTypeDetails.GameId, valueAsNumber: service.CreateValueAsNumber(standing) }));
 	const gamesByGameId = useObservable(GameStore.Instance.GamesByGameId);
 
 	return (
@@ -100,4 +100,4 @@ const StandingsChart: React.FC<{ standings: GameAward[]; }> = (props) => {
 };
 
 
-export default GameAwardStandingsView;
+export default UserAwardStandingsView;
