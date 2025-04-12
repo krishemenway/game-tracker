@@ -45,6 +45,12 @@ namespace GameTracker
 			return Content(javascript, "application/javascript", Encoding.UTF8);
 		}
 
+		[HttpGet("robots.txt")]
+		public ContentResult Robots()
+		{
+			return Content(RobotsContent, "text/plain", Encoding.UTF8);
+		}
+
 		[HttpGet("{*url}", Order = int.MaxValue)]
 		public async Task<ContentResult> AppMarkup(string url)
 		{
@@ -94,6 +100,15 @@ namespace GameTracker
 			});
 		}
 
+		private static string LoadRobots()
+		{
+			using (var robotsStream = typeof(GameTrackerService).Assembly.GetManifestResourceStream("GameTracker.Robots.txt"))
+			using (var reader = new StreamReader(robotsStream))
+			{
+				return reader.ReadToEnd();
+			}
+		}
+
 		private static Icon LoadDefaultAppIcon()
 		{
 			using (var defaultAppIconStream = typeof(GameTrackerService).Assembly.GetManifestResourceStream("GameTracker.app.ico"))
@@ -113,6 +128,7 @@ namespace GameTracker
 
 		public static Icon DefaultAppIcon { get; } = LoadDefaultAppIcon();
 		public static byte[] DefaultAppIconBytes { get; } = LoadDefaultAppIconBytes();
+		public static string RobotsContent { get; } = LoadRobots();
 
 		private readonly IMemoryCache _memoryCache;
 	}

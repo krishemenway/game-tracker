@@ -38,6 +38,9 @@
 		<EmbeddedResource Include="app.ico">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
+		<EmbeddedResource Include="Robots.txt">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</EmbeddedResource>
 		<EmbeddedResource Include="ViewConfigurations\GameProfileView.json" />
 		<EmbeddedResource Include="ViewConfigurations\MonthOverviewView.json" />
 		<EmbeddedResource Include="ViewConfigurations\DayOverviewView.json" />
