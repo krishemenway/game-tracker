@@ -79,8 +79,8 @@ namespace GameTracker.UserActivities
 		public UserActivityCacheData(IReadOnlyList<UserActivity> userActivities)
 		{
 			AllUserActivity = userActivities;
-			TotalTimeSpentInSeconds = userActivities.Sum(x => x.TimeSpentInSeconds);
-			StartedCollectingDataTime = userActivities.Min(x => x.StartTime);
+			TotalTimeSpentInSeconds = userActivities.Sum(activity => activity.TimeSpentInSeconds);
+			StartedCollectingDataTime = userActivities.Select(activity => activity.StartTime).DefaultIfEmpty(DateTimeOffset.Now).Min(time => time);
 			ActivityForMonths = userActivities.GroupBy(x => MonthOfYear.Create(x.AssignedToDate)).ToDictionary(x => x.Key, activities => (IReadOnlyList<UserActivity>)activities.ToArray());
 			ActivityForYears = userActivities.GroupBy(x => x.AssignedToDate.Year).ToDictionary(x => x.Key, activities => (IReadOnlyList<UserActivity>)activities.ToArray());
 			ActivityForGames = userActivities.GroupBy(x => x.GameId).ToDictionary(x => x.Key, activities => (IReadOnlyList<UserActivity>)activities.ToArray());
