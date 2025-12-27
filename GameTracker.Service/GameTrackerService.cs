@@ -1,7 +1,6 @@
 using GameTracker.Games;
 using GameTracker.ObservedProcesses;
 using GameTracker.ProcessSessions;
-using GameTracker.UserActivities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -44,11 +43,15 @@ namespace GameTracker
 			WebAssetsFileMonitor = new HostFileChangeMonitor(WebAssets.AllAssetPaths.ToArray());
 			WebAssetsFileMonitor.NotifyOnChanged((_) => { WebAssets.CancellationTokenSource.Cancel(); });
 
-			WebHost = new WebHostBuilder()
-				.UseKestrel()
-				.UseStartup<WebHostConfiguration>()
-				.UseConfiguration(AppSettings.Instance.Configuration)
-				.UseUrls(WebHostListenAddress)
+			WebHost = new HostBuilder()
+				.ConfigureWebHost(webHostBuilder =>
+					{
+						webHostBuilder
+							.UseKestrel()
+							.UseStartup<WebHostConfiguration>()
+							.UseConfiguration(AppSettings.Instance.Configuration)
+							.UseUrls(WebHostListenAddress);
+					})
 				.Build();
 		}
 
@@ -57,7 +60,7 @@ namespace GameTracker
 			Log.Information("Reading Game Data from {GamesFilePath}", GameStore.GamesFilePath);
 			Log.Information("Writing ProcessSessions to {ProcessSessionsPath}", ProcessSessionStore.DataFilePath);
 			Log.Information("Writing ObservedProcesses to {ObservedProcessesPath}", ObservedProcessStore.DataFilePath);
-			Log.Information("Starting web host on {WebHostListenAddress}", WebHostListenAddress);
+			Log.Information("Starting web host on {Address}", WebHostListenAddress);
 		}
 
 		public Task StartAsync(CancellationToken cancellationToken)
@@ -126,7 +129,7 @@ namespace GameTracker
 		private HostFileChangeMonitor WebAssetsFileMonitor { get; }
 		private System.Timers.Timer GamesDataUpdateTimer { get; set; }
 		private System.Timers.Timer ProcessScannerTimer { get; set; }
-		private IWebHost WebHost { get; set; }
+		private IHost WebHost { get; set; }
 		private ProcessScanner ProcessScanner { get; }
 	}
 }
