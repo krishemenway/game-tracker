@@ -48,18 +48,13 @@ namespace GameTracker.UserActivities
 				TimeSpentInSecondsByDate = userActivityForMonth
 					.GroupBy(userActivity => userActivity.AssignedToDate)
 					.ToDictionary(groupedUserActivities => groupedUserActivities.Key.ToString("yyyy-MM-dd"), groupedUserActivities => groupedUserActivities.Sum(activity => activity.TimeSpentInSeconds))
-					.SetDefaultValuesForKeys(Enumerable.Range(1, DateTime.DaysInMonth(year, month) - 1).Select(date => date.ToString("yyyy-MM-dd")), (_) => 0),
+					.SetDefaultValuesForKeys(Enumerable.Range(1, DateTime.DaysInMonth(year, month)).Select(date => $"{year}-{month.ToString("00")}-{date.ToString("00")}"), (_) => 0),
 
 				GamesByGameId = _gameStore.FindGames(distinctGameIds).ToDictionary(x => x.Key.Value, x => new GameViewModel(x.Value)),
 
 				TotalGamesPlayed = distinctGameIds.Length,
 				TotalTimePlayedInSeconds = userActivityForMonth.Sum(x => x.TimeSpentInSeconds),
 			};
-		}
-
-		private IEnumerable<DateTimeOffset> StartOfEachDayInMonth(DateTimeOffset lastDayOfMonth)
-		{
-			return Enumerable.Range(1, lastDayOfMonth.Day).Select(x => new DateTimeOffset(lastDayOfMonth.Year, lastDayOfMonth.Month, x, 0, 0, 0, lastDayOfMonth.Offset));
 		}
 
 		private readonly AllUserActivityCache _allUserActivityCache;
